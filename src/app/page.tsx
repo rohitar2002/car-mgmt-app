@@ -1,101 +1,154 @@
-import Image from "next/image";
+'use client'
+
+import Loader from "@/components/Loader/RotatingLines";
+import { useFirebaseContext } from "@/context/firebaseContext";
+import { LoginCredentials, LoginErrors } from "@/interface/UsersType";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [loginData, setLoginData] = useState<LoginCredentials>({
+    email: "",
+    password: "",
+  })
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const [loginErrors, setLoginErrors] = useState<LoginErrors>({
+    emailError: "",
+    passwordError: "",
+  })
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [passwordInput, setPasswordInput] = useState<boolean>(true);
+  const firebaseResponse = useFirebaseContext();
+  const router = useRouter();
+
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/;
+
+  const handleLogin = async (e?: any) => {
+    e?.preventDefault();
+    if (loginData.email.trim() === "") {
+      setLoginErrors((prev: LoginErrors) => ({
+        ...prev,
+        emailError: "This field is Required",
+      }))
+
+      return;
+    }
+    else if (!emailRegex.test(loginData.email)) {
+      setLoginErrors((prev: LoginErrors) => ({
+        ...prev,
+        emailError: "Email is Invalid",
+      }))
+
+      return;
+    }
+
+    if (loginData.password.trim() === "") {
+      setLoginErrors((prev: LoginErrors) => ({
+        ...prev,
+        passwordError: "This field is Required",
+      }))
+
+      return;
+    }
+    setIsLoading(true);
+    const loginResponse = await firebaseResponse?.loginUser(loginData);
+    if (typeof loginResponse === "string") {
+      toast.error(loginResponse)
+    }
+    else if (loginResponse === null) {
+      toast.error("Something Went Wrong");
+    }
+    else {
+      toast.success("Login Success!");
+
+      setLoginData({
+        email: "",
+        password: "",
+      })
+      router.replace("/pages/DashBoard");
+    }
+
+    setIsLoading(false);
+  }
+
+  useEffect(() => {
+    if (localStorage.getItem("UsersInfo")) {
+      router.replace("/pages/DashBoard")
+    }
+  }, [])
+
+  return (
+    <>
+      {isLoading && <Loader />}
+      <div className="flex flex-col justify-center items-center w-full px-5 py-10">
+        <div className="text-xl text-center md:text-2xl text-primary font-bold py-10 underline">Car Finance Management App!</div>
+        <div className="p-5 md:p-10 w-full lg:w-2/5 rounded-lg flex flex-col gap-10 border border-primary">
+          <h2 className="text-lg text-center md:text-2xl text-primary font-bold underline">Welcome Back!</h2>
+          <form className="flex flex-col justify-center gap-5">
+            <div className="flex flex-col justify-center gap-3">
+              <label className="text-lg font-semibold">Email:</label>
+              <input type="text" placeholder="Enter Email" className="px-3 py-2 border border-primary focus:outline-none rounded" value={loginData.email} onChange={(e) => {
+                setLoginData((prev: LoginCredentials) => ({
+                  ...prev,
+                  email: e.target.value,
+                }))
+
+                setLoginErrors((prev: LoginErrors) => ({
+                  ...prev,
+                  emailError: "",
+                }))
+              }} />
+              {loginErrors.emailError && <h2 className="text-lg text-error font-bold">{loginErrors.emailError}</h2>}
+
+            </div>
+            <div className="flex flex-col justify-center gap-3">
+              <label className="text-lg font-semibold">Password:</label>
+              <div className="flex items-center w-full relative">
+                <input type={passwordInput ? "password" : "text"} placeholder="Enter Password" className="px-3 py-2 border border-primary focus:outline-none rounded w-full" value={loginData.password} onChange={(e) => {
+                  setLoginData((prev: LoginCredentials) => ({
+                    ...prev,
+                    password: e.target.value,
+                  }))
+
+                  setLoginErrors((prev: LoginErrors) => ({
+                    ...prev,
+                    passwordError: "",
+                  }))
+                }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleLogin();
+                    }
+                  }} />
+
+                <div className="absolute right-0 pr-3">
+                  {!passwordInput ? <FaEye size={20} onClick={() => {
+                    setPasswordInput(true);
+                  }} className="cursor-pointer" />
+                    : <FaEyeSlash size={20} onClick={() => {
+                      setPasswordInput(false);
+                    }} className="cursor-pointer" />}
+                </div>
+              </div>
+              {loginErrors.passwordError && <h2 className="text-lg text-error font-bold">{loginErrors.passwordError}</h2>}
+            </div>
+
+            <div className="mt-5">
+              <button type="button" className="py-3 w-full text-xl text-white bg-primary rounded " onClick={handleLogin}>Login</button>
+            </div>
+
+            <div className="flex flex-col md:flex-row justify-center items-center gap-3 text-lg font-bold mt-5">
+              <h2>Don't have an account?</h2>
+              <Link href="/pages/RegisterUser">
+                <h2 className="text-primary cursor-pointer">Register here</h2>
+              </Link>
+            </div>
+          </form>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+    </>
   );
 }
