@@ -54,21 +54,15 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
 
     const loginUser = async (data: LoginCredentials) => {
         try {
-            console.log("data: ", data);
             const signInResponse = await signInWithEmailAndPassword(auth, data.email, data.password);
-            console.log("signInResponse: ", signInResponse);
 
             if (signInResponse.user) {
                 const queryResult = await getDataWithQuery("Users", "email", "==", signInResponse?.user?.email);
 
-                console.log("queryResult: ", queryResult);
-                
                 const documentId = queryResult.docs[0].id;
                 const documentData = queryResult.docs[0].data();
 
-                
-                console.log("documentData: ", documentData);
-                
+
                 if (documentData["Cars Ids"].length) {
                     const carIds = documentData["Cars Ids"];
 
