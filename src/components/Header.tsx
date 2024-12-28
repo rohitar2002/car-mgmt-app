@@ -13,7 +13,7 @@ export const Header = () => {
     const firebaseContext = useFirebaseContext();
     const router = useRouter();
   
-    const handleLogout = (e: any) => {
+    const handleLogout = (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
       setIsLoading(true);
   

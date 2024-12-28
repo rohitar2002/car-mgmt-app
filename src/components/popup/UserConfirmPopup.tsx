@@ -5,7 +5,7 @@ import Modal from "react-modal"
 
 Modal.setAppElement("#documentBody");
 
-const customStyles: any = {
+const customStyles: ReactModal.Styles = {
     overlay: {
         backgroundColor: "rgba(0, 0, 0, 0.5)",
         zIndex: 1000,

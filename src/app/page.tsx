@@ -26,7 +26,7 @@ export default function Home() {
 
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/;
 
-  const handleLogin = async (e?: any) => {
+  const handleLogin = async (e?: React.MouseEvent<HTMLButtonElement>) => {
     e?.preventDefault();
     if (loginData.email.trim() === "") {
       setLoginErrors((prev: LoginErrors) => ({
@@ -141,7 +141,7 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col md:flex-row justify-center items-center gap-3 text-lg font-bold mt-5">
-              <h2>Don't have an account?</h2>
+              <h2>Don&apos;t have an account?</h2>
               <Link href="/pages/RegisterUser">
                 <h2 className="text-primary cursor-pointer">Register here</h2>
               </Link>

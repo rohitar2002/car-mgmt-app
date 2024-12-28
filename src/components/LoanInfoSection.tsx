@@ -21,11 +21,12 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, loanInfoError, setLoanInfoE
                             "Total Loan Amount": e.target.value,
                         }))
 
-                        setLoanInfoChangesStatus && setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
-                            ...prev,
-                            "Total Loan Amount": true,
-                        }))
-
+                        if (setLoanInfoChangesStatus) {
+                            setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
+                                ...prev,
+                                "Total Loan Amount": true,
+                            }))
+                        }
                         setLoanInfoError((prev: LoanInfoErrorType) => ({
                             ...prev,
                             Total_Loan_Amount_Error: "",
@@ -44,10 +45,12 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, loanInfoError, setLoanInfoE
                                 "Loan Tenure": e.target.value,
                             }))
 
-                            setLoanInfoChangesStatus && setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
-                                ...prev,
-                                "Loan Tenure": true,
-                            }))
+                            if (setLoanInfoChangesStatus) {
+                                setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
+                                    ...prev,
+                                    "Loan Tenure": true,
+                                }))
+                            }
 
                             setLoanInfoError((prev: LoanInfoErrorType) => ({
                                 ...prev,
@@ -66,11 +69,12 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, loanInfoError, setLoanInfoE
                                 "Interest Rate": e.target.value,
                             }))
 
-                            setLoanInfoChangesStatus && setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
-                                ...prev,
-                                "Interest Rate": true,
-                            }))
-
+                            if (setLoanInfoChangesStatus) {
+                                setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
+                                    ...prev,
+                                    "Interest Rate": true,
+                                }))
+                            }
                             setLoanInfoError((prev: LoanInfoErrorType) => ({
                                 ...prev,
                                 Interest_Rate_Error: "",
@@ -89,10 +93,12 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, loanInfoError, setLoanInfoE
                             "Loan Start Date": e.target.value,
                         }))
 
-                        setLoanInfoChangesStatus && setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
-                            ...prev,
-                            "Loan Start Date": true,
-                        }))
+                        if (setLoanInfoChangesStatus) {
+                            setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
+                                ...prev,
+                                "Loan Start Date": true,
+                            }))
+                        }
 
                         setLoanInfoError((prev: LoanInfoErrorType) => ({
                             ...prev,
@@ -111,10 +117,12 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, loanInfoError, setLoanInfoE
                             "EMI Amount": e.target.value,
                         }))
 
-                        setLoanInfoChangesStatus && setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
-                            ...prev,
-                            "EMI Amount": true,
-                        }))
+                        if (setLoanInfoChangesStatus) {
+                            setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
+                                ...prev,
+                                "EMI Amount": true,
+                            }))
+                        }
 
                         setLoanInfoError((prev: LoanInfoErrorType) => ({
                             ...prev,
@@ -133,10 +141,12 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, loanInfoError, setLoanInfoE
                             "Total Paid Amount": e.target.value,
                         }))
 
-                        setLoanInfoChangesStatus && setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
-                            ...prev,
-                            "Total Paid Amount": true,
-                        }))
+                        if (setLoanInfoChangesStatus) {
+                            setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
+                                ...prev,
+                                "Total Paid Amount": true,
+                            }))
+                        }
 
                         setLoanInfoError((prev: LoanInfoErrorType) => ({
                             ...prev,

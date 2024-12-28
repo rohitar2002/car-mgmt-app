@@ -3,8 +3,8 @@
 import { nextEMIDate } from "@/Constants/utils";
 import { auth, firestore } from "@/firebase/firebase.config";
 import { CarDetailsType } from "@/interface/CarEntriesTypes";
-import { FirebaseContextType, LoginCredentials, LoginQueryType, SignUpType, UserDetailsType } from "@/interface/UsersType";
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { FirebaseContextType, LoginCredentials, SignUpType, UserDetailsType } from "@/interface/UsersType";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { addDoc, arrayUnion, collection, doc, DocumentData, getDoc, getDocs, query, updateDoc, where, WhereFilterOp } from "firebase/firestore";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
@@ -13,14 +13,18 @@ const signUpUser = async (data: SignUpType) => {
         const response = await createUserWithEmailAndPassword(auth, data.email, data.password)
 
         if (response?.user) {
-            const document = await addDoc(collection(firestore, "Users"), {
+            await addDoc(collection(firestore, "Users"), {
                 ...data,
+                email: data.email.toLowerCase(),
                 "Cars Ids": [],
             });
             return true;
         }
-    } catch (error: any) {
-        return error.message;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return error.message;
+        }
+        return "Something Went Wrong!";
     }
     return null;
 }
@@ -36,6 +40,8 @@ const signOutUser = async () => {
     try {
         await signOut(auth);
     } catch (error) {
+        console.error(error);
+
         return false;
     }
 
@@ -50,11 +56,12 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
         try {
             const signInResponse = await signInWithEmailAndPassword(auth, data.email, data.password);
 
-            if (signInResponse) {
+            if (signInResponse.user) {
                 const queryResult = await getDataWithQuery("Users", "email", "==", signInResponse?.user?.email);
 
                 const documentId = queryResult.docs[0].id;
                 const documentData = queryResult.docs[0].data();
+
 
                 if (documentData["Cars Ids"].length) {
                     const carIds = documentData["Cars Ids"];
@@ -89,10 +96,14 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
                 return true;
             }
 
-        } catch (error: any) {
-            console.error("error", error.message);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error("error", error.message);
 
-            return error.message;
+                return error.message;
+            }
+
+            return "Something Went Wrong!"
         }
 
         return null;
@@ -127,8 +138,12 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
                 "Cars Ids": carIds,
             }))
 
-        } catch (error: any) {
-            return error.message;
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                return error.message;
+            }
+
+            return "Something Went Wrong!";
         }
 
         return true;
@@ -148,13 +163,19 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
             }))
 
             return true;
-        } catch (error: any) {
-            return error.message;
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                return error.message;
+            }
+
+            return "Something Went Wrong!";
         }
     }
 
     useEffect(() => {
-        userDetails && localStorage.setItem("UsersInfo", JSON.stringify(userDetails))
+        if (userDetails) {
+            localStorage.setItem("UsersInfo", JSON.stringify(userDetails));
+        }
     }, [userDetails])
 
     useEffect(() => {

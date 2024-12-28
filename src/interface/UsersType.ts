@@ -1,5 +1,5 @@
-import { DocumentData, WhereFilterOp } from "firebase/firestore";
-import { CarDetailsType, CarDetailsWithIdType } from "./CarEntriesTypes";
+import { DocumentData, QuerySnapshot, WhereFilterOp } from "firebase/firestore";
+import { CarDetailsType } from "./CarEntriesTypes";
 
 export interface LoginCredentials {
     email: string;
@@ -46,5 +46,5 @@ export interface FirebaseContextType {
     signOutUser: () => Promise<boolean>;
     addCarRecord: (data: CarDetailsType) => Promise<string | boolean>;
     deleteCarRecord: (carId: string) => Promise<string | boolean>;
-    getDataWithQuery: (collectionName: string, fieldName: string, operator: WhereFilterOp, value: unknown) => Promise<any>;
+    getDataWithQuery: (collectionName: string, fieldName: string, operator: WhereFilterOp, value: unknown) => Promise<QuerySnapshot<DocumentData, DocumentData>>;
 }
