@@ -20,7 +20,7 @@ const DeleteConfirmPopup = ({ isShowPopup, closePopup, carId, registrationNumber
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const firebaseContext = useFirebaseContext();
 
-    const customStyles: any = {
+    const customStyles: ReactModal.Styles = {
         overlay: {
             backgroundColor: "rgba(0, 0, 0, 0.5)",
             zIndex: 1000,
@@ -41,7 +41,7 @@ const DeleteConfirmPopup = ({ isShowPopup, closePopup, carId, registrationNumber
         },
     };
 
-    const handleDeletion = async (e: any) => {
+    const handleDeletion = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         setIsLoading(true);
 

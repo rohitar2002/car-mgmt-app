@@ -5,10 +5,11 @@ import { MdClose } from "react-icons/md";
 import Modal from "react-modal"
 import Loader from "../Loader/RotatingLines";
 import { toast } from "react-toastify";
+import { DocumentData } from "firebase/firestore";
 
 Modal.setAppElement("#documentBody");
 
-const customStyles: any = {
+const customStyles: ReactModal.Styles = {
     overlay: {
         backgroundColor: "rgba(0, 0, 0, 0.5)",
         zIndex: 1000,
@@ -41,7 +42,7 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup }: Props) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const firebaseContext = useFirebaseContext();
 
-    const downloadCSV = (e: any) => {
+    const downloadCSV = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
         if (emiHistoryDetails) {
@@ -72,7 +73,9 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup }: Props) => {
 
                 toast.success("File Downloaded successfully. Adjust the column size to see the Dates(if needed).");
 
-            } catch (error: any) {
+            } catch (error) {
+                console.error(error);
+
                 toast.error("Something Went wrong during downloading data!");
             }
             setIsLoading(false);
@@ -82,8 +85,8 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup }: Props) => {
     const getEMIDetails = async () => {
         setIsLoading(true);
         const queryResult = await firebaseContext?.getDataWithQuery("EMIDetails", "Loan Id", "==", loanId);
-        if (!queryResult.empty) {
-            const emiArray = queryResult.docs.map((item: any) => (item.data()));
+        if (queryResult && !queryResult.empty) {
+            const emiArray = queryResult.docs.map((item: DocumentData) => (item.data()));
 
             const historyData = emiArray.map((item: EMIHistoryDBType) => {
                 const status = getStatus(item);
@@ -135,12 +138,17 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup }: Props) => {
     }
     useEffect(() => {
         if (isShowPopup) {
-            loanId && getEMIDetails();
+            if (loanId) {
+                getEMIDetails();
+            }
         }
     }, [isShowPopup])
 
     useEffect(() => {
-        emiHistoryDetails && setIsLoading(false);
+        if (emiHistoryDetails) {
+            setIsLoading(false);
+        }
+
     }, [emiHistoryDetails])
 
     return (

@@ -83,8 +83,8 @@ const DashBoard = () => {
         }
     }
     useEffect(() => {
-        if (firebaseContext?.userDetails) {
-            firebaseContext?.userDetails?.["Cars Ids"].length > 0 && getCarRecords();
+        if (firebaseContext?.userDetails && firebaseContext?.userDetails?.["Cars Ids"].length) {
+            getCarRecords();
         }
     }, [firebaseContext?.userDetails])
 
@@ -138,7 +138,9 @@ const DashBoard = () => {
                                             <input type="text" className="border border-primary px-3 py-2 rounded focus:outline-none" placeholder="Registration Number" value={registrationNumber} onChange={(e) => {
                                                 setRegistrationNumber(e.target.value);
                                             }} onKeyDown={(e) => {
-                                                e.key === "Enter" && handleSearch(registrationNumber, null);
+                                                if (e.key === "Enter") {
+                                                    handleSearch(registrationNumber, null);
+                                                }
                                             }} />
                                             <button className="text-white bg-primary px-5 py-2 rounded " onClick={(e) => {
                                                 e.preventDefault();
@@ -158,7 +160,9 @@ const DashBoard = () => {
                                                 setCarModel(e.target.value);
                                             }}
                                                 onKeyDown={(e) => {
-                                                    e.key === "Enter" && handleSearch(null, carModel);
+                                                    if (e.key === "Enter") {
+                                                        handleSearch(null, carModel);
+                                                    }
                                                 }} />
                                             <button className="text-white bg-primary px-5 py-2 rounded " onClick={(e) => {
                                                 e.preventDefault();

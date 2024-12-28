@@ -20,10 +20,12 @@ export const CarDetails = ({ carInfo, setCarInfo, carInfoError, setCarInfoError,
                         "Registration Number": e.target.value,
                     }))
 
-                    setCarInfoChangesStatus && setCarInfoChangesStatus((prev: CarInfoChangesStatusType) => ({
-                        ...prev,
-                        "Registration Number": true,
-                    }))
+                    if (setCarInfoChangesStatus) {
+                        setCarInfoChangesStatus((prev: CarInfoChangesStatusType) => ({
+                            ...prev,
+                            "Registration Number": true,
+                        }))
+                    }
                     setCarInfoError((prev: CarInfoErrorType) => ({
                         ...prev,
                         Registration_Number_Error: "",
@@ -41,10 +43,12 @@ export const CarDetails = ({ carInfo, setCarInfo, carInfoError, setCarInfoError,
                             "Model Number": e.target.value,
                         }))
 
-                        setCarInfoChangesStatus && setCarInfoChangesStatus((prev: CarInfoChangesStatusType) => ({
-                            ...prev,
-                            "Model Number": true,
-                        }))
+                        if (setCarInfoChangesStatus) {
+                            setCarInfoChangesStatus((prev: CarInfoChangesStatusType) => ({
+                                ...prev,
+                                "Model Number": true,
+                            }))
+                        }
 
                         setCarInfoError((prev: CarInfoErrorType) => ({
                             ...prev,
@@ -61,10 +65,12 @@ export const CarDetails = ({ carInfo, setCarInfo, carInfoError, setCarInfoError,
                             "Brand Name": e.target.value,
                         }))
 
-                        setCarInfoChangesStatus && setCarInfoChangesStatus((prev: CarInfoChangesStatusType) => ({
-                            ...prev,
-                            "Brand Name": true,
-                        }))
+                        if (setCarInfoChangesStatus) {
+                            setCarInfoChangesStatus((prev: CarInfoChangesStatusType) => ({
+                                ...prev,
+                                "Brand Name": true,
+                            }))
+                        }
 
                         setCarInfoError((prev: CarInfoErrorType) => ({
                             ...prev,
@@ -83,10 +89,12 @@ export const CarDetails = ({ carInfo, setCarInfo, carInfoError, setCarInfoError,
                         "Engine Number": e.target.value,
                     }))
 
-                    setCarInfoChangesStatus && setCarInfoChangesStatus((prev: CarInfoChangesStatusType) => ({
-                        ...prev,
-                        "Engine Number": true,
-                    }))
+                    if (setCarInfoChangesStatus) {
+                        setCarInfoChangesStatus((prev: CarInfoChangesStatusType) => ({
+                            ...prev,
+                            "Engine Number": true,
+                        }))
+                    }
 
                     setCarInfoError((prev: CarInfoErrorType) => ({
                         ...prev,
@@ -104,10 +112,12 @@ export const CarDetails = ({ carInfo, setCarInfo, carInfoError, setCarInfoError,
                         "Chassis Number": e.target.value,
                     }))
 
-                    setCarInfoChangesStatus && setCarInfoChangesStatus((prev: CarInfoChangesStatusType) => ({
-                        ...prev,
-                        "Chassis Number": true,
-                    }))
+                    if (setCarInfoChangesStatus) {
+                        setCarInfoChangesStatus((prev: CarInfoChangesStatusType) => ({
+                            ...prev,
+                            "Chassis Number": true,
+                        }))
+                    }
 
                     setCarInfoError((prev: CarInfoErrorType) => ({
                         ...prev,
@@ -125,10 +135,12 @@ export const CarDetails = ({ carInfo, setCarInfo, carInfoError, setCarInfoError,
                         "Purchased Date": e.target.value,
                     }))
 
-                    setCarInfoChangesStatus && setCarInfoChangesStatus((prev: CarInfoChangesStatusType) => ({
-                        ...prev,
-                        "Purchased Date": true,
-                    }))
+                    if (setCarInfoChangesStatus) {
+                        setCarInfoChangesStatus((prev: CarInfoChangesStatusType) => ({
+                            ...prev,
+                            "Purchased Date": true,
+                        }))
+                    }
 
                     setCarInfoError((prev: CarInfoErrorType) => ({
                         ...prev,

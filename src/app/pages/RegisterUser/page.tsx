@@ -34,7 +34,7 @@ const RegisterUser = () => {
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/;
 
-    const handleRegister = async (e: any) => {
+    const handleRegister = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         if (signUpData.userName.trim() === "") {
             setSignUpErrors((prev: SignUpErrorType) => ({
@@ -96,7 +96,7 @@ const RegisterUser = () => {
         setIsLoading(true);
         const mobileQueryResult = await firebaseResponse?.getDataWithQuery("Users", "mobile", "==", signUpData?.mobile);
 
-        if (!mobileQueryResult.empty) {
+        if (mobileQueryResult && !mobileQueryResult.empty) {
             toast.error("Mobile Number Already exists with Another User.");
             setSignUpErrors((prev: SignUpErrorType) => ({
                 ...prev,

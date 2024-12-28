@@ -12,7 +12,7 @@ import { firestore } from "@/firebase/firebase.config";
 
 Modal.setAppElement("#documentBody");
 
-const customStyles: any = {
+const customStyles: ReactModal.Styles = {
     overlay: {
         backgroundColor: "rgba(0, 0, 0, 0.5)",
         zIndex: 1000,
@@ -192,7 +192,7 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
         setIsLoading(true);
 
         const queryResult = await firebaseContext?.getDataWithQuery("CarDetails", "Registration Number", "==", carInfo["Registration Number"]);
-        if (!queryResult.empty) {
+        if (queryResult && !queryResult.empty) {
             const documentData = queryResult.docs[0].data();
 
             if (!documentData.isDeleted) {
@@ -205,23 +205,36 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
                 try {
                     const loanQuery = await firebaseContext?.getDataWithQuery("LoanDetails", "Car Id", "==", queryResult.docs[0].id);
 
-                    const emiQuery = await firebaseContext?.getDataWithQuery("EMIDetails", "Loan Id", "==", loanQuery.docs[0].id);
+                    const emiQuery = await firebaseContext?.getDataWithQuery("EMIDetails", "Loan Id", "==", loanQuery?.docs[0].id);
 
-                    await deleteDoc(queryResult.docs[0].ref);
-                    await deleteDoc(loanQuery.docs[0].ref);
-                    await deleteDoc(emiQuery.docs[0].ref);
+                    if (queryResult) {
+                        await deleteDoc(queryResult.docs[0].ref);
 
-                    const usersQuery = await firebaseContext?.getDataWithQuery("Users", "email", "==", firebaseContext?.userDetails?.email);
-                    const userData = usersQuery.docs[0].data();
+                        if (loanQuery) {
+                            await deleteDoc(loanQuery.docs[0].ref);
+                        }
 
-                    const carIds = userData["Cars Ids"];
-                    const updatedCarIds = carIds.filter((item: string) => item !== queryResult.docs[0].id);
+                        if (emiQuery) {
+                            await deleteDoc(emiQuery.docs[0].ref);
+                        }
 
-                    await updateDoc(usersQuery.docs[0].ref, {
-                        "Cars Ids": updatedCarIds,
-                    })
+                        const usersQuery = await firebaseContext?.getDataWithQuery("Users", "email", "==", firebaseContext?.userDetails?.email);
 
+                        if (usersQuery) {
+                            const userData = usersQuery.docs[0].data();
+
+                            const carIds = userData["Cars Ids"];
+                            const updatedCarIds = carIds.filter((item: string) => item !== queryResult.docs[0].id);
+
+                            await updateDoc(usersQuery.docs[0].ref, {
+                                "Cars Ids": updatedCarIds,
+                            })
+                        }
+
+                    }
                 } catch (error) {
+                    console.error(error);
+
                     toast.error("Something Went wrong. Try Again after Some time.");
                 }
             }
@@ -336,9 +349,15 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
                 clearState();
                 closePopup();
 
-                getCarDetails && getCarDetails();
-            } catch (error: any) {
-                toast.error(error.message);
+                if (getCarDetails) {
+                    getCarDetails();
+                }
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    toast.error(error.message);
+                } else {
+                    toast.error("Something Went Wrong!");
+                }
             }
         }
         setIsLoading(false);
