@@ -1,6 +1,6 @@
 'use client'
 
-import { nextEMIDate } from "@/Constants/utils";
+import { nextEMIDate } from "@/Helper/utils";
 import { auth, firestore } from "@/firebase/firebase.config";
 import { CarDetailsType } from "@/interface/CarEntriesTypes";
 import { FirebaseContextType, LoginCredentials, SignUpType, UserDetailsType } from "@/interface/UsersType";
@@ -13,9 +13,12 @@ const signUpUser = async (data: SignUpType) => {
         const response = await createUserWithEmailAndPassword(auth, data.email, data.password)
 
         if (response?.user) {
+            const { password, countryCode, ...passedData } = data;
+
             await addDoc(collection(firestore, "Users"), {
-                ...data,
-                email: data.email.toLowerCase(),
+                ...passedData,
+                email: passedData.email.toLowerCase(),
+                mobile: countryCode.value + passedData.mobile,
                 "Cars Ids": [],
             });
             return true;

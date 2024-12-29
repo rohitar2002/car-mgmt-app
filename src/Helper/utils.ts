@@ -21,4 +21,4 @@ export const nextEMIDate = (date: string) =>{
     }
 
     return `${nextYear}-${nextMonth}-${nextDate}`;
-}
+}  

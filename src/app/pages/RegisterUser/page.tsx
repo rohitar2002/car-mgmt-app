@@ -9,6 +9,9 @@ import { useFirebaseContext } from "@/context/firebaseContext";
 import { toast } from "react-toastify";
 import Loader from "@/components/Loader/RotatingLines";
 import UserConfirmMeaasge from "@/components/popup/UserConfirmPopup";
+import { emailRegex, frequentlyUsedCountryCodes } from "@/Helper/constants";
+import Select, { SingleValue } from "react-select"
+import { OptionType } from "@/interface/CommonTypes";
 
 const RegisterUser = () => {
     const [signUpData, setSignUpData] = useState<SignUpType>({
@@ -16,6 +19,7 @@ const RegisterUser = () => {
         mobile: "",
         email: "",
         password: "",
+        countryCode: frequentlyUsedCountryCodes[1],
     })
 
     const [signUpErrors, setSignUpErrors] = useState<SignUpErrorType>({
@@ -32,10 +36,32 @@ const RegisterUser = () => {
     const [confirmPasswordInput, setConfirmPasswordInput] = useState<boolean>(true);
     const firebaseResponse = useFirebaseContext();
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/;
+    const handleCountryCodeChange = (select: SingleValue<OptionType>) => {
+        setSignUpData((prev: SignUpType) => ({
+            ...prev,
+            countryCode: select as OptionType,
+        }))
+    }
+    const handleMobileBlur = () => {
+        if (signUpData.mobile.length < 10) {
+            setSignUpErrors((prev: SignUpErrorType) => ({
+                ...prev,
+                mobileError: "Mobile Number Must contains atleast 10 digits.",
+            }))
+            return;
+        }
+    }
+    const handleEmailBlur = () => {
+        if (!emailRegex.test(signUpData.email)) {
+            setSignUpErrors((prev: SignUpErrorType) => ({
+                ...prev,
+                emailError: "Email is invalid",
+            }))
+            return;
+        }
+    }
+    const handleRegister = async () => {
 
-    const handleRegister = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
         if (signUpData.userName.trim() === "") {
             setSignUpErrors((prev: SignUpErrorType) => ({
                 ...prev,
@@ -50,6 +76,7 @@ const RegisterUser = () => {
             }))
             return;
         }
+
         if (signUpData.email.trim() === "") {
             setSignUpErrors((prev: SignUpErrorType) => ({
                 ...prev,
@@ -57,13 +84,7 @@ const RegisterUser = () => {
             }))
             return;
         }
-        else if (!emailRegex.test(signUpData.email)) {
-            setSignUpErrors((prev: SignUpErrorType) => ({
-                ...prev,
-                emailError: "Email is invalid",
-            }))
-            return;
-        }
+
         if (signUpData.password.trim() === "") {
             setSignUpErrors((prev: SignUpErrorType) => ({
                 ...prev,
@@ -112,6 +133,7 @@ const RegisterUser = () => {
                     mobile: "",
                     email: "",
                     password: "",
+                    countryCode: frequentlyUsedCountryCodes[1],
                 })
                 setConfirmPassword("");
             }
@@ -125,6 +147,11 @@ const RegisterUser = () => {
         setIsLoading(false);
     }
 
+    const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter") {
+            handleRegister();
+        }
+    }
     useEffect(() => {
         if (showConfirm) {
             document.body.style.display = "fixed";
@@ -148,7 +175,7 @@ const RegisterUser = () => {
             }} />
 
             <div className="flex flex-col justify-center items-center overflow-auto">
-                {!showConfirm && (<div className="px-5 py-10 w-full md:w-1/2">
+                {!showConfirm && (<div className="px-5 py-10 w-full lg:w-1/2">
                     <div className="text-xl text-center md:text-2xl text-primary font-bold py-10 underline">Car Finance Management App!</div>
                     <div className="p-5 md:p-10 rounded-lg flex flex-col gap-10 border border-primary">
                         <h2 className="text-lg text-center md:text-2xl text-primary font-bold underline">Register New User</h2>
@@ -170,19 +197,28 @@ const RegisterUser = () => {
                             </div>
 
                             <div className="flex flex-col justify-center gap-3">
-                                <label className="text-lg font-semibold">Mobile no. :</label>
-                                <input type="text" placeholder="Enter Mobile no." className="px-3 py-2 border border-primary focus:outline-none rounded" value={signUpData.mobile} onChange={(e) => {
-                                    setSignUpData((prev: SignUpType) => ({
-                                        ...prev,
-                                        mobile: e.target.value,
-                                    }))
+                                <label className="text-lg font-semibold">Mobile number :</label>
+                                <div className="flex items-center md:items-start justify-center gap-3 flex-col md:flex-row">
+                                    <Select instanceId="country-code" value={signUpData.countryCode} options={frequentlyUsedCountryCodes} onChange={handleCountryCodeChange} className="w-full md:w-4/12 border border-primary rounded focus:outline-none" />
 
-                                    setSignUpErrors((prev: SignUpErrorType) => ({
-                                        ...prev,
-                                        mobileError: "",
-                                    }))
-                                }} />
-                                {signUpErrors.mobileError && <h2 className="text-lg text-error font-bold">{signUpErrors.mobileError}</h2>}
+                                    <div className="flex flex-col gap-3 w-full md:w-8/12">
+                                        <input type="text" placeholder="Enter Mobile number" className="px-3 py-2 border border-primary focus:outline-none rounded w-full" value={signUpData.mobile} onChange={(e) => {
+                                            const value = e.target.value.replace(/\D/g, "");
+                                            setSignUpData((prev: SignUpType) => ({
+                                                ...prev,
+                                                mobile: value,
+                                            }))
+
+                                            setSignUpErrors((prev: SignUpErrorType) => ({
+                                                ...prev,
+                                                mobileError: "",
+                                            }))
+                                        }}
+
+                                            onBlur={handleMobileBlur} />
+                                        {signUpErrors.mobileError && <h2 className="text-lg text-error font-bold">{signUpErrors.mobileError}</h2>}
+                                    </div>
+                                </div>
                             </div>
                             <div className="flex flex-col justify-center gap-3">
                                 <label className="text-lg font-semibold">Email:</label>
@@ -196,7 +232,8 @@ const RegisterUser = () => {
                                         ...prev,
                                         emailError: "",
                                     }))
-                                }} />
+                                }}
+                                    onBlur={handleEmailBlur} />
                                 {signUpErrors.emailError && <h2 className="text-lg text-error font-bold">{signUpErrors.emailError}</h2>}
                             </div>
 
@@ -216,10 +253,10 @@ const RegisterUser = () => {
                                             }))
                                         }} />
                                         <div className="absolute right-0 pr-3">
-                                            {passwordInput ? <FaEye size={20} onClick={() => {
-                                                setPasswordInput(false);
-                                            }} className="cursor-pointer" /> : <FaEyeSlash size={20} onClick={() => {
+                                            {!passwordInput ? <FaEye size={20} onClick={() => {
                                                 setPasswordInput(true);
+                                            }} className="cursor-pointer" /> : <FaEyeSlash size={20} onClick={() => {
+                                                setPasswordInput(false);
                                             }} className="cursor-pointer" />}
                                         </div>
                                     </div>
@@ -235,13 +272,15 @@ const RegisterUser = () => {
                                                 ...prev,
                                                 confirmPasswordError: "",
                                             }))
-                                        }} />
+                                        }}
+                                            onKeyDown={handleKeyPress}
+                                        />
 
                                         <div className="absolute right-0 pr-3">
-                                            {confirmPasswordInput ? <FaEye size={20} onClick={() => {
-                                                setConfirmPasswordInput(false);
-                                            }} className="cursor-pointer" /> : <FaEyeSlash size={20} onClick={() => {
+                                            {!confirmPasswordInput ? <FaEye size={20} onClick={() => {
                                                 setConfirmPasswordInput(true);
+                                            }} className="cursor-pointer" /> : <FaEyeSlash size={20} onClick={() => {
+                                                setConfirmPasswordInput(false);
                                             }} className="cursor-pointer" />}
                                         </div>
                                     </div>
@@ -250,7 +289,7 @@ const RegisterUser = () => {
                             </div>
 
                             <div className="mt-5">
-                                <button className="py-3 w-full text-xl text-white bg-primary rounded " onClick={handleRegister}>Register</button>
+                                <button className="py-3 w-full text-xl text-white bg-primary rounded " type="button" onClick={handleRegister}>Register</button>
                             </div>
 
                             <div className="flex flex-col md:flex-row justify-center items-center gap-3 text-lg font-bold mt-5">

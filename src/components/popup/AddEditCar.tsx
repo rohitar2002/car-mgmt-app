@@ -12,28 +12,6 @@ import { firestore } from "@/firebase/firebase.config";
 
 Modal.setAppElement("#documentBody");
 
-const customStyles: ReactModal.Styles = {
-    overlay: {
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-        zIndex: 1000,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    content: {
-        position: "relative",
-        inset: "auto",
-        padding: "20px",
-        width: "40%",
-        height: "100%",
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-        background: "#ffffff",
-        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-        overflow: "auto",
-    },
-};
-
 interface Props {
     title: string;
     existingDetails?: CarDetailsWithIdType;
@@ -96,7 +74,30 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
     })
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isCarInfoSection, setIsCarInfoSection] = useState<boolean>(true);
+    const [modalWidth, setModalWidth] = useState<string>("50%");
     const firebaseContext = useFirebaseContext();
+
+    const customStyles: ReactModal.Styles = {
+        overlay: {
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 1000,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        content: {
+            position: "relative",
+            inset: "auto",
+            padding: "20px",
+            width: modalWidth,
+            height: "100%",
+            border: "1px solid #ccc",
+            borderRadius: "8px",
+            background: "#ffffff",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            overflow: "auto",
+        },
+    };
 
     const clearState = () => {
         setIsCarInfoSection(true);
@@ -152,17 +153,17 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
             }))
             return;
         }
+        else if (Number(loanInfo["Loan Tenure"].trim()) < 0) {
+            setLoanInfoError((prev: LoanInfoErrorType) => ({
+                ...prev,
+                Loan_Tenure_Error: "Loan Tenure must be Greater then 0.",
+            }))
+            return;
+        }
         if (loanInfo["Interest Rate"].trim() === "") {
             setLoanInfoError((prev: LoanInfoErrorType) => ({
                 ...prev,
                 Interest_Rate_Error: "This Field is Required.",
-            }))
-            return;
-        }
-        else if (Number(loanInfo["Interest Rate"]) > 100) {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                Interest_Rate_Error: "Interest Rate must 0 to 100.",
             }))
             return;
         }
@@ -263,7 +264,7 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
         setIsLoading(false);
     }
     const handleUpdate = async () => {
-
+        
         if (loanInfo["Total Loan Amount"].trim() === "") {
             setLoanInfoError((prev: LoanInfoErrorType) => ({
                 ...prev,
@@ -275,6 +276,13 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
             setLoanInfoError((prev: LoanInfoErrorType) => ({
                 ...prev,
                 Loan_Tenure_Error: "This Field is Required.",
+            }))
+            return;
+        }
+        else if (Number(loanInfo["Loan Tenure"].trim()) < 0) {
+            setLoanInfoError((prev: LoanInfoErrorType) => ({
+                ...prev,
+                Loan_Tenure_Error: "Loan Tenure must be Greater then 0.",
             }))
             return;
         }
@@ -443,6 +451,31 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
         }
     }, [isShowPopup])
 
+    useEffect(() => {
+        const handleScreenSize = () => {
+            if (window.innerWidth >= 1000) {
+                setModalWidth("50%");
+            }
+            else if (window.innerWidth >= 768) {
+                setModalWidth("60%");
+            }
+            else {
+                setModalWidth("90%");
+            }
+        }
+
+        if (isShowPopup) {
+            window.addEventListener("resize", handleScreenSize);
+        }
+        else {
+            window.removeEventListener("resize", handleScreenSize);
+        }
+
+        return () => {
+            window.removeEventListener("resize", handleScreenSize);
+        }
+    }, [isShowPopup])
+
     return (
         <>
             <div className="">
@@ -461,8 +494,8 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
                             {isCarInfoSection ? (<>
                                 <CarDetails carInfo={carInfo} setCarInfo={setCarInfo} carInfoError={carInfoError} setCarInfoError={setCarInfoError} setCarInfoChangesStatus={setCarInfoChangesStatus} />
 
-                                <div className="flex items-center justify-end py-5">
-                                    <button className="text-white bg-primary px-10 py-2 rounded text-lg" onClick={() => {
+                                <div className="flex items-center md:justify-end py-5">
+                                    <button className="text-white bg-primary px-10 py-2 rounded text-lg w-full md:w-auto" onClick={() => {
                                         handleNextPhase();
                                     }}>Next</button>
                                 </div>
@@ -470,17 +503,17 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
                                 <>
                                     <LoanDetails loanInfo={loanInfo} setLoanInfo={setLoanInfo} loanInfoError={loanInfoError} setLoanInfoError={setLoanInfoError} setLoanInfoChangesStatus={setLoanInfoChangesStatus} />
 
-                                    <div className="flex items-center justify-end py-5 gap-5">
-                                        <button className="text-white bg-primary px-10 py-2 rounded text-lg" onClick={() => {
+                                    <div className="flex items-center justify-center md:justify-end py-5 gap-5 flex-col md:flex-row">
+                                        <button className="text-white bg-primary px-10 py-2 rounded text-lg w-full md:w-auto" onClick={() => {
                                             setIsCarInfoSection(true);
                                         }}>Previous</button>
 
-                                        {existingDetails ? (<button type="button" className="text-white bg-primary px-10 py-2 rounded text-lg" onClick={(e) => {
+                                        {existingDetails ? (<button type="button" className="text-white bg-primary px-10 py-2 rounded text-lg w-full md:w-auto" onClick={(e) => {
                                             e.preventDefault();
                                             handleUpdate();
                                         }}>Update</button>) :
 
-                                            (<button type="button" className="text-white bg-primary px-10 py-2 rounded text-lg" onClick={(e) => {
+                                            (<button type="button" className="text-white bg-primary px-10 py-2 rounded text-lg w-full md:w-auto" onClick={(e) => {
                                                 e.preventDefault();
                                                 handleSubmit();
                                             }}>Submit</button>)}
