@@ -2,6 +2,7 @@
 
 import Loader from "@/components/Loader/RotatingLines";
 import { useFirebaseContext } from "@/context/firebaseContext";
+import { emailRegex } from "@/Helper/constants";
 import { LoginCredentials, LoginErrors } from "@/interface/UsersType";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -24,7 +25,6 @@ export default function Home() {
   const firebaseResponse = useFirebaseContext();
   const router = useRouter();
 
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/;
 
   const handleLogin = async (e?: React.MouseEvent<HTMLButtonElement>) => {
     e?.preventDefault();

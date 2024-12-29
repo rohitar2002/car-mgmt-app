@@ -9,28 +9,6 @@ import { DocumentData } from "firebase/firestore";
 
 Modal.setAppElement("#documentBody");
 
-const customStyles: ReactModal.Styles = {
-    overlay: {
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-        zIndex: 1000,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    content: {
-        position: "relative",
-        inset: "auto",
-        padding: "20px",
-        width: "60%",
-        height: "auto",
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-        background: "#ffffff",
-        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-        overflow: "hidden",
-    },
-};
-
 interface Props {
     loanId: string | undefined;
     isShowPopup: boolean;
@@ -40,7 +18,30 @@ interface Props {
 export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup }: Props) => {
     const [emiHistoryDetails, setEMIHistoryDetails] = useState<EMIHistoryDetailsType[] | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [modalWidth, setModalWidth] = useState<string>("50%");
     const firebaseContext = useFirebaseContext();
+
+    const customStyles: ReactModal.Styles = {
+        overlay: {
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 1000,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        content: {
+            position: "relative",
+            inset: "auto",
+            padding: "20px",
+            width: modalWidth,
+            height: "auto",
+            border: "1px solid #ccc",
+            borderRadius: "8px",
+            background: "#ffffff",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            overflow: "hidden",
+        },
+    };
 
     const downloadCSV = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -150,6 +151,27 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup }: Props) => {
         }
 
     }, [emiHistoryDetails])
+    useEffect(() => {
+        const handleScreenSize = () => {
+            if (window.innerWidth >= 1400) {
+                setModalWidth("60%");
+            }       
+            else {
+                setModalWidth("90%");
+            }
+        }
+
+        if (isShowPopup) {
+            window.addEventListener("resize", handleScreenSize);
+        }
+        else {
+            window.removeEventListener("resize", handleScreenSize);
+        }
+
+        return () => {
+            window.removeEventListener("resize", handleScreenSize);
+        }
+    }, [isShowPopup])
 
     return (
         <>
@@ -184,7 +206,7 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup }: Props) => {
                                             return (
                                                 <tr key={index}>
                                                     <td className="px-3 py-2 border border-black">{index + 1}</td>
-                                                    <td className="px-3 py-2 border border-black">{item["Due Date"]}</td>
+                                                    <td className="px-3 py-2 border border-black whitespace-nowrap">{item["Due Date"]}</td>
                                                     <td className="px-3 py-2 border border-black">₹{item["EMI Amount"]}</td>
                                                     <td className={`px-3 py-2 font-bold border border-black ${item["EMI Status"] === "Paid" ? "text-accent" : item["EMI Status"] === "Pending" ? "text-orange-500" : "text-error"}`}>{item["EMI Status"]}</td>
                                                     <td className="px-3 py-2 border border-black">{item["Late Fees"] ? "₹" + item["Late Fees"] : "--"}</td>

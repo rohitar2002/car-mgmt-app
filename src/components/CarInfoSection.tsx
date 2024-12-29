@@ -34,8 +34,8 @@ export const CarDetails = ({ carInfo, setCarInfo, carInfoError, setCarInfoError,
                 {carInfoError.Registration_Number_Error && <h2 className="text-lg font-bold text-red-500">{carInfoError.Registration_Number_Error}</h2>}
             </div>
 
-            <div className="flex items-start gap-3">
-                <div className="flex flex-col justify-center gap-3 w-1/2">
+            <div className="flex items-center md:items-start gap-3 flex-col md:flex-row">
+                <div className="flex flex-col justify-center gap-3 w-full md:w-1/2">
                     <label className="font-semibold text-lg">Model Number</label>
                     <input type="text" value={carInfo["Model Number"]} onChange={(e) => {
                         setCarInfo((prev: CarInfoType) => ({
@@ -57,7 +57,7 @@ export const CarDetails = ({ carInfo, setCarInfo, carInfoError, setCarInfoError,
                     }} placeholder="Enter Model Number" className="px-3 py-2 border border-primary focus:outline-none rounded" />
                     {carInfoError.Model_Number_Error && <h2 className="text-lg font-bold text-red-500">{carInfoError.Model_Number_Error}</h2>}
                 </div>
-                <div className="flex flex-col justify-center gap-3 w-1/2">
+                <div className="flex flex-col justify-center gap-3 w-full md:w-1/2">
                     <label className="font-semibold text-lg">Brand Name</label>
                     <input type="text" value={carInfo["Brand Name"]} onChange={(e) => {
                         setCarInfo((prev: CarInfoType) => ({

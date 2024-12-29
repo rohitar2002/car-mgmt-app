@@ -9,6 +9,16 @@ interface Props {
 }
 
 export const LoanDetails = ({ loanInfo, setLoanInfo, loanInfoError, setLoanInfoError, setLoanInfoChangesStatus }: Props) => {
+    const handleIntRateBlur = () => {
+        if (Number(loanInfo["Interest Rate"]) > 100) {
+            setLoanInfoError((prev: LoanInfoErrorType) => ({
+                ...prev,
+                Interest_Rate_Error: "Interest Rate must 0 to 100.",
+            }))
+            return;
+        }
+
+    }
     return (
         <>
             <div className="flex flex-col gap-5 my-5">
@@ -16,9 +26,10 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, loanInfoError, setLoanInfoE
                 <div className="flex flex-col justify-center gap-3">
                     <label className="font-semibold text-lg">Total Loan Amount</label>
                     <input type="text" value={loanInfo["Total Loan Amount"]} onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, "");
                         setLoanInfo((prev: LoanInfoType) => ({
                             ...prev,
-                            "Total Loan Amount": e.target.value,
+                            "Total Loan Amount": value,
                         }))
 
                         if (setLoanInfoChangesStatus) {
@@ -36,13 +47,14 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, loanInfoError, setLoanInfoE
                     {loanInfoError.Total_Loan_Amount_Error && <h2 className="text-lg font-bold text-red-500">{loanInfoError.Total_Loan_Amount_Error}</h2>}
                 </div>
 
-                <div className="flex items-start gap-3">
-                    <div className="flex flex-col justify-center gap-3 w-1/2">
+                <div className="flex items-center md:items-start gap-3 flex-col md:flex-row">
+                    <div className="flex flex-col justify-center gap-3 w-full md:w-1/2">
                         <label className="font-semibold text-lg">Loan Tenure</label>
-                        <input type="number" value={loanInfo["Loan Tenure"]} onChange={(e) => {
+                        <input type="text" value={loanInfo["Loan Tenure"]} onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, "");
                             setLoanInfo((prev: LoanInfoType) => ({
                                 ...prev,
-                                "Loan Tenure": e.target.value,
+                                "Loan Tenure": value,
                             }))
 
                             if (setLoanInfoChangesStatus) {
@@ -61,12 +73,13 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, loanInfoError, setLoanInfoE
                         {loanInfoError.Loan_Tenure_Error && <h2 className="text-lg font-bold text-red-500">{loanInfoError.Loan_Tenure_Error}</h2>}
                     </div>
 
-                    <div className="flex flex-col justify-center gap-3 w-1/2">
+                    <div className="flex flex-col justify-center gap-3 w-full md:w-1/2">
                         <label className="font-semibold text-lg">Interest Rate</label>
-                        <input type="number" value={loanInfo["Interest Rate"]} onChange={(e) => {
+                        <input type="text" value={loanInfo["Interest Rate"]} onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, "");
                             setLoanInfo((prev: LoanInfoType) => ({
                                 ...prev,
-                                "Interest Rate": e.target.value,
+                                "Interest Rate": value,
                             }))
 
                             if (setLoanInfoChangesStatus) {
@@ -79,7 +92,9 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, loanInfoError, setLoanInfoE
                                 ...prev,
                                 Interest_Rate_Error: "",
                             }))
-                        }} placeholder="Enter Interest Rate" className="px-3 py-2 border border-primary focus:outline-none rounded" />
+                        }}
+                            onBlur={handleIntRateBlur}
+                            placeholder="Enter Interest Rate" className="px-3 py-2 border border-primary focus:outline-none rounded" />
 
                         {loanInfoError.Interest_Rate_Error && <h2 className="text-lg font-bold text-red-500">{loanInfoError.Interest_Rate_Error}</h2>}
                     </div>
@@ -112,9 +127,10 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, loanInfoError, setLoanInfoE
                 <div className="flex flex-col justify-center gap-3">
                     <label className="font-semibold text-lg">EMI Amount</label>
                     <input type="text" value={loanInfo["EMI Amount"]} onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, "");
                         setLoanInfo((prev: LoanInfoType) => ({
                             ...prev,
-                            "EMI Amount": e.target.value,
+                            "EMI Amount": value,
                         }))
 
                         if (setLoanInfoChangesStatus) {
@@ -136,9 +152,10 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, loanInfoError, setLoanInfoE
                 <div className="flex flex-col justify-center gap-3">
                     <label className="font-semibold text-lg">Total Paid Amount</label>
                     <input type="text" value={loanInfo["Total Paid Amount"]} onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, "");
                         setLoanInfo((prev: LoanInfoType) => ({
                             ...prev,
-                            "Total Paid Amount": e.target.value,
+                            "Total Paid Amount": value,
                         }))
 
                         if (setLoanInfoChangesStatus) {

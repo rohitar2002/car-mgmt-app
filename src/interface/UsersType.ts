@@ -1,5 +1,6 @@
 import { DocumentData, QuerySnapshot, WhereFilterOp } from "firebase/firestore";
 import { CarDetailsType } from "./CarEntriesTypes";
+import { OptionType } from "./CommonTypes";
 
 export interface LoginCredentials {
     email: string;
@@ -15,6 +16,7 @@ export interface SignUpType {
     mobile: string;
     email: string;
     password: string;
+    countryCode: OptionType;
 }
 export interface SignUpErrorType {
     userNameError: string;
