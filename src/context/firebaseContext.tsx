@@ -13,7 +13,7 @@ const signUpUser = async (data: SignUpType) => {
         const response = await createUserWithEmailAndPassword(auth, data.email, data.password)
 
         if (response?.user) {
-            const { password, countryCode, ...passedData } = data;
+            const { countryCode, ...passedData } = data;
 
             await addDoc(collection(firestore, "Users"), {
                 ...passedData,
