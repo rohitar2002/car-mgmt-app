@@ -6,6 +6,7 @@ import Modal from "react-modal"
 import Loader from "../Loader/RotatingLines";
 import { toast } from "react-toastify";
 import { DocumentData } from "firebase/firestore";
+import { isMobile, isTablet } from "react-device-detect";
 
 Modal.setAppElement("#documentBody");
 
@@ -153,16 +154,31 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup }: Props) => {
     }, [emiHistoryDetails])
     useEffect(() => {
         const handleScreenSize = () => {
-            if (window.innerWidth >= 1400) {
-                setModalWidth("60%");
-            }       
+            if (window.innerWidth >= 1000) {
+                setModalWidth("70%");                
+            }
+            else if (window.innerWidth >= 768) {
+                setModalWidth("80%"); 
+            }
             else {
-                setModalWidth("90%");
+                setModalWidth("90%"); 
             }
         }
 
         if (isShowPopup) {
             window.addEventListener("resize", handleScreenSize);
+
+            if (isShowPopup) {
+                if (isMobile) {
+                    setModalWidth("90%");
+                }
+                else if(isTablet){
+                    setModalWidth("70%");
+                }
+                else{
+                    setModalWidth("60%");
+                }
+            }
         }
         else {
             window.removeEventListener("resize", handleScreenSize);

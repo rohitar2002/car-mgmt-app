@@ -119,7 +119,7 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, loanInfoError, setLoanInfoE
                             ...prev,
                             Loan_Start_Date_Error: "",
                         }))
-                    }} className="px-3 py-2 border border-primary focus:outline-none rounded" />
+                    }} className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
 
                     {loanInfoError.Loan_Start_Date_Error && <h2 className="text-lg font-bold text-red-500">{loanInfoError.Loan_Start_Date_Error}</h2>}
                 </div>

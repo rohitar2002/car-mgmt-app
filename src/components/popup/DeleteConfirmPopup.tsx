@@ -5,6 +5,7 @@ import Modal from "react-modal"
 import { toast } from "react-toastify";
 import Loader from "../Loader/RotatingLines";
 import { useFirebaseContext } from "@/context/firebaseContext";
+import { isMobile, isTablet } from "react-device-detect";
 
 Modal.setAppElement("#documentBody");
 
@@ -60,11 +61,14 @@ const DeleteConfirmPopup = ({ isShowPopup, closePopup, carId, registrationNumber
     }
     useEffect(() => {
         const handleScreenSize = () => {
-            if (window.innerWidth >= 1000) {
+            if (window.innerWidth >= 1800) {
+                setModalWidth("40%");
+            }
+            else if (window.innerWidth >= 1000) {
                 setModalWidth("50%");
             }
             else if (window.innerWidth >= 768) {
-                setModalWidth("60%");
+                setModalWidth("80%");
             }
             else {
                 setModalWidth("90%");
@@ -73,6 +77,18 @@ const DeleteConfirmPopup = ({ isShowPopup, closePopup, carId, registrationNumber
 
         if (isShowPopup) {
             window.addEventListener("resize", handleScreenSize);
+
+            if (isShowPopup) {
+                if (isMobile) {
+                    setModalWidth("90%");
+                }
+                else if (isTablet) {
+                    setModalWidth("70%");
+                }
+                else {
+                    setModalWidth("50%");
+                }
+            }
         }
         else {
             window.removeEventListener("resize", handleScreenSize);
