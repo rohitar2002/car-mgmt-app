@@ -18,7 +18,6 @@ const RegisterUser = () => {
         userName: "",
         mobile: "",
         email: "",
-        password: "",
         countryCode: frequentlyUsedCountryCodes[1],
     })
 
@@ -29,6 +28,7 @@ const RegisterUser = () => {
         passwordError: "",
         confirmPasswordError: "",
     })
+    const [password, setPassword] = useState<string>("");
     const [confirmPassword, setConfirmPassword] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [showConfirm, setShowConfirm] = useState<boolean>(false);
@@ -85,14 +85,14 @@ const RegisterUser = () => {
             return;
         }
 
-        if (signUpData.password.trim() === "") {
+        if (password.trim() === "") {
             setSignUpErrors((prev: SignUpErrorType) => ({
                 ...prev,
                 passwordError: "This Field is required",
             }))
             return;
         }
-        else if (signUpData.password.length < 6 || signUpData.password.length > 128) {
+        else if (password.length < 6 || password.length > 128) {
             setSignUpErrors((prev: SignUpErrorType) => ({
                 ...prev,
                 passwordError: "Password must contains from 6 to 128 Characters",
@@ -106,7 +106,7 @@ const RegisterUser = () => {
             }))
             return;
         }
-        else if (confirmPassword !== signUpData.password) {
+        else if (confirmPassword !== password) {
             setSignUpErrors((prev: SignUpErrorType) => ({
                 ...prev,
                 confirmPasswordError: "Password & ConfirmPassword must be match",
@@ -125,16 +125,16 @@ const RegisterUser = () => {
             }))
         }
         else {
-            const userCreationResponse = await firebaseResponse?.signUpUser(signUpData);
+            const userCreationResponse = await firebaseResponse?.signUpUser(signUpData, password);
             if (typeof userCreationResponse === "boolean") {
                 setShowConfirm(true);
                 setSignUpData({
                     userName: "",
                     mobile: "",
                     email: "",
-                    password: "",
                     countryCode: frequentlyUsedCountryCodes[1],
                 })
+                setPassword("");
                 setConfirmPassword("");
             }
             else if (userCreationResponse === null) {
@@ -241,11 +241,8 @@ const RegisterUser = () => {
                                 <div className="flex flex-col justify-center gap-3 w-full lg:w-1/2">
                                     <label className="text-lg font-semibold">Password:</label>
                                     <div className="flex items-center relative">
-                                        <input type={passwordInput ? "password" : "text"} placeholder="Enter Password" className="px-3 py-2 border border-primary focus:outline-none rounded w-full" value={signUpData.password} onChange={(e) => {
-                                            setSignUpData((prev: SignUpType) => ({
-                                                ...prev,
-                                                password: e.target.value,
-                                            }))
+                                        <input type={passwordInput ? "password" : "text"} placeholder="Enter Password" className="px-3 py-2 border border-primary focus:outline-none rounded w-full" value={password} onChange={(e) => {
+                                            setPassword(e.target.value);
 
                                             setSignUpErrors((prev: SignUpErrorType) => ({
                                                 ...prev,

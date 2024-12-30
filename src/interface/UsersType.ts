@@ -15,7 +15,6 @@ export interface SignUpType {
     userName: string;
     mobile: string;
     email: string;
-    password: string;
     countryCode: OptionType;
 }
 export interface SignUpErrorType {
@@ -43,7 +42,7 @@ export interface UserDetailsType {
 export interface FirebaseContextType {
     userDetails: DocumentData | null;
     setUserDetails: React.Dispatch<React.SetStateAction<DocumentData | null>>;
-    signUpUser: (data: SignUpType) => Promise<string | boolean | null>;
+    signUpUser: (data: SignUpType, password: string) => Promise<string | boolean | null>;
     loginUser: (data: LoginCredentials) => Promise<string | boolean | null>;
     signOutUser: () => Promise<boolean>;
     addCarRecord: (data: CarDetailsType) => Promise<string | boolean>;

@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import Loader from "../Loader/RotatingLines";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "@/firebase/firebase.config";
+import { isMobile, isTablet } from "react-device-detect";
 
 Modal.setAppElement("#documentBody");
 
@@ -85,7 +86,7 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
             justifyContent: "center",
             alignItems: "center",
         },
-        content: {
+        content: {  
             position: "relative",
             inset: "auto",
             padding: "20px",
@@ -454,18 +455,30 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
     useEffect(() => {
         const handleScreenSize = () => {
             if (window.innerWidth >= 1000) {
-                setModalWidth("50%");
+                setModalWidth("50%");                
             }
             else if (window.innerWidth >= 768) {
-                setModalWidth("60%");
+                setModalWidth("80%"); 
             }
             else {
-                setModalWidth("90%");
+                setModalWidth("90%"); 
             }
         }
 
         if (isShowPopup) {
             window.addEventListener("resize", handleScreenSize);
+
+            if (isShowPopup) {
+                if (isMobile) {
+                    setModalWidth("90%");
+                }
+                else if(isTablet){
+                    setModalWidth("70%");
+                }
+                else{
+                    setModalWidth("50%");
+                }
+            }
         }
         else {
             window.removeEventListener("resize", handleScreenSize);

@@ -8,9 +8,9 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } f
 import { addDoc, arrayUnion, collection, doc, DocumentData, getDoc, getDocs, query, updateDoc, where, WhereFilterOp } from "firebase/firestore";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
-const signUpUser = async (data: SignUpType) => {
+const signUpUser = async (data: SignUpType, password: string) => {
     try {
-        const response = await createUserWithEmailAndPassword(auth, data.email, data.password)
+        const response = await createUserWithEmailAndPassword(auth, data.email, password)
 
         if (response?.user) {
             const { countryCode, ...passedData } = data;
