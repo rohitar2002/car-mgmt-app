@@ -4,7 +4,7 @@ import tailwindConfig from "../../../tailwind.config";
 const Loader = () => {
     return (
         <>
-            <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50">
+            <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-[99999]">
                 <RotatingLines
                     visible={true}
                     width="96"

@@ -1,5 +1,5 @@
 import { useFirebaseContext } from "@/context/firebaseContext";
-import { EMIHistoryDBType, EMIHistoryDetailsType } from "@/interface/CarEntriesTypes";
+import { EmiDetailsType, EMIHistoryDBType } from "@/interface/CarEntriesTypes";
 import { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
 import Modal from "react-modal"
@@ -7,20 +7,25 @@ import Loader from "../Loader/RotatingLines";
 import { toast } from "react-toastify";
 import { DocumentData } from "firebase/firestore";
 import { isMobile, isTablet } from "react-device-detect";
+import { TbEdit } from "react-icons/tb";
 
 Modal.setAppElement("#documentBody");
 
 interface Props {
     loanId: string | undefined;
     isShowPopup: boolean;
+    emiHistoryDetails: EmiDetailsType[] | null;
+    setEMIHistoryDetails: (value: EmiDetailsType[] | null) => void;
+    setExistingEMIDetails: (value: EmiDetailsType) => void;
+    getEMIDetails: (loanId: string) => void;
+    setEMIPopupTitle: (value: string) => void;
+    setShowEditPopup: (value: boolean) => void;
     closePopup: () => void;
 }
 
-export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup }: Props) => {
-    const [emiHistoryDetails, setEMIHistoryDetails] = useState<EMIHistoryDetailsType[] | null>(null);
+export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPopup, emiHistoryDetails, setExistingEMIDetails, setEMIHistoryDetails, setEMIPopupTitle, getEMIDetails }: Props) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [modalWidth, setModalWidth] = useState<string>("50%");
-    const firebaseContext = useFirebaseContext();
 
     const customStyles: ReactModal.Styles = {
         overlay: {
@@ -50,11 +55,11 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup }: Props) => {
         if (emiHistoryDetails) {
             setIsLoading(true);
             try {
-                const headers = ["EMI Number,Due Date,Status,Amount,Late Fee,Payment Date"];
+                const headers = ["EMI Number, Slip Number, Due Date, Received Date, Status, Emi Amount, OverDue, Other Interest"];
 
                 const rows = emiHistoryDetails.map(
-                    (item: EMIHistoryDetailsType, index: number) =>
-                        `${index + 1},"${item["Due Date"]}",${item["EMI Status"]},${item["EMI Amount"]},${item["Late Fees"] || "--"},"${item["Payment Date"] || "--"}"`
+                    (item: EmiDetailsType, index: number) =>
+                        `${item.emiNo}, ${item.slipNo || "--"}, "${item.emiDueDate}", "${item.emiReceivedDate || "--"}", ${item.emiAmount}, ${item.emiStatus},${item.overdue || "--"}, ${item.otherInterest || "--"}`
                 );
 
                 // Combine headers and rows
@@ -84,84 +89,48 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup }: Props) => {
         }
     };
 
-    const getEMIDetails = async () => {
-        setIsLoading(true);
-        const queryResult = await firebaseContext?.getDataWithQuery("EMIDetails", "Loan Id", "==", loanId);
-        if (queryResult && !queryResult.empty) {
-            const emiArray = queryResult.docs.map((item: DocumentData) => (item.data()));
-
-            const historyData = emiArray.map((item: EMIHistoryDBType) => {
-                const status = getStatus(item);
-                const lateFees = getLateFees(item);
-
-                return {
-                    ...item,
-                    "EMI Status": status,
-                    "Late Fees": lateFees.toString(),
-                }
-            })
-
-            setEMIHistoryDetails(historyData);
-        }
+    const handleEditClick = (data: EmiDetailsType) => {
+        setShowEditPopup(true);
+        setExistingEMIDetails(data);
+        setEMIPopupTitle("Edit EMI Details");
     }
+    // const getLateFees = (emiInfo: EMIHistoryDBType) => {
+    //     const dueDate = new Date(emiInfo["Due Date"]);
+    //     const currentDate = new Date();
 
-    const getStatus = (emiInfo: EMIHistoryDBType) => {
-        const currentDate = new Date();
-        const dueDate = new Date(emiInfo["Due Date"]);
+    //     const yearsDiff = currentDate.getFullYear() - dueDate.getFullYear();
+    //     const monthsDiff = currentDate.getMonth() - dueDate.getMonth();
 
-        if (emiInfo["Payment Date"]) {
-            return "Paid";
-        }
+    //     // Total months difference
+    //     let totalMonthsPassed = yearsDiff * 12 + monthsDiff;
 
-        else if (dueDate < currentDate) {
-            return "Overdue";
-        }
+    //     // Check if the current day is before the due day in the current month
+    //     if (currentDate.getDate() < dueDate.getDate()) {
+    //         totalMonthsPassed--; // Subtract one month if the day hasn't fully passed
+    //     }
 
-        return "Pending";
-    }
+    //     return totalMonthsPassed >= 2 ? (totalMonthsPassed / 2) * 500 : 0;
 
-    const getLateFees = (emiInfo: EMIHistoryDBType) => {
-        const dueDate = new Date(emiInfo["Due Date"]);
-        const currentDate = new Date();
-
-        const yearsDiff = currentDate.getFullYear() - dueDate.getFullYear();
-        const monthsDiff = currentDate.getMonth() - dueDate.getMonth();
-
-        // Total months difference
-        let totalMonthsPassed = yearsDiff * 12 + monthsDiff;
-
-        // Check if the current day is before the due day in the current month
-        if (currentDate.getDate() < dueDate.getDate()) {
-            totalMonthsPassed--; // Subtract one month if the day hasn't fully passed
-        }
-
-        return totalMonthsPassed >= 2 ? (totalMonthsPassed / 2) * 500 : 0;
-
-    }
+    // }
     useEffect(() => {
         if (isShowPopup) {
             if (loanId) {
-                getEMIDetails();
+                getEMIDetails(loanId);
             }
         }
     }, [isShowPopup])
 
-    useEffect(() => {
-        if (emiHistoryDetails) {
-            setIsLoading(false);
-        }
 
-    }, [emiHistoryDetails])
     useEffect(() => {
         const handleScreenSize = () => {
             if (window.innerWidth >= 1000) {
-                setModalWidth("70%");                
+                setModalWidth("70%");
             }
             else if (window.innerWidth >= 768) {
-                setModalWidth("80%"); 
+                setModalWidth("80%");
             }
             else {
-                setModalWidth("90%"); 
+                setModalWidth("90%");
             }
         }
 
@@ -172,10 +141,10 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup }: Props) => {
                 if (isMobile) {
                     setModalWidth("90%");
                 }
-                else if(isTablet){
+                else if (isTablet) {
                     setModalWidth("70%");
                 }
-                else{
+                else {
                     setModalWidth("60%");
                 }
             }
@@ -207,26 +176,34 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup }: Props) => {
                             <table className="w-full border border-black">
                                 <thead>
                                     <tr>
-                                        <th className="border border-black px-3 py-3 text-left text-white bg-primary">EMI no.</th>
-                                        <th className="border border-black px-3 py-3 text-left text-white bg-primary">Due Date</th>
-                                        <th className="border border-black px-3 py-3 text-left text-white bg-primary">Amount</th>
-                                        <th className="border border-black px-3 py-3 text-left text-white bg-primary">Status</th>
-                                        <th className="border border-black px-3 py-3 text-left text-white bg-primary">Late fees</th>
-                                        <th className="border border-black px-3 py-3 text-left text-white bg-primary">Payment Date</th>
+                                        <th className="border border-black px-3 py-3 text-left text-white bg-primary whitespace-nowrap">EMI no.</th>
+                                        <th className="border border-black px-3 py-3 text-left text-white bg-primary whitespace-nowrap">Slip no.</th>
+                                        <th className="border border-black px-3 py-3 text-left text-white bg-primary whitespace-nowrap">Due Date</th>
+                                        <th className="border border-black px-3 py-3 text-left text-white bg-primary whitespace-nowrap">Received Date</th>
+                                        <th className="border border-black px-3 py-3 text-left text-white bg-primary whitespace-nowrap">Amount</th>
+                                        <th className="border border-black px-3 py-3 text-left text-white bg-primary whitespace-nowrap">Status</th>
+                                        <th className="border border-black px-3 py-3 text-left text-white bg-primary whitespace-nowrap">OverDue</th>
+                                        <th className="border border-black px-3 py-3 text-left text-white bg-primary whitespace-nowrap">Other Interest</th>
+                                        <th className="border border-black px-3 py-3 text-left text-white bg-primary whitespace-nowrap">Action</th>
                                     </tr>
                                 </thead>
 
                                 <tbody>
                                     {
-                                        emiHistoryDetails ? (emiHistoryDetails.map((item: EMIHistoryDetailsType, index) => {
+                                        emiHistoryDetails ? (emiHistoryDetails.map((item: EmiDetailsType, index) => {
                                             return (
                                                 <tr key={index}>
-                                                    <td className="px-3 py-2 border border-black">{index + 1}</td>
-                                                    <td className="px-3 py-2 border border-black whitespace-nowrap">{item["Due Date"]}</td>
-                                                    <td className="px-3 py-2 border border-black">₹{item["EMI Amount"]}</td>
-                                                    <td className={`px-3 py-2 font-bold border border-black ${item["EMI Status"] === "Paid" ? "text-accent" : item["EMI Status"] === "Pending" ? "text-orange-500" : "text-error"}`}>{item["EMI Status"]}</td>
-                                                    <td className="px-3 py-2 border border-black">{item["Late Fees"] ? "₹" + item["Late Fees"] : "--"}</td>
-                                                    <td className="px-3 py-2 border border-black">{item["Payment Date"] ? item["Payment Date"] : "--"}</td>
+                                                    <td className="px-3 py-2 border border-black">{item.emiNo}</td>
+                                                    <td className="px-3 py-2 border border-black">{item.slipNo ? item.slipNo : "--"}</td>
+                                                    <td className="px-3 py-2 border border-black">{item.emiDueDate}</td>
+                                                    <td className="px-3 py-2 border border-black whitespace-nowrap">{item.emiReceivedDate ? item.emiReceivedDate : "--"}</td>
+                                                    <td className="px-3 py-2 border border-black">₹{item.emiAmount}</td>
+                                                    <td className={`px-3 py-2 font-bold border border-black ${item.emiStatus === "Paid" ? "text-accent" : item.emiStatus === "Pending" ? "text-orange-500" : "text-error"}`}>{item.emiStatus}</td>
+                                                    <td className="px-3 py-2 border border-black">{item.overdue ? "₹" + item.overdue : "--"}</td>
+                                                    <td className="px-3 py-2 border border-black">{item.otherInterest ? "₹" + item.otherInterest : "--"}</td>
+                                                    <td className="px-5 py-2 border border-black">
+                                                        <TbEdit size={30} className="cursor-pointer text-center" onClick={() => handleEditClick(item)} />
+                                                    </td>
                                                 </tr>)
                                         })) :
                                             <tr>

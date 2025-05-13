@@ -1,4 +1,4 @@
-import { CarInfoType, CarDetailsType, LoanInfoType, CarInfoErrorType, LoanInfoErrorType, CarDetailsWithIdType, CarInfoChangesStatusType, LoanInfoChangesStatusType } from "@/interface/CarEntriesTypes";
+import { CarInfoType, CarDetailsType, LoanInfoType, CarInfoErrorType, LoanInfoErrorType, CarDetailsWithIdType, CarInfoChangesStatusType, LoanInfoChangesStatusType, CustomerInfoType, CustomerInfoChangesStatusType } from "@/interface/CarEntriesTypes";
 import { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
 import Modal from "react-modal"
@@ -10,6 +10,7 @@ import Loader from "../Loader/RotatingLines";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "@/firebase/firebase.config";
 import { isMobile, isTablet } from "react-device-detect";
+import { CustomerDetails } from "../CustomerInfoSection";
 
 Modal.setAppElement("#documentBody");
 
@@ -29,11 +30,26 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
         "Chassis Number": existingDetails?.carInfo["Chassis Number"] || "",
         "Purchased Date": existingDetails?.carInfo["Purchased Date"] || "",
     })
+    const [customerInfo, setCustomerInfo] = useState<CustomerInfoType>({
+        "Customer Name": existingDetails?.customerInfo?.["Customer Name"] || "",
+        "Address": existingDetails?.customerInfo?.["Address"] || "",
+        "Mobile Number": existingDetails?.customerInfo?.["Mobile Number"] || "",
+        "Guardian name": existingDetails?.customerInfo?.["Guardian name"] || "",
+        "Guarantor Name": existingDetails?.customerInfo?.["Guarantor Name"] || "",
+        "Guarantor Address": existingDetails?.customerInfo?.["Guarantor Address"] || "",
+        "Guarantor Mobile Number": existingDetails?.customerInfo?.["Guarantor Mobile Number"] || "",
+        "Guarantor Guardian Name": existingDetails?.customerInfo?.["Guarantor Guardian Name"] || "",
+    })
+
     const [loanInfo, setLoanInfo] = useState<LoanInfoType>({
         "Total Loan Amount": existingDetails?.loanInfo["Total Loan Amount"] || "",
         "Loan Start Date": existingDetails?.loanInfo["Loan Start Date"] || "",
         "Loan Tenure": existingDetails?.loanInfo["Loan Tenure"] || "",
         "EMI Amount": existingDetails?.loanInfo["EMI Amount"] || "",
+        "First EMI Date": existingDetails?.loanInfo["First EMI Date"] || "",
+        "Due Amount": existingDetails?.loanInfo["Due Amount"] || "",
+        "Additional Charges": existingDetails?.loanInfo["Additional Charges"] || "",
+        "Dasti Amount": existingDetails?.loanInfo["Dasti Amount"] || "",
         "Total Paid Amount": existingDetails?.loanInfo["Total Paid Amount"] || "",
         "Interest Rate": existingDetails?.loanInfo["Interest Rate"] || "",
     })
@@ -46,12 +62,26 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
         "Chassis_Number_Error": "",
         "Purchased_Date_Error": "",
     })
+    const [customerInfoError, setCustomerInfoError] = useState<CustomerInfoType>({
+        "Customer Name": "",
+        "Address": "",
+        "Mobile Number": "",
+        "Guardian name": "",
+        "Guarantor Name": "",
+        "Guarantor Address": "",
+        "Guarantor Mobile Number": "",
+        "Guarantor Guardian Name": "",
+    })
 
     const [loanInfoError, setLoanInfoError] = useState<LoanInfoErrorType>({
         "Total_Loan_Amount_Error": "",
         "Loan_Start_Date_Error": "",
         "Loan_Tenure_Error": "",
         "EMI_Amount_Error": "",
+        "First_EMI Date_Error": "",
+        "Due_Amount_Error": "",
+        "Additional_Charges_Error": "",
+        "Dasti_Amount_Error": "",
         "Total_Paid_Amount_Error": "",
         "Interest_Rate_Error": "",
     })
@@ -64,18 +94,33 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
         "Chassis Number": false,
         "Purchased Date": false,
     })
+    const [customerInfoChangesStatus, setCustomerInfoChangesStatus] = useState<CustomerInfoChangesStatusType>({
+        "Customer Name": false,
+        "Address": false,
+        "Mobile Number": false,
+        "Guardian name": false,
+        "Guarantor Name": false,
+        "Guarantor Address": false,
+        "Guarantor Mobile Number": false,
+        "Guarantor Guardian Name": false,
+    })
 
     const [loanInfoChangesStatus, setLoanInfoChangesStatus] = useState<LoanInfoChangesStatusType>({
         "Total Loan Amount": false,
         "Loan Start Date": false,
         "Loan Tenure": false,
         "EMI Amount": false,
+        "First EMI Date": false,
+        "Due Amount": false,
+        "Additional Charges": false,
+        "Dasti Amount": false,
         "Total Paid Amount": false,
         "Interest Rate": false,
     })
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isCarInfoSection, setIsCarInfoSection] = useState<boolean>(true);
     const [modalWidth, setModalWidth] = useState<string>("50%");
+    const [isCarInfoSection, setIsCarInfoSection] = useState<boolean>(true);
+    const [isCustomerInfoSection, setIsCustomerInfoSection] = useState<boolean>(true);
     const firebaseContext = useFirebaseContext();
 
     const customStyles: ReactModal.Styles = {
@@ -86,7 +131,7 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
             justifyContent: "center",
             alignItems: "center",
         },
-        content: {  
+        content: {
             position: "relative",
             inset: "auto",
             padding: "20px",
@@ -110,12 +155,35 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
             "Chassis Number": "",
             "Purchased Date": "",
         })
-
+        setCustomerInfo({
+            "Customer Name": "",
+            "Address": "",
+            "Mobile Number": "",
+            "Guardian name": "",
+            "Guarantor Name": "",
+            "Guarantor Address": "",
+            "Guarantor Mobile Number": "",
+            "Guarantor Guardian Name": "",
+        })
+        setCustomerInfoError({
+            "Customer Name": "",
+            "Address": "",
+            "Mobile Number": "",
+            "Guardian name": "",
+            "Guarantor Name": "",
+            "Guarantor Address": "",
+            "Guarantor Mobile Number": "",
+            "Guarantor Guardian Name": "",
+        })
         setLoanInfo({
             "Total Loan Amount": "",
             "Loan Start Date": "",
             "Loan Tenure": "",
             "EMI Amount": "",
+            "First EMI Date": "",
+            "Due Amount": "",
+            "Additional Charges": "",
+            "Dasti Amount": "",
             "Total Paid Amount": "",
             "Interest Rate": "",
         })
@@ -134,6 +202,10 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
             "Loan_Start_Date_Error": "",
             "Loan_Tenure_Error": "",
             "EMI_Amount_Error": "",
+            "First_EMI Date_Error": "",
+            "Due_Amount_Error": "",
+            "Additional_Charges_Error": "",
+            "Dasti_Amount_Error": "",
             "Total_Paid_Amount_Error": "",
             "Interest_Rate_Error": "",
         })
@@ -183,6 +255,35 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
             }))
             return;
         }
+        if (loanInfo["First EMI Date"].trim() === "") {
+            setLoanInfoError((prev: LoanInfoErrorType) => ({
+                ...prev,
+                "First_EMI Date_Error": "This Field is Required.",
+            }))
+            return;
+        }
+        if (loanInfo["Due Amount"].trim() === "") {
+            setLoanInfoError((prev: LoanInfoErrorType) => ({
+                ...prev,
+                Due_Amount_Error: "This Field is Required.",
+            }))
+            return;
+        }
+        if (loanInfo["Additional Charges"].trim() === "") {
+            setLoanInfoError((prev: LoanInfoErrorType) => ({
+                ...prev,
+                Additional_Charges_Error: "This Field is Required.",
+            }))
+            return;
+        }
+        if (loanInfo["Dasti Amount"].trim() === "") {
+            setLoanInfoError((prev: LoanInfoErrorType) => ({
+                ...prev,
+                Dasti_Amount_Error: "This Field is Required.",
+            }))
+            return;
+        }
+
         if (loanInfo["Total Paid Amount"].trim() === "") {
             setLoanInfoError((prev: LoanInfoErrorType) => ({
                 ...prev,
@@ -205,6 +306,7 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
             }
             else {
                 try {
+                    // const customerQuery = await firebaseContext?.getDataWithQuery("CustomerDetails", "Car Id", "==", queryResult.docs[0].id);
                     const loanQuery = await firebaseContext?.getDataWithQuery("LoanDetails", "Car Id", "==", queryResult.docs[0].id);
 
                     const emiQuery = await firebaseContext?.getDataWithQuery("EMIDetails", "Loan Id", "==", loanQuery?.docs[0].id);
@@ -246,6 +348,9 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
             carInfo: {
                 ...carInfo,
             },
+            customerInfo: {
+                ...customerInfo,
+            },
             loanInfo: {
                 ...loanInfo,
             },
@@ -265,7 +370,7 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
         setIsLoading(false);
     }
     const handleUpdate = async () => {
-        
+
         if (loanInfo["Total Loan Amount"].trim() === "") {
             setLoanInfoError((prev: LoanInfoErrorType) => ({
                 ...prev,
@@ -373,57 +478,120 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
     }
 
     const handleNextPhase = () => {
-        if (carInfo["Registration Number"].trim() === "") {
+        if (isCarInfoSection) {
+            if (carInfo["Registration Number"].trim() === "") {
 
-            setCarInfoError((prev: CarInfoErrorType) => ({
-                ...prev,
-                Registration_Number_Error: "This Field is Required",
-            }))
+                setCarInfoError((prev: CarInfoErrorType) => ({
+                    ...prev,
+                    Registration_Number_Error: "This Field is Required",
+                }))
 
-            return;
+                return;
+            }
+            if (carInfo["Model Number"].trim() === "") {
+                setCarInfoError((prev: CarInfoErrorType) => ({
+                    ...prev,
+                    Model_Number_Error: "This Field is Required",
+                }))
+
+                return;
+            }
+            if (carInfo["Brand Name"].trim() === "") {
+                setCarInfoError((prev: CarInfoErrorType) => ({
+                    ...prev,
+                    Brand_Name_Error: "This Field is Required",
+                }))
+
+                return;
+            }
+            if (carInfo["Engine Number"].trim() === "") {
+                setCarInfoError((prev: CarInfoErrorType) => ({
+                    ...prev,
+                    Engine_Number_Error: "This Field is Required",
+                }))
+
+                return;
+            }
+            if (carInfo["Chassis Number"].trim() === "") {
+                setCarInfoError((prev: CarInfoErrorType) => ({
+                    ...prev,
+                    Chassis_Number_Error: "This Field is Required",
+                }))
+
+                return;
+            }
+            if (carInfo["Purchased Date"].trim() === "") {
+                setCarInfoError((prev: CarInfoErrorType) => ({
+                    ...prev,
+                    Purchased_Date_Error: "This Field is Required",
+                }))
+
+                return;
+            }
+
+            setIsCarInfoSection(false);
+            setIsCustomerInfoSection(true);
         }
-        if (carInfo["Model Number"].trim() === "") {
-            setCarInfoError((prev: CarInfoErrorType) => ({
-                ...prev,
-                Model_Number_Error: "This Field is Required",
-            }))
+        else {
+            if (customerInfo["Customer Name"].trim() === "") {
+                setCustomerInfoError((prev: CustomerInfoType) => ({
+                    ...prev,
+                    "Customer Name": "This Field is Required",
+                }))
+                return;
+            }
+            if (customerInfo["Address"].trim() === "") {
+                setCustomerInfoError((prev: CustomerInfoType) => ({
+                    ...prev,
+                    "Address": "This Field is Required",
+                }))
+                return;
+            }
+            if (customerInfo["Mobile Number"].trim() === "") {
+                setCustomerInfoError((prev: CustomerInfoType) => ({
+                    ...prev,
+                    "Mobile Number": "This Field is Required",
+                }))
+                return;
+            }
+            if (customerInfo["Guardian name"].trim() === "") {
+                setCustomerInfoError((prev: CustomerInfoType) => ({
+                    ...prev,
+                    "Guardian name": "This Field is Required",
+                }))
+                return;
+            }
+            if (customerInfo["Guarantor Name"].trim() === "") {
+                setCustomerInfoError((prev: CustomerInfoType) => ({
+                    ...prev,
+                    "Guarantor Name": "This Field is Required",
+                }))
+                return;
+            }
+            if (customerInfo["Guarantor Address"].trim() === "") {
+                setCustomerInfoError((prev: CustomerInfoType) => ({
+                    ...prev,
+                    "Guarantor Address": "This Field is Required",
+                }))
+                return;
+            }
+            if (customerInfo["Guarantor Mobile Number"].trim() === "") {
+                setCustomerInfoError((prev: CustomerInfoType) => ({
+                    ...prev,
+                    "Guarantor Mobile Number": "This Field is Required",
+                }))
+                return;
+            }
+            if (customerInfo["Guarantor Guardian Name"].trim() === "") {
+                setCustomerInfoError((prev: CustomerInfoType) => ({
+                    ...prev,
+                    "Guarantor Guardian Name": "This Field is Required",
+                }))
+                return;
+            }
 
-            return;
+            setIsCustomerInfoSection(false);
         }
-        if (carInfo["Brand Name"].trim() === "") {
-            setCarInfoError((prev: CarInfoErrorType) => ({
-                ...prev,
-                Brand_Name_Error: "This Field is Required",
-            }))
-
-            return;
-        }
-        if (carInfo["Engine Number"].trim() === "") {
-            setCarInfoError((prev: CarInfoErrorType) => ({
-                ...prev,
-                Engine_Number_Error: "This Field is Required",
-            }))
-
-            return;
-        }
-        if (carInfo["Chassis Number"].trim() === "") {
-            setCarInfoError((prev: CarInfoErrorType) => ({
-                ...prev,
-                Chassis_Number_Error: "This Field is Required",
-            }))
-
-            return;
-        }
-        if (carInfo["Purchased Date"].trim() === "") {
-            setCarInfoError((prev: CarInfoErrorType) => ({
-                ...prev,
-                Purchased_Date_Error: "This Field is Required",
-            }))
-
-            return;
-        }
-
-        setIsCarInfoSection(false);
     }
 
     useEffect(() => {
@@ -438,12 +606,27 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
             }
 
             setCarInfo(existingCarInfo);
+            const existingCustomerDetails = {
+                "Customer Name": existingDetails?.customerInfo?.["Customer Name"] || "",
+                "Address": existingDetails?.customerInfo?.["Address"] || "",
+                "Mobile Number": existingDetails?.customerInfo?.["Mobile Number"] || "",
+                "Guardian name": existingDetails?.customerInfo?.["Guardian name"] || "",
+                "Guarantor Name": existingDetails?.customerInfo?.["Guarantor Name"] || "",
+                "Guarantor Address": existingDetails?.customerInfo?.["Guarantor Address"] || "",
+                "Guarantor Mobile Number": existingDetails?.customerInfo?.["Guarantor Mobile Number"] || "",
+                "Guarantor Guardian Name": existingDetails?.customerInfo?.["Guarantor Guardian Name"] || "",
+            }
 
+            setCustomerInfo(existingCustomerDetails);
             const existingLoanInfo = {
                 "Total Loan Amount": existingDetails?.loanInfo["Total Loan Amount"] || "",
                 "Loan Start Date": existingDetails?.loanInfo["Loan Start Date"] || "",
                 "Loan Tenure": existingDetails?.loanInfo["Loan Tenure"] || "",
                 "EMI Amount": existingDetails?.loanInfo["EMI Amount"] || "",
+                "First EMI Date": existingDetails?.loanInfo["First EMI Date"] || "",
+                "Due Amount": existingDetails?.loanInfo["Due Amount"] || "",
+                "Additional Charges": existingDetails?.loanInfo["Additional Charges"] || "",
+                "Dasti Amount": existingDetails?.loanInfo["Dasti Amount"] || "",
                 "Total Paid Amount": existingDetails?.loanInfo["Total Paid Amount"] || "",
                 "Interest Rate": existingDetails?.loanInfo["Interest Rate"] || "",
             }
@@ -455,13 +638,13 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
     useEffect(() => {
         const handleScreenSize = () => {
             if (window.innerWidth >= 1000) {
-                setModalWidth("50%");                
+                setModalWidth("50%");
             }
             else if (window.innerWidth >= 768) {
-                setModalWidth("80%"); 
+                setModalWidth("80%");
             }
             else {
-                setModalWidth("90%"); 
+                setModalWidth("90%");
             }
         }
 
@@ -472,10 +655,10 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
                 if (isMobile) {
                     setModalWidth("90%");
                 }
-                else if(isTablet){
+                else if (isTablet) {
                     setModalWidth("70%");
                 }
-                else{
+                else {
                     setModalWidth("50%");
                 }
             }
@@ -512,13 +695,27 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
                                         handleNextPhase();
                                     }}>Next</button>
                                 </div>
-                            </>) :
+                            </>) : isCustomerInfoSection ? (
+                                <>
+                                    <CustomerDetails customerInfo={customerInfo} setCustomerInfo={setCustomerInfo} customerInfoError={customerInfoError} setCustomerInfoError={setCustomerInfoError} setCustomerInfoChangesStatus={setCustomerInfoChangesStatus} />
+
+                                    <div className="flex items-center justify-center md:justify-end py-5 gap-5 flex-col md:flex-row">
+                                        <button className="text-white bg-primary px-10 py-2 rounded text-lg w-full md:w-auto" onClick={() => {
+                                            setIsCarInfoSection(true);
+                                        }}>Previous</button>
+
+                                        <button className="text-white bg-primary px-10 py-2 rounded text-lg w-full md:w-auto" onClick={() => {
+                                            handleNextPhase();
+                                        }}>Next</button>
+                                    </div>
+                                </>
+                            ) :
                                 <>
                                     <LoanDetails loanInfo={loanInfo} setLoanInfo={setLoanInfo} loanInfoError={loanInfoError} setLoanInfoError={setLoanInfoError} setLoanInfoChangesStatus={setLoanInfoChangesStatus} />
 
                                     <div className="flex items-center justify-center md:justify-end py-5 gap-5 flex-col md:flex-row">
                                         <button className="text-white bg-primary px-10 py-2 rounded text-lg w-full md:w-auto" onClick={() => {
-                                            setIsCarInfoSection(true);
+                                            setIsCustomerInfoSection(true);
                                         }}>Previous</button>
 
                                         {existingDetails ? (<button type="button" className="text-white bg-primary px-10 py-2 rounded text-lg w-full md:w-auto" onClick={(e) => {
