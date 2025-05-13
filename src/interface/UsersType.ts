@@ -1,5 +1,5 @@
 import { DocumentData, QuerySnapshot, WhereFilterOp } from "firebase/firestore";
-import { CarDetailsType } from "./CarEntriesTypes";
+import { CarDetailsType, EmiDetailsType } from "./CarEntriesTypes";
 import { OptionType } from "./CommonTypes";
 
 export interface LoginCredentials {
@@ -15,7 +15,6 @@ export interface SignUpType {
     userName: string;
     mobile: string;
     email: string;
-    password: string;
     countryCode: OptionType;
 }
 export interface SignUpErrorType {
@@ -43,10 +42,11 @@ export interface UserDetailsType {
 export interface FirebaseContextType {
     userDetails: DocumentData | null;
     setUserDetails: React.Dispatch<React.SetStateAction<DocumentData | null>>;
-    signUpUser: (data: SignUpType) => Promise<string | boolean | null>;
+    signUpUser: (data: SignUpType, password: string) => Promise<string | boolean | null>;
     loginUser: (data: LoginCredentials) => Promise<string | boolean | null>;
     signOutUser: () => Promise<boolean>;
     addCarRecord: (data: CarDetailsType) => Promise<string | boolean>;
+    addEMIDetails: (loanId: string, data: EmiDetailsType) => Promise<string | boolean>;
     deleteCarRecord: (carId: string) => Promise<string | boolean>;
     getDataWithQuery: (collectionName: string, fieldName: string, operator: WhereFilterOp, value: unknown) => Promise<QuerySnapshot<DocumentData, DocumentData>>;
 }

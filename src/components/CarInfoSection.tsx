@@ -146,7 +146,7 @@ export const CarDetails = ({ carInfo, setCarInfo, carInfoError, setCarInfoError,
                         ...prev,
                         Purchased_Date_Error: "",
                     }))
-                }} className="px-3 py-2 border border-primary focus:outline-none rounded" />
+                }} className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
                 {carInfoError.Purchased_Date_Error && <h2 className="text-lg font-bold text-red-500">{carInfoError.Purchased_Date_Error}</h2>}
             </div>
         </div>

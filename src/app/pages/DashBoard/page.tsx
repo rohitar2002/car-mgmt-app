@@ -5,7 +5,7 @@ import AddEditCarDetails from "@/components/popup/AddEditCar";
 import DeleteConfirmPopup from "@/components/popup/DeleteConfirmPopup";
 import { useFirebaseContext } from "@/context/firebaseContext";
 import { firestore } from "@/firebase/firebase.config";
-import { CarDetailsType, CarDetailsWithIdType } from "@/interface/CarEntriesTypes";
+import { CarDetailsWithIdType } from "@/interface/CarEntriesTypes";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -29,7 +29,7 @@ const DashBoard = () => {
 
     const getTotalLoanAmount = () => {
         let totalAmount = "0";
-        fillteredRegisteredCarInfo?.forEach((item: CarDetailsType) => {
+        fillteredRegisteredCarInfo?.forEach((item: CarDetailsWithIdType) => {
             totalAmount = (Number(totalAmount) + Number(item.loanInfo["Total Loan Amount"])).toString();
         })
 
@@ -83,7 +83,7 @@ const DashBoard = () => {
         }
     }
     useEffect(() => {
-        if (firebaseContext?.userDetails && firebaseContext?.userDetails?.["Cars Ids"].length) {
+        if (firebaseContext?.userDetails && firebaseContext?.userDetails?.["Cars Ids"]?.length) {
             getCarRecords();
         }
     }, [firebaseContext?.userDetails])
@@ -95,18 +95,21 @@ const DashBoard = () => {
     }, [fillteredRegisteredCarInfo])
 
     useEffect(() => {
-        if (showConfirm || showDeleteConfirm) {
-            document.body.style.display = "fixed";
-            document.body.style.overflow = "hidden";
+        if ((showConfirm || showDeleteConfirm) && (document.getElementById("main-container"))) {
+            // document.body.style.display = "fixed";
+            // document.body.style.overflow = "hidden";
+            document.getElementById("main-container")?.classList.add("scroll-hidden");
         }
         else {
-            document.body.style.display = "relative";
-            document.body.style.overflow = "auto";
+            // document.body.style.display = "relative";
+            // document.body.style.overflow = "auto";
+            document.getElementById("main-container")?.classList.remove("scroll-hidden");
         }
 
         return () => {
-            document.body.style.display = "relative";
-            document.body.style.overflow = "auto";
+            // document.body.style.display = "relative";
+            // document.body.style.overflow = "auto";
+            document.getElementById("main-container")?.classList.remove("scroll-hidden");
         }
 
     }, [showConfirm, showDeleteConfirm])

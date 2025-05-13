@@ -119,11 +119,10 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, loanInfoError, setLoanInfoE
                             ...prev,
                             Loan_Start_Date_Error: "",
                         }))
-                    }} className="px-3 py-2 border border-primary focus:outline-none rounded" />
+                    }} className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
 
                     {loanInfoError.Loan_Start_Date_Error && <h2 className="text-lg font-bold text-red-500">{loanInfoError.Loan_Start_Date_Error}</h2>}
                 </div>
-
                 <div className="flex flex-col justify-center gap-3">
                     <label className="font-semibold text-lg">EMI Amount</label>
                     <input type="text" value={loanInfo["EMI Amount"]} onChange={(e) => {
@@ -147,6 +146,101 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, loanInfoError, setLoanInfoE
                     }} placeholder="Enter EMI Amount" className="px-3 py-2 border border-primary focus:outline-none rounded" />
 
                     {loanInfoError.EMI_Amount_Error && <h2 className="text-lg font-bold text-red-500">{loanInfoError.EMI_Amount_Error}</h2>}
+                </div>
+                <div className="flex flex-col justify-center gap-3">
+                    <label className="font-semibold text-lg">First EMI Date</label>
+                    <input type="date" value={loanInfo["First EMI Date"]} onChange={(e) => {
+                        setLoanInfo((prev: LoanInfoType) => ({
+                            ...prev,
+                            "First EMI Date": e.target.value,
+                        }))
+
+                        if (setLoanInfoChangesStatus) {
+                            setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
+                                ...prev,
+                                "First EMI Date": true,
+                            }))
+                        }
+
+                        setLoanInfoError((prev: LoanInfoErrorType) => ({
+                            ...prev,
+                            "First_EMI Date_Error": "",
+                        }))
+                    }} className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
+
+                    {loanInfoError["First_EMI Date_Error"] && <h2 className="text-lg font-bold text-red-500">{loanInfoError["First_EMI Date_Error"]}</h2>}
+                </div>
+
+                <div className="flex flex-col justify-center gap-3">
+                    <label className="font-semibold text-lg">Due Amount</label>
+                    <input type="text" value={loanInfo["Due Amount"]} onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, "");
+                        setLoanInfo((prev: LoanInfoType) => ({
+                            ...prev,
+                            "Due Amount": value,
+                        }))
+
+                        if (setLoanInfoChangesStatus) {
+                            setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
+                                ...prev,
+                                "Due Amount": true,
+                            }))
+                        }
+
+                        setLoanInfoError((prev: LoanInfoErrorType) => ({
+                            ...prev,
+                            Due_Amount_Error: "",
+                        }))
+                    }} placeholder="Enter Any Due Amount" className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
+
+                    {loanInfoError.Due_Amount_Error && <h2 className="text-lg font-bold text-red-500">{loanInfoError.Due_Amount_Error}</h2>}
+                </div>
+                <div className="flex flex-col justify-center gap-3">
+                    <label className="font-semibold text-lg">Additional Charges (Including file Charges)</label>
+                    <input type="text" value={loanInfo["Additional Charges"]} onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, "");
+                        setLoanInfo((prev: LoanInfoType) => ({
+                            ...prev,
+                            "Additional Charges": value,
+                        }))
+
+                        if (setLoanInfoChangesStatus) {
+                            setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
+                                ...prev,
+                                "Additional Charges": true,
+                            }))
+                        }
+
+                        setLoanInfoError((prev: LoanInfoErrorType) => ({
+                            ...prev,
+                            Additional_Charges_Error: "",
+                        }))
+                    }} placeholder="Enter any Additional Charges" className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
+
+                    {loanInfoError.Additional_Charges_Error && <h2 className="text-lg font-bold text-red-500">{loanInfoError.Additional_Charges_Error}</h2>}
+                </div>
+                <div className="flex flex-col justify-center gap-3">
+                    <label className="font-semibold text-lg">Dasti Amount</label>
+                    <input type="text" value={loanInfo["Dasti Amount"]} onChange={(e) => {
+                        setLoanInfo((prev: LoanInfoType) => ({
+                            ...prev,
+                            "Dasti Amount": e.target.value,
+                        }))
+
+                        if (setLoanInfoChangesStatus) {
+                            setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
+                                ...prev,
+                                "Dasti Amount": true,
+                            }))
+                        }
+
+                        setLoanInfoError((prev: LoanInfoErrorType) => ({
+                            ...prev,
+                            Dasti_Amount_Error: "",
+                        }))
+                    }} placeholder="Enter any dasti Amount" className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
+
+                    {loanInfoError.Dasti_Amount_Error && <h2 className="text-lg font-bold text-red-500">{loanInfoError.Dasti_Amount_Error}</h2>}
                 </div>
 
                 <div className="flex flex-col justify-center gap-3">
