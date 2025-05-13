@@ -2,7 +2,7 @@
 
 import { nextEMIDate } from "@/Helper/utils";
 import { auth, firestore } from "@/firebase/firebase.config";
-import { CarDetailsType } from "@/interface/CarEntriesTypes";
+import { CarDetailsType, EmiDetailsType } from "@/interface/CarEntriesTypes";
 import { FirebaseContextType, LoginCredentials, SignUpType, UserDetailsType } from "@/interface/UsersType";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { addDoc, arrayUnion, collection, doc, DocumentData, getDoc, getDocs, query, updateDoc, where, WhereFilterOp } from "firebase/firestore";
@@ -65,7 +65,6 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
                 const documentId = queryResult.docs[0].id;
                 const documentData = queryResult.docs[0].data();
 
-
                 if (documentData["Cars Ids"].length) {
                     const carIds = documentData["Cars Ids"];
 
@@ -114,7 +113,11 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
 
     const addCarRecord = async (data: CarDetailsType) => {
         try {
-            const carDocRef = await addDoc(collection(firestore, "CarDetails"), data.carInfo);
+            const customerDocRef = await addDoc(collection(firestore, "CustomerDetails"), data.customerInfo);
+            const carDocRef = await addDoc(collection(firestore, "CarDetails"), {
+                "Customer Id": customerDocRef.id,
+                ...data.carInfo
+            });
 
             const loanDocRef = await addDoc(collection(firestore, "LoanDetails"), {
                 ...data.loanInfo,
@@ -123,9 +126,10 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
             });
 
             await addDoc(collection(firestore, "EMIDetails"), {
-                "Loan Id": loanDocRef.id,
-                "EMI Amount": data.loanInfo["EMI Amount"],
-                "Due Date": nextEMIDate(data.loanInfo["Loan Start Date"]),
+                "loanId": loanDocRef.id,
+                "emiNo": 1,
+                "emiAmount": data.loanInfo["EMI Amount"],
+                "emiDueDate": nextEMIDate(data.loanInfo["First EMI Date"]),
             });
 
             const userRef = doc(firestore, "Users", userDetails?.id);
@@ -174,7 +178,25 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
             return "Something Went Wrong!";
         }
     }
+    const addEMIDetails = async (loanId: string, emiDetails: EmiDetailsType) => {
+        try {
+            const emiDocRef = await addDoc(collection(firestore, "EMIDetails"), {
+                loanId: loanId,
+                ...emiDetails,
+            })
 
+            if (emiDocRef.id) {
+                return true;
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                return error.message;
+            }
+
+            return "Something Went Wrong!";
+        }
+        return "Something Went Wrong!";
+    }
     useEffect(() => {
         if (userDetails) {
             localStorage.setItem("UsersInfo", JSON.stringify(userDetails));
@@ -189,7 +211,7 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [])
     return (
-        <FirebaseUtilsContext.Provider value={{ signUpUser, getDataWithQuery, loginUser, signOutUser, userDetails, addCarRecord, setUserDetails, deleteCarRecord }}>
+        <FirebaseUtilsContext.Provider value={{ signUpUser, getDataWithQuery, loginUser, signOutUser, userDetails, addCarRecord, addEMIDetails, setUserDetails, deleteCarRecord }}>
             {children}
         </FirebaseUtilsContext.Provider>
     )

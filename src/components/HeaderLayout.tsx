@@ -20,7 +20,9 @@ const HeaderLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <>
             {!withoutHeaderPagesList.includes(currentPath) && <Header />}
-            {children}
+            <div className="h-full overflow-auto" id="main-container">
+                {children}
+            </div>
         </>
     );
 }
