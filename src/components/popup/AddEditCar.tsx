@@ -672,6 +672,11 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
         }
     }, [isShowPopup])
 
+    useEffect(() => {
+        console.log("Customer Info Changes Status Status: ", customerInfoChangesStatus);
+
+    }, [])
+
     return (
         <>
             <div className="">

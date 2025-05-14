@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { IoWarningOutline } from "react-icons/io5";
 import { MdClose } from "react-icons/md";
 import Modal from "react-modal"
 import { toast } from "react-toastify";

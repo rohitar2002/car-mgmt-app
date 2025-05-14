@@ -1,11 +1,9 @@
-import { useFirebaseContext } from "@/context/firebaseContext";
-import { EmiDetailsType, EMIHistoryDBType } from "@/interface/CarEntriesTypes";
+import { EmiDetailsType } from "@/interface/CarEntriesTypes";
 import { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
 import Modal from "react-modal"
 import Loader from "../Loader/RotatingLines";
 import { toast } from "react-toastify";
-import { DocumentData } from "firebase/firestore";
 import { isMobile, isTablet } from "react-device-detect";
 import { TbEdit } from "react-icons/tb";
 
@@ -58,7 +56,7 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPo
                 const headers = ["EMI Number, Slip Number, Due Date, Received Date, Status, Emi Amount, OverDue, Other Interest"];
 
                 const rows = emiHistoryDetails.map(
-                    (item: EmiDetailsType, index: number) =>
+                    (item: EmiDetailsType) =>
                         `${item.emiNo}, ${item.slipNo || "--"}, "${item.emiDueDate}", "${item.emiReceivedDate || "--"}", ${item.emiAmount}, ${item.emiStatus},${item.overdue || "--"}, ${item.otherInterest || "--"}`
                 );
 
