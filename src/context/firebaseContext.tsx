@@ -113,11 +113,7 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
 
     const addCarRecord = async (data: CarDetailsType) => {
         try {
-            const customerDocRef = await addDoc(collection(firestore, "CustomerDetails"), data.customerInfo);
-            const carDocRef = await addDoc(collection(firestore, "CarDetails"), {
-                "Customer Id": customerDocRef.id,
-                ...data.carInfo
-            });
+            const carDocRef = await addDoc(collection(firestore, "CarDetails"), data.carInfo);
 
             const loanDocRef = await addDoc(collection(firestore, "LoanDetails"), {
                 ...data.loanInfo,
@@ -130,6 +126,11 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
                 "emiNo": 1,
                 "emiAmount": data.loanInfo["EMI Amount"],
                 "emiDueDate": nextEMIDate(data.loanInfo["First EMI Date"]),
+            });
+
+            await addDoc(collection(firestore, "CustomerDetails"), {
+                ...data.customerInfo,
+                "Car Id": carDocRef.id,
             });
 
             const userRef = doc(firestore, "Users", userDetails?.id);

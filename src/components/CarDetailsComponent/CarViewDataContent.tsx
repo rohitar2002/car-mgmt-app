@@ -4,7 +4,7 @@ import Loader from "@/components/Loader/RotatingLines";
 import AddEditCarDetails from "@/components/popup/AddEditCar";
 import { EMIHistoryPopup } from "@/components/popup/EMIHistory";
 import { firestore } from "@/firebase/firebase.config";
-import { CarDetailsWithIdType, CarInfoType, EmiDetailsType, LoanInfoType } from "@/interface/CarEntriesTypes";
+import { CarDetailsWithIdType, CarInfoType, CustomerInfoType, EmiDetailsType, LoanInfoType } from "@/interface/CarEntriesTypes";
 import { doc, DocumentData, getDoc, updateDoc } from "firebase/firestore";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -12,6 +12,9 @@ import { useEffect, useState } from "react";
 import ADDEMIDetails from "../popup/NewEMIDetails";
 import { toast } from "react-toastify";
 import { useFirebaseContext } from "@/context/firebaseContext";
+import { CustomerInfoViewer } from "./CustomerInfoViewer";
+import { CarInfoViewer } from "./CarInfoViewer";
+import { LoanInfoViewer } from "./LoanInfoViewer";
 
 const CarViewDataContent = () => {
     const [carDetails, setCarDetails] = useState<CarDetailsWithIdType | null>(null);
@@ -39,6 +42,7 @@ const CarViewDataContent = () => {
                 const loanDocRef = doc(firestore, "LoanDetails", loanId);
                 const loanDocument = await getDoc(loanDocRef);
 
+                const queryResult = await firebaseContext?.getDataWithQuery("CustomerDetails", "Car Id", "==", carId);
                 const carInfo: CarInfoType = {
                     ...carDocument.data() as CarInfoType
                 };
@@ -46,12 +50,15 @@ const CarViewDataContent = () => {
                 const loanInfo: LoanInfoType = {
                     ...loanDocument?.data() as LoanInfoType
                 };
+                const customerInfo = queryResult?.docs[0]?.data() as CustomerInfoType;
 
                 const carDetails: CarDetailsWithIdType = {
                     carInfo,
                     loanInfo,
+                    customerInfo,
                     carId: carId,
                     loanId: loanId,
+                    customerId: queryResult?.docs[0]?.id as string,
                 }
                 setCarDetails(carDetails);
 
@@ -188,65 +195,8 @@ const CarViewDataContent = () => {
             <div className="flex justify-center items-center relative top-20">
                 <div className="w-full lg:w-3/5 h-full border border-primary rounded m-10">
                     <div className="text-2xl underline bg-primary text-white font-bold text-center py-5 ">Car Details</div>
-
-                    <section className="border-b border-gray-500 bg-white p-5">
-                        <h2 className="text-xl font-bold text-primary mb-5 text-center sm:text-left">Car Information</h2>
-                        <div className="flex flex-col gap-3 justify-center  px-2 lg:px-10">
-                            <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3" >
-                                <label className="font-bold text-md md:text-lg">Registration Number:</label>
-                                <h2 className="text-md">{carDetails?.carInfo["Registration Number"] || "--"}</h2>
-                            </div>
-                            <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
-                                <label className="font-bold text-md md:text-lg">Car Brand:</label>
-                                <h2 className="text-md">{carDetails?.carInfo["Brand Name"] || "--"}</h2>
-                            </div>
-                            <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
-                                <label className="font-bold text-md md:text-lg">Car Model:</label>
-                                <h2 className="text-md">{carDetails?.carInfo["Model Number"] || "--"}</h2>
-                            </div>
-                            <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
-                                <label className="font-bold text-md md:text-lg">Chassis Number:</label>
-                                <h2 className="text-md">{carDetails?.carInfo["Chassis Number"] || "--"}</h2>
-                            </div>
-                            <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
-                                <label className="font-bold text-md md:text-lg">Engine Number:</label>
-                                <h2 className="text-md">{carDetails?.carInfo["Engine Number"] || "--"}</h2>
-                            </div>
-                            <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
-                                <label className="font-bold text-md md:text-lg">Purchase Date:</label>
-                                <h2 className="text-md">{carDetails?.carInfo["Purchased Date"] || "--"}</h2>
-                            </div>
-                        </div>
-                    </section>
-                    <section className="border-b border-gray-500 bg-white p-5">
-                        <h2 className="text-xl font-bold text-primary mb-5 text-center sm:text-left">Loan Information</h2>
-                        <div className="flex flex-col gap-3 justify-center px-2 lg:px-10">
-                            <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
-                                <label className="font-bold text-lg">Total Loan Amount:</label>
-                                <h2 className="text-md">{carDetails?.loanInfo["Total Loan Amount"] || "--"}</h2>
-                            </div>
-                            <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
-                                <label className="font-bold text-lg">Loan Start Date:</label>
-                                <h2 className="text-md">{carDetails?.loanInfo["Loan Start Date"] || "--"}</h2>
-                            </div>
-                            <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
-                                <label className="font-bold text-lg">Loan Tenure:</label>
-                                <h2 className="text-md">{carDetails?.loanInfo["Loan Tenure"] || "--"} Month</h2>
-                            </div>
-                            <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
-                                <label className="font-bold text-lg">Interest Rate:</label>
-                                <h2 className="text-md">{carDetails?.loanInfo["Interest Rate"] || "--"}%</h2>
-                            </div>
-                            <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
-                                <label className="font-bold text-lg">Total paid Amount:</label>
-                                <h2 className="text-md">{carDetails?.loanInfo["Total Paid Amount"] || "--"}</h2>
-                            </div>
-                            <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
-                                <label className="font-bold text-lg">Remaining Balance:</label>
-                                <h2 className="text-md">{(Number(carDetails?.loanInfo["Total Loan Amount"]) - Number(carDetails?.loanInfo["Total Paid Amount"])).toString() || "--"}</h2>
-                            </div>
-                        </div>
-                    </section>
+                    <CarInfoViewer carInfo={carDetails?.carInfo} />
+                    <LoanInfoViewer loanInfo={carDetails?.loanInfo} />
 
                     <section className="border-b border-gray-500 bg-white p-5">
                         <h2 className="text-xl font-bold text-primary mb-5 text-center sm:text-left">EMI History</h2>
@@ -260,6 +210,8 @@ const CarViewDataContent = () => {
                             }}>Click to see EMI history</button>
                         </div>
                     </section>
+
+                    <CustomerInfoViewer customerInfo={carDetails?.customerInfo} />
 
                     <div className="flex items-center justify-center flex-col sm:flex-row sm:justify-end gap-5 p-5">
                         <button className="px-3 py-2 w-full sm:w-fit bg-primary text-white rounded" onClick={() => {

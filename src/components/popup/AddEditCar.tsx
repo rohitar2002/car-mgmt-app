@@ -120,7 +120,7 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [modalWidth, setModalWidth] = useState<string>("50%");
     const [isCarInfoSection, setIsCarInfoSection] = useState<boolean>(true);
-    const [isCustomerInfoSection, setIsCustomerInfoSection] = useState<boolean>(true);
+    const [isLoanInfoSection, setIsLoanInfoSection] = useState<boolean>(true);
     const firebaseContext = useFirebaseContext();
 
     const customStyles: ReactModal.Styles = {
@@ -155,26 +155,6 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
             "Chassis Number": "",
             "Purchased Date": "",
         })
-        setCustomerInfo({
-            "Customer Name": "",
-            "Address": "",
-            "Mobile Number": "",
-            "Guardian name": "",
-            "Guarantor Name": "",
-            "Guarantor Address": "",
-            "Guarantor Mobile Number": "",
-            "Guarantor Guardian Name": "",
-        })
-        setCustomerInfoError({
-            "Customer Name": "",
-            "Address": "",
-            "Mobile Number": "",
-            "Guardian name": "",
-            "Guarantor Name": "",
-            "Guarantor Address": "",
-            "Guarantor Mobile Number": "",
-            "Guarantor Guardian Name": "",
-        })
         setLoanInfo({
             "Total Loan Amount": "",
             "Loan Start Date": "",
@@ -186,6 +166,16 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
             "Dasti Amount": "",
             "Total Paid Amount": "",
             "Interest Rate": "",
+        })
+        setCustomerInfo({
+            "Customer Name": "",
+            "Address": "",
+            "Mobile Number": "",
+            "Guardian name": "",
+            "Guarantor Name": "",
+            "Guarantor Address": "",
+            "Guarantor Mobile Number": "",
+            "Guarantor Guardian Name": "",
         })
 
         setCarInfoError({
@@ -209,88 +199,82 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
             "Total_Paid_Amount_Error": "",
             "Interest_Rate_Error": "",
         })
+        setCustomerInfoError({
+            "Customer Name": "",
+            "Address": "",
+            "Mobile Number": "",
+            "Guardian name": "",
+            "Guarantor Name": "",
+            "Guarantor Address": "",
+            "Guarantor Mobile Number": "",
+            "Guarantor Guardian Name": "",
+        })
+
+    }
+
+    const isCustomerInfoValid = () => {
+        if (customerInfo["Customer Name"].trim() === "") {
+            setCustomerInfoError((prev: CustomerInfoType) => ({
+                ...prev,
+                "Customer Name": "This Field is Required",
+            }))
+            return false;
+        }
+        if (customerInfo["Address"].trim() === "") {
+            setCustomerInfoError((prev: CustomerInfoType) => ({
+                ...prev,
+                "Address": "This Field is Required",
+            }))
+            return false;
+        }
+        if (customerInfo["Mobile Number"].trim() === "") {
+            setCustomerInfoError((prev: CustomerInfoType) => ({
+                ...prev,
+                "Mobile Number": "This Field is Required",
+            }))
+            return false;
+        }
+        if (customerInfo["Guardian name"].trim() === "") {
+            setCustomerInfoError((prev: CustomerInfoType) => ({
+                ...prev,
+                "Guardian name": "This Field is Required",
+            }))
+            return false;
+        }
+        if (customerInfo["Guarantor Name"].trim() === "") {
+            setCustomerInfoError((prev: CustomerInfoType) => ({
+                ...prev,
+                "Guarantor Name": "This Field is Required",
+            }))
+            return false;
+        }
+        if (customerInfo["Guarantor Address"].trim() === "") {
+            setCustomerInfoError((prev: CustomerInfoType) => ({
+                ...prev,
+                "Guarantor Address": "This Field is Required",
+            }))
+            return false;
+        }
+        if (customerInfo["Guarantor Mobile Number"].trim() === "") {
+            setCustomerInfoError((prev: CustomerInfoType) => ({
+                ...prev,
+                "Guarantor Mobile Number": "This Field is Required",
+            }))
+            return false;
+        }
+        if (customerInfo["Guarantor Guardian Name"].trim() === "") {
+            setCustomerInfoError((prev: CustomerInfoType) => ({
+                ...prev,
+                "Guarantor Guardian Name": "This Field is Required",
+            }))
+            return false;
+        }
+
+        return true;
     }
     const handleSubmit = async () => {
-
-        if (loanInfo["Total Loan Amount"].trim() === "") {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                Total_Loan_Amount_Error: "This Field is Required.",
-            }))
-            return;
-        }
-        if (loanInfo["Loan Tenure"].trim() === "") {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                Loan_Tenure_Error: "This Field is Required.",
-            }))
-            return;
-        }
-        else if (Number(loanInfo["Loan Tenure"].trim()) < 0) {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                Loan_Tenure_Error: "Loan Tenure must be Greater then 0.",
-            }))
-            return;
-        }
-        if (loanInfo["Interest Rate"].trim() === "") {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                Interest_Rate_Error: "This Field is Required.",
-            }))
-            return;
-        }
-
-        if (loanInfo["Loan Start Date"].trim() === "") {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                Loan_Start_Date_Error: "This Field is Required.",
-            }))
-            return;
-        }
-        if (loanInfo["EMI Amount"].trim() === "") {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                EMI_Amount_Error: "This Field is Required.",
-            }))
-            return;
-        }
-        if (loanInfo["First EMI Date"].trim() === "") {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                "First_EMI Date_Error": "This Field is Required.",
-            }))
-            return;
-        }
-        if (loanInfo["Due Amount"].trim() === "") {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                Due_Amount_Error: "This Field is Required.",
-            }))
-            return;
-        }
-        if (loanInfo["Additional Charges"].trim() === "") {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                Additional_Charges_Error: "This Field is Required.",
-            }))
-            return;
-        }
-        if (loanInfo["Dasti Amount"].trim() === "") {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                Dasti_Amount_Error: "This Field is Required.",
-            }))
-            return;
-        }
-
-        if (loanInfo["Total Paid Amount"].trim() === "") {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                Total_Paid_Amount_Error: "This Field is Required.",
-            }))
-            return;
-        }
+        const isValidCustomerInfo = isCustomerInfoValid();
+        if (!isValidCustomerInfo) return;
 
         setIsLoading(true);
 
@@ -306,10 +290,9 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
             }
             else {
                 try {
-                    // const customerQuery = await firebaseContext?.getDataWithQuery("CustomerDetails", "Car Id", "==", queryResult.docs[0].id);
                     const loanQuery = await firebaseContext?.getDataWithQuery("LoanDetails", "Car Id", "==", queryResult.docs[0].id);
-
                     const emiQuery = await firebaseContext?.getDataWithQuery("EMIDetails", "Loan Id", "==", loanQuery?.docs[0].id);
+                    const customerQuery = await firebaseContext?.getDataWithQuery("CustomerDetails", "Car Id", "==", queryResult.docs[0].id);
 
                     if (queryResult) {
                         await deleteDoc(queryResult.docs[0].ref);
@@ -320,6 +303,9 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
 
                         if (emiQuery) {
                             await deleteDoc(emiQuery.docs[0].ref);
+                        }
+                        if (customerQuery) {
+                            await deleteDoc(customerQuery.docs[0].ref);
                         }
 
                         const usersQuery = await firebaseContext?.getDataWithQuery("Users", "email", "==", firebaseContext?.userDetails?.email);
@@ -370,69 +356,14 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
         setIsLoading(false);
     }
     const handleUpdate = async () => {
-
-        if (loanInfo["Total Loan Amount"].trim() === "") {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                Total_Loan_Amount_Error: "This Field is Required.",
-            }))
-            return;
-        }
-        if (loanInfo["Loan Tenure"].trim() === "") {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                Loan_Tenure_Error: "This Field is Required.",
-            }))
-            return;
-        }
-        else if (Number(loanInfo["Loan Tenure"].trim()) < 0) {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                Loan_Tenure_Error: "Loan Tenure must be Greater then 0.",
-            }))
-            return;
-        }
-        if (loanInfo["Interest Rate"].trim() === "") {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                Interest_Rate_Error: "This Field is Required.",
-            }))
-            return;
-        }
-        else if (Number(loanInfo["Interest Rate"]) > 100) {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                Interest_Rate_Error: "Interest Rate must 0 to 100.",
-            }))
-            return;
-        }
-
-        if (loanInfo["Loan Start Date"].trim() === "") {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                Loan_Start_Date_Error: "This Field is Required.",
-            }))
-            return;
-        }
-        if (loanInfo["EMI Amount"].trim() === "") {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                EMI_Amount_Error: "This Field is Required.",
-            }))
-            return;
-        }
-        if (loanInfo["Total Paid Amount"].trim() === "") {
-            setLoanInfoError((prev: LoanInfoErrorType) => ({
-                ...prev,
-                Total_Paid_Amount_Error: "This Field is Required.",
-            }))
-            return;
-        }
+        const isValidCustomerInfo = isCustomerInfoValid();
+        if (!isValidCustomerInfo) return;
 
         setIsLoading(true);
 
         const updatedCarInfo: Partial<CarInfoType> = {};
         const updatedLoanInfo: Partial<LoanInfoType> = {};
+        const updatedCustomerInfo: Partial<CustomerInfoType> = {};
 
         for (const key in carInfoChangesStatus) {
             if (carInfoChangesStatus[key as keyof typeof carInfoChangesStatus]) {
@@ -443,6 +374,12 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
         for (const key in loanInfoChangesStatus) {
             if (loanInfoChangesStatus[key as keyof typeof loanInfoChangesStatus]) {
                 updatedLoanInfo[key as keyof LoanInfoChangesStatusType] = loanInfo[key as keyof LoanInfoChangesStatusType];
+            }
+        }
+
+        for (const key in customerInfoChangesStatus) {
+            if (customerInfoChangesStatus[key as keyof typeof customerInfoChangesStatus]) {
+                updatedCustomerInfo[key as keyof CustomerInfoType] = customerInfo[key as keyof CustomerInfoType];
             }
         }
 
@@ -457,6 +394,10 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
                 if (Object.keys(updatedLoanInfo).length) {
                     const carDocRef = doc(firestore, "LoanDetails", existingDetails.loanId)
                     await updateDoc(carDocRef, updatedLoanInfo)
+                }
+                if (Object.keys(updatedCustomerInfo).length) {
+                    const carDocRef = doc(firestore, "CustomerDetails", existingDetails.customerId)
+                    await updateDoc(carDocRef, updatedCustomerInfo)
                 }
 
                 toast.success("Car Details Updated Successfully.");
@@ -530,67 +471,90 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
             }
 
             setIsCarInfoSection(false);
-            setIsCustomerInfoSection(true);
+            setIsLoanInfoSection(true);
         }
         else {
-            if (customerInfo["Customer Name"].trim() === "") {
-                setCustomerInfoError((prev: CustomerInfoType) => ({
+            if (loanInfo["Total Loan Amount"].trim() === "") {
+                setLoanInfoError((prev: LoanInfoErrorType) => ({
                     ...prev,
-                    "Customer Name": "This Field is Required",
+                    Total_Loan_Amount_Error: "This Field is Required.",
                 }))
                 return;
             }
-            if (customerInfo["Address"].trim() === "") {
-                setCustomerInfoError((prev: CustomerInfoType) => ({
+            if (loanInfo["Loan Tenure"].trim() === "") {
+                setLoanInfoError((prev: LoanInfoErrorType) => ({
                     ...prev,
-                    "Address": "This Field is Required",
+                    Loan_Tenure_Error: "This Field is Required.",
                 }))
                 return;
             }
-            if (customerInfo["Mobile Number"].trim() === "") {
-                setCustomerInfoError((prev: CustomerInfoType) => ({
+            else if (Number(loanInfo["Loan Tenure"].trim()) < 0) {
+                setLoanInfoError((prev: LoanInfoErrorType) => ({
                     ...prev,
-                    "Mobile Number": "This Field is Required",
+                    Loan_Tenure_Error: "Loan Tenure must be Greater then 0.",
                 }))
                 return;
             }
-            if (customerInfo["Guardian name"].trim() === "") {
-                setCustomerInfoError((prev: CustomerInfoType) => ({
+            if (loanInfo["Interest Rate"].trim() === "") {
+                setLoanInfoError((prev: LoanInfoErrorType) => ({
                     ...prev,
-                    "Guardian name": "This Field is Required",
-                }))
-                return;
-            }
-            if (customerInfo["Guarantor Name"].trim() === "") {
-                setCustomerInfoError((prev: CustomerInfoType) => ({
-                    ...prev,
-                    "Guarantor Name": "This Field is Required",
-                }))
-                return;
-            }
-            if (customerInfo["Guarantor Address"].trim() === "") {
-                setCustomerInfoError((prev: CustomerInfoType) => ({
-                    ...prev,
-                    "Guarantor Address": "This Field is Required",
-                }))
-                return;
-            }
-            if (customerInfo["Guarantor Mobile Number"].trim() === "") {
-                setCustomerInfoError((prev: CustomerInfoType) => ({
-                    ...prev,
-                    "Guarantor Mobile Number": "This Field is Required",
-                }))
-                return;
-            }
-            if (customerInfo["Guarantor Guardian Name"].trim() === "") {
-                setCustomerInfoError((prev: CustomerInfoType) => ({
-                    ...prev,
-                    "Guarantor Guardian Name": "This Field is Required",
+                    Interest_Rate_Error: "This Field is Required.",
                 }))
                 return;
             }
 
-            setIsCustomerInfoSection(false);
+            if (loanInfo["Loan Start Date"].trim() === "") {
+                setLoanInfoError((prev: LoanInfoErrorType) => ({
+                    ...prev,
+                    Loan_Start_Date_Error: "This Field is Required.",
+                }))
+                return;
+            }
+            if (loanInfo["EMI Amount"].trim() === "") {
+                setLoanInfoError((prev: LoanInfoErrorType) => ({
+                    ...prev,
+                    EMI_Amount_Error: "This Field is Required.",
+                }))
+                return;
+            }
+            if (loanInfo["First EMI Date"].trim() === "") {
+                setLoanInfoError((prev: LoanInfoErrorType) => ({
+                    ...prev,
+                    "First_EMI Date_Error": "This Field is Required.",
+                }))
+                return;
+            }
+            if (loanInfo["Due Amount"].trim() === "") {
+                setLoanInfoError((prev: LoanInfoErrorType) => ({
+                    ...prev,
+                    Due_Amount_Error: "This Field is Required.",
+                }))
+                return;
+            }
+            if (loanInfo["Additional Charges"].trim() === "") {
+                setLoanInfoError((prev: LoanInfoErrorType) => ({
+                    ...prev,
+                    Additional_Charges_Error: "This Field is Required.",
+                }))
+                return;
+            }
+            if (loanInfo["Dasti Amount"].trim() === "") {
+                setLoanInfoError((prev: LoanInfoErrorType) => ({
+                    ...prev,
+                    Dasti_Amount_Error: "This Field is Required.",
+                }))
+                return;
+            }
+
+            if (loanInfo["Total Paid Amount"].trim() === "") {
+                setLoanInfoError((prev: LoanInfoErrorType) => ({
+                    ...prev,
+                    Total_Paid_Amount_Error: "This Field is Required.",
+                }))
+                return;
+            }
+
+            setIsLoanInfoSection(false);
         }
     }
 
@@ -672,11 +636,6 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
         }
     }, [isShowPopup])
 
-    useEffect(() => {
-        console.log("Customer Info Changes Status Status: ", customerInfoChangesStatus);
-
-    }, [])
-
     return (
         <>
             <div className="">
@@ -700,13 +659,14 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
                                         handleNextPhase();
                                     }}>Next</button>
                                 </div>
-                            </>) : isCustomerInfoSection ? (
+                            </>) : isLoanInfoSection ? (
                                 <>
-                                    <CustomerDetails customerInfo={customerInfo} setCustomerInfo={setCustomerInfo} customerInfoError={customerInfoError} setCustomerInfoError={setCustomerInfoError} setCustomerInfoChangesStatus={setCustomerInfoChangesStatus} />
+                                    <LoanDetails loanInfo={loanInfo} setLoanInfo={setLoanInfo} loanInfoError={loanInfoError} setLoanInfoError={setLoanInfoError} setLoanInfoChangesStatus={setLoanInfoChangesStatus} />
 
                                     <div className="flex items-center justify-center md:justify-end py-5 gap-5 flex-col md:flex-row">
                                         <button className="text-white bg-primary px-10 py-2 rounded text-lg w-full md:w-auto" onClick={() => {
                                             setIsCarInfoSection(true);
+                                            setIsLoanInfoSection(false);
                                         }}>Previous</button>
 
                                         <button className="text-white bg-primary px-10 py-2 rounded text-lg w-full md:w-auto" onClick={() => {
@@ -716,11 +676,11 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
                                 </>
                             ) :
                                 <>
-                                    <LoanDetails loanInfo={loanInfo} setLoanInfo={setLoanInfo} loanInfoError={loanInfoError} setLoanInfoError={setLoanInfoError} setLoanInfoChangesStatus={setLoanInfoChangesStatus} />
+                                    <CustomerDetails customerInfo={customerInfo} setCustomerInfo={setCustomerInfo} customerInfoError={customerInfoError} setCustomerInfoError={setCustomerInfoError} setCustomerInfoChangesStatus={setCustomerInfoChangesStatus} />
 
                                     <div className="flex items-center justify-center md:justify-end py-5 gap-5 flex-col md:flex-row">
                                         <button className="text-white bg-primary px-10 py-2 rounded text-lg w-full md:w-auto" onClick={() => {
-                                            setIsCustomerInfoSection(true);
+                                            setIsLoanInfoSection(true);
                                         }}>Previous</button>
 
                                         {existingDetails ? (<button type="button" className="text-white bg-primary px-10 py-2 rounded text-lg w-full md:w-auto" onClick={(e) => {
@@ -735,8 +695,6 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
                                     </div>
                                 </>
                             }
-
-
                         </form>
 
                     </div>

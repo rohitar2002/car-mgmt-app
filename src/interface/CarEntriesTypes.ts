@@ -88,10 +88,11 @@ export interface CarDetailsType {
 }
 export interface CarDetailsWithIdType {
     carInfo: CarInfoType;
-    customerInfo?: CustomerInfoType;
+    customerInfo: CustomerInfoType;
     loanInfo: LoanInfoType;
     carId: string;
     loanId: string;
+    customerId: string;
 }
 
 export interface EmiDetailsType {
