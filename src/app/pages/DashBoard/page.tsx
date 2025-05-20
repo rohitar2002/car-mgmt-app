@@ -28,12 +28,14 @@ const DashBoard = () => {
     const router = useRouter()
 
     const getTotalLoanAmount = () => {
-        let totalAmount = "0";
-        fillteredRegisteredCarInfo?.forEach((item: CarDetailsWithIdType) => {
-            totalAmount = (Number(totalAmount) + Number(item.loanInfo["Total Loan Amount"])).toString();
-        })
+        if (fillteredRegisteredCarInfo && fillteredRegisteredCarInfo.length > 0) {
+            let totalAmount = "0";
+            fillteredRegisteredCarInfo.forEach((item: CarDetailsWithIdType) => {
+                totalAmount = (Number(totalAmount) + Number(item.loanInfo["Total Loan Amount"])).toString();
+            })
 
-        setTotalLoanAmount(totalAmount);
+            setTotalLoanAmount(totalAmount);
+        }
     }
 
     const getCarRecords = async () => {
@@ -89,7 +91,7 @@ const DashBoard = () => {
     }, [firebaseContext?.userDetails])
 
     useEffect(() => {
-        if (fillteredRegisteredCarInfo?.length) {
+        if (fillteredRegisteredCarInfo && fillteredRegisteredCarInfo.length > 0) {
             getTotalLoanAmount();
         }
     }, [fillteredRegisteredCarInfo])
