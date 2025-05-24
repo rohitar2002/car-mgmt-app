@@ -42,7 +42,7 @@ const CarViewDataContent = () => {
                 const loanDocRef = doc(firestore, "LoanDetails", loanId);
                 const loanDocument = await getDoc(loanDocRef);
 
-                const queryResult = await firebaseContext?.getDataWithQuery("CustomerDetails", "Car Id", "==", carId);
+                const queryResult = await firebaseContext?.getDataWithQuery("CustomerDetails", "carId", "==", carId);
                 const carInfo: CarInfoType = {
                     ...carDocument.data() as CarInfoType
                 };

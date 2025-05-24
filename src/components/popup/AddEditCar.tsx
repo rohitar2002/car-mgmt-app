@@ -23,99 +23,102 @@ interface Props {
 }
 const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, getCarDetails }: Props) => {
     const [carInfo, setCarInfo] = useState<CarInfoType>({
-        "Registration Number": existingDetails?.carInfo["Registration Number"] || "",
-        "Model Number": existingDetails?.carInfo["Model Number"] || "",
-        "Brand Name": existingDetails?.carInfo["Brand Name"] || "",
-        "Engine Number": existingDetails?.carInfo["Engine Number"] || "",
-        "Chassis Number": existingDetails?.carInfo["Chassis Number"] || "",
-        "Purchased Date": existingDetails?.carInfo["Purchased Date"] || "",
+        registrationNumber: existingDetails?.carInfo.registrationNumber || "",
+        modelNumber: existingDetails?.carInfo.modelNumber || "",
+        brandName: existingDetails?.carInfo.brandName || "",
+        engineNumber: existingDetails?.carInfo.engineNumber || "",
+        chassisNumber: existingDetails?.carInfo.chassisNumber || "",
+        purchasedDate: existingDetails?.carInfo.purchasedDate || "",
     })
     const [customerInfo, setCustomerInfo] = useState<CustomerInfoType>({
-        "Customer Name": existingDetails?.customerInfo?.["Customer Name"] || "",
-        "Address": existingDetails?.customerInfo?.["Address"] || "",
-        "Mobile Number": existingDetails?.customerInfo?.["Mobile Number"] || "",
-        "Guardian name": existingDetails?.customerInfo?.["Guardian name"] || "",
-        "Guarantor Name": existingDetails?.customerInfo?.["Guarantor Name"] || "",
-        "Guarantor Address": existingDetails?.customerInfo?.["Guarantor Address"] || "",
-        "Guarantor Mobile Number": existingDetails?.customerInfo?.["Guarantor Mobile Number"] || "",
-        "Guarantor Guardian Name": existingDetails?.customerInfo?.["Guarantor Guardian Name"] || "",
+        customerName: existingDetails?.customerInfo.customerName || "",
+        address: existingDetails?.customerInfo.address || "",
+        mobileNumber: existingDetails?.customerInfo.mobileNumber || "",
+        guardianName: existingDetails?.customerInfo.guardianName || "",
+        guarantorName: existingDetails?.customerInfo.guarantorName || "",
+        guarantorAddress: existingDetails?.customerInfo.guarantorAddress || "",
+        guarantorMobileNumber: existingDetails?.customerInfo.guarantorMobileNumber || "",
+        guarantorGuardianName: existingDetails?.customerInfo.guarantorGuardianName || "",
     })
 
     const [loanInfo, setLoanInfo] = useState<LoanInfoType>({
-        "Total Loan Amount": existingDetails?.loanInfo["Total Loan Amount"] || "",
-        "Loan Start Date": existingDetails?.loanInfo["Loan Start Date"] || "",
-        "Loan Tenure": existingDetails?.loanInfo["Loan Tenure"] || "",
-        "EMI Amount": existingDetails?.loanInfo["EMI Amount"] || "",
-        "First EMI Date": existingDetails?.loanInfo["First EMI Date"] || "",
-        "Due Amount": existingDetails?.loanInfo["Due Amount"] || "",
-        "Additional Charges": existingDetails?.loanInfo["Additional Charges"] || "",
-        "Dasti Amount": existingDetails?.loanInfo["Dasti Amount"] || "",
-        "Total Paid Amount": existingDetails?.loanInfo["Total Paid Amount"] || "",
-        "Interest Rate": existingDetails?.loanInfo["Interest Rate"] || "",
+        totalSaleAmount: existingDetails?.loanInfo.totalSaleAmount || "",
+        totalLoanAmount: existingDetails?.loanInfo.totalLoanAmount || "",
+        loanStartDate: existingDetails?.loanInfo.loanStartDate || "",
+        loanTenure: existingDetails?.loanInfo.loanTenure || "",
+        emiAmount: existingDetails?.loanInfo.emiAmount || "",
+        firstEmiDate: existingDetails?.loanInfo.firstEmiDate || "",
+        dueAmount: existingDetails?.loanInfo.dueAmount || "",
+        additionalCharges: existingDetails?.loanInfo.additionalCharges || "",
+        dastiAmount: existingDetails?.loanInfo.dastiAmount || "",
+        downPayment: existingDetails?.loanInfo.downPayment || "",
+        interestRate: existingDetails?.loanInfo.interestRate || "",
     })
 
     const [carInfoError, setCarInfoError] = useState<CarInfoErrorType>({
-        "Registration_Number_Error": "",
-        "Model_Number_Error": "",
-        "Brand_Name_Error": "",
-        "Engine_Number_Error": "",
-        "Chassis_Number_Error": "",
-        "Purchased_Date_Error": "",
+        registrationNumberError: "",
+        modelNumberError: "",
+        brandNameError: "",
+        engineNumberError: "",
+        chassisNumberError: "",
+        purchasedDateError: "",
     })
     const [customerInfoError, setCustomerInfoError] = useState<CustomerInfoType>({
-        "Customer Name": "",
-        "Address": "",
-        "Mobile Number": "",
-        "Guardian name": "",
-        "Guarantor Name": "",
-        "Guarantor Address": "",
-        "Guarantor Mobile Number": "",
-        "Guarantor Guardian Name": "",
+        customerName: "",
+        address: "",
+        mobileNumber: "",
+        guardianName: "",
+        guarantorName: "",
+        guarantorAddress: "",
+        guarantorMobileNumber: "",
+        guarantorGuardianName: "",
     })
 
     const [loanInfoError, setLoanInfoError] = useState<LoanInfoErrorType>({
-        "Total_Loan_Amount_Error": "",
-        "Loan_Start_Date_Error": "",
-        "Loan_Tenure_Error": "",
-        "EMI_Amount_Error": "",
-        "First_EMI Date_Error": "",
-        "Due_Amount_Error": "",
-        "Additional_Charges_Error": "",
-        "Dasti_Amount_Error": "",
-        "Total_Paid_Amount_Error": "",
-        "Interest_Rate_Error": "",
+        totalSaleAmountError: "",
+        totalLoanAmountError: "",
+        loanStartDateError: "",
+        loanTenureError: "",
+        emiAmountError: "",
+        firstEmiDateError: "",
+        dueAmountError: "",
+        additionalChargesError: "",
+        dastiAmountError: "",
+        downPaymentError: "",
+        interestRateError: "",
     })
 
     const [carInfoChangesStatus, setCarInfoChangesStatus] = useState<CarInfoChangesStatusType>({
-        "Registration Number": false,
-        "Model Number": false,
-        "Brand Name": false,
-        "Engine Number": false,
-        "Chassis Number": false,
-        "Purchased Date": false,
+        registrationNumber: false,
+        modelNumber: false,
+        brandName: false,
+        engineNumber: false,
+        chassisNumber: false,
+        purchasedDate: false,
     })
     const [customerInfoChangesStatus, setCustomerInfoChangesStatus] = useState<CustomerInfoChangesStatusType>({
-        "Customer Name": false,
-        "Address": false,
-        "Mobile Number": false,
-        "Guardian name": false,
-        "Guarantor Name": false,
-        "Guarantor Address": false,
-        "Guarantor Mobile Number": false,
-        "Guarantor Guardian Name": false,
+        customerName: false,
+        address: false,
+        mobileNumber: false,
+        guardianName: false,
+        guarantorName: false,
+        guarantorAddress: false,
+        guarantorMobileNumber: false,
+        guarantorGuardianName: false,
     })
 
     const [loanInfoChangesStatus, setLoanInfoChangesStatus] = useState<LoanInfoChangesStatusType>({
-        "Total Loan Amount": false,
-        "Loan Start Date": false,
-        "Loan Tenure": false,
-        "EMI Amount": false,
-        "First EMI Date": false,
-        "Due Amount": false,
-        "Additional Charges": false,
-        "Dasti Amount": false,
-        "Total Paid Amount": false,
-        "Interest Rate": false,
+        totalSaleAmount: false,
+        totalLoanAmount: false,
+        loanStartDate: false,
+        loanTenure: false,
+        emiAmount: false,
+        firstEmiDate: false,
+        dueAmount: false,
+        additionalCharges: false,
+        dastiAmount: false,
+        downPayment: false,
+        interestRate: false,
     })
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [modalWidth, setModalWidth] = useState<string>("50%");
@@ -148,124 +151,126 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
     const clearState = () => {
         setIsCarInfoSection(true);
         setCarInfo({
-            "Registration Number": "",
-            "Model Number": "",
-            "Brand Name": "",
-            "Engine Number": "",
-            "Chassis Number": "",
-            "Purchased Date": "",
+            registrationNumber: "",
+            modelNumber: "",
+            brandName: "",
+            engineNumber: "",
+            chassisNumber: "",
+            purchasedDate: "",
         })
         setLoanInfo({
-            "Total Loan Amount": "",
-            "Loan Start Date": "",
-            "Loan Tenure": "",
-            "EMI Amount": "",
-            "First EMI Date": "",
-            "Due Amount": "",
-            "Additional Charges": "",
-            "Dasti Amount": "",
-            "Total Paid Amount": "",
-            "Interest Rate": "",
+            totalSaleAmount: "",
+            totalLoanAmount: "",
+            loanStartDate: "",
+            loanTenure: "",
+            emiAmount: "",
+            firstEmiDate: "",
+            dueAmount: "",
+            additionalCharges: "",
+            dastiAmount: "",
+            downPayment: "",
+            interestRate: "",
         })
         setCustomerInfo({
-            "Customer Name": "",
-            "Address": "",
-            "Mobile Number": "",
-            "Guardian name": "",
-            "Guarantor Name": "",
-            "Guarantor Address": "",
-            "Guarantor Mobile Number": "",
-            "Guarantor Guardian Name": "",
+            customerName: "",
+            address: "",
+            mobileNumber: "",
+            guardianName: "",
+            guarantorName: "",
+            guarantorAddress: "",
+            guarantorMobileNumber: "",
+            guarantorGuardianName: "",
         })
 
         setCarInfoError({
-            "Registration_Number_Error": "",
-            "Model_Number_Error": "",
-            "Brand_Name_Error": "",
-            "Engine_Number_Error": "",
-            "Chassis_Number_Error": "",
-            "Purchased_Date_Error": "",
+            registrationNumberError: "",
+            modelNumberError: "",
+            brandNameError: "",
+            engineNumberError: "",
+            chassisNumberError: "",
+            purchasedDateError: "",
         })
 
         setLoanInfoError({
-            "Total_Loan_Amount_Error": "",
-            "Loan_Start_Date_Error": "",
-            "Loan_Tenure_Error": "",
-            "EMI_Amount_Error": "",
-            "First_EMI Date_Error": "",
-            "Due_Amount_Error": "",
-            "Additional_Charges_Error": "",
-            "Dasti_Amount_Error": "",
-            "Total_Paid_Amount_Error": "",
-            "Interest_Rate_Error": "",
+            totalSaleAmountError: "",
+            totalLoanAmountError: "",
+            loanStartDateError: "",
+            loanTenureError: "",
+            emiAmountError: "",
+            firstEmiDateError: "",
+            dueAmountError: "",
+            additionalChargesError: "",
+            dastiAmountError: "",
+            downPaymentError: "",
+            interestRateError: "",
         })
         setCustomerInfoError({
-            "Customer Name": "",
-            "Address": "",
-            "Mobile Number": "",
-            "Guardian name": "",
-            "Guarantor Name": "",
-            "Guarantor Address": "",
-            "Guarantor Mobile Number": "",
-            "Guarantor Guardian Name": "",
+            customerName: "",
+            address: "",
+            mobileNumber: "",
+            guardianName: "",
+            guarantorName: "",
+            guarantorAddress: "",
+            guarantorMobileNumber: "",
+            guarantorGuardianName: "",
         })
 
     }
 
     const isCustomerInfoValid = () => {
-        if (customerInfo["Customer Name"].trim() === "") {
+        if (customerInfo.customerName.trim() === "") {
             setCustomerInfoError((prev: CustomerInfoType) => ({
                 ...prev,
-                "Customer Name": "This Field is Required",
+                customerName: "This Field is Required",
             }))
             return false;
         }
-        if (customerInfo["Address"].trim() === "") {
+        if (customerInfo.address.trim() === "") {
             setCustomerInfoError((prev: CustomerInfoType) => ({
                 ...prev,
-                "Address": "This Field is Required",
+                address: "This Field is Required",
             }))
             return false;
         }
-        if (customerInfo["Mobile Number"].trim() === "") {
+        if (customerInfo.mobileNumber.trim() === "") {
             setCustomerInfoError((prev: CustomerInfoType) => ({
                 ...prev,
-                "Mobile Number": "This Field is Required",
+                mobileNumber: "This Field is Required",
             }))
             return false;
         }
-        if (customerInfo["Guardian name"].trim() === "") {
+        if (customerInfo.guardianName.trim() === "") {
             setCustomerInfoError((prev: CustomerInfoType) => ({
                 ...prev,
-                "Guardian name": "This Field is Required",
+                guardianName: "This Field is Required",
             }))
             return false;
         }
-        if (customerInfo["Guarantor Name"].trim() === "") {
+        if (customerInfo.guarantorName.trim() === "") {
             setCustomerInfoError((prev: CustomerInfoType) => ({
                 ...prev,
-                "Guarantor Name": "This Field is Required",
+                guarantorName: "This Field is Required",
             }))
             return false;
         }
-        if (customerInfo["Guarantor Address"].trim() === "") {
+        if (customerInfo.guarantorAddress.trim() === "") {
             setCustomerInfoError((prev: CustomerInfoType) => ({
                 ...prev,
-                "Guarantor Address": "This Field is Required",
+                guarantorAddress: "This Field is Required",
             }))
             return false;
         }
-        if (customerInfo["Guarantor Mobile Number"].trim() === "") {
+        if (customerInfo.guarantorMobileNumber.trim() === "") {
             setCustomerInfoError((prev: CustomerInfoType) => ({
                 ...prev,
-                "Guarantor Mobile Number": "This Field is Required",
+                guarantorMobileNumber: "This Field is Required",
             }))
             return false;
         }
-        if (customerInfo["Guarantor Guardian Name"].trim() === "") {
+        if (customerInfo.guarantorGuardianName.trim() === "") {
             setCustomerInfoError((prev: CustomerInfoType) => ({
                 ...prev,
-                "Guarantor Guardian Name": "This Field is Required",
+                guarantorGuardianName: "This Field is Required",
             }))
             return false;
         }
@@ -278,7 +283,7 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
 
         setIsLoading(true);
 
-        const queryResult = await firebaseContext?.getDataWithQuery("CarDetails", "Registration Number", "==", carInfo["Registration Number"]);
+        const queryResult = await firebaseContext?.getDataWithQuery("CarDetails", "registrationNumber", "==", carInfo.registrationNumber);
         if (queryResult && !queryResult.empty) {
             const documentData = queryResult.docs[0].data();
 
@@ -290,9 +295,9 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
             }
             else {
                 try {
-                    const loanQuery = await firebaseContext?.getDataWithQuery("LoanDetails", "Car Id", "==", queryResult.docs[0].id);
-                    const emiQuery = await firebaseContext?.getDataWithQuery("EMIDetails", "Loan Id", "==", loanQuery?.docs[0].id);
-                    const customerQuery = await firebaseContext?.getDataWithQuery("CustomerDetails", "Car Id", "==", queryResult.docs[0].id);
+                    const loanQuery = await firebaseContext?.getDataWithQuery("LoanDetails", "carId", "==", queryResult.docs[0].id);
+                    const emiQuery = await firebaseContext?.getDataWithQuery("EMIDetails", "loanId", "==", loanQuery?.docs[0].id);
+                    const customerQuery = await firebaseContext?.getDataWithQuery("CustomerDetails", "carId", "==", queryResult.docs[0].id);
 
                     if (queryResult) {
                         await deleteDoc(queryResult.docs[0].ref);
@@ -313,11 +318,11 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
                         if (usersQuery) {
                             const userData = usersQuery.docs[0].data();
 
-                            const carIds = userData["Cars Ids"];
+                            const carIds = userData.registeredCars;
                             const updatedCarIds = carIds.filter((item: string) => item !== queryResult.docs[0].id);
 
                             await updateDoc(usersQuery.docs[0].ref, {
-                                "Cars Ids": updatedCarIds,
+                                registeredCars: updatedCarIds,
                             })
                         }
 
@@ -420,51 +425,51 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
 
     const handleNextPhase = () => {
         if (isCarInfoSection) {
-            if (carInfo["Registration Number"].trim() === "") {
+            if (carInfo.registrationNumber.trim() === "") {
 
                 setCarInfoError((prev: CarInfoErrorType) => ({
                     ...prev,
-                    Registration_Number_Error: "This Field is Required",
+                    registrationNumberError: "This Field is Required",
                 }))
 
                 return;
             }
-            if (carInfo["Model Number"].trim() === "") {
+            if (carInfo.modelNumber.trim() === "") {
                 setCarInfoError((prev: CarInfoErrorType) => ({
                     ...prev,
-                    Model_Number_Error: "This Field is Required",
+                    modelNumberError: "This Field is Required",
                 }))
 
                 return;
             }
-            if (carInfo["Brand Name"].trim() === "") {
+            if (carInfo.brandName.trim() === "") {
                 setCarInfoError((prev: CarInfoErrorType) => ({
                     ...prev,
-                    Brand_Name_Error: "This Field is Required",
+                    brandNameError: "This Field is Required",
                 }))
 
                 return;
             }
-            if (carInfo["Engine Number"].trim() === "") {
+            if (carInfo.engineNumber.trim() === "") {
                 setCarInfoError((prev: CarInfoErrorType) => ({
                     ...prev,
-                    Engine_Number_Error: "This Field is Required",
+                    engineNumberError: "This Field is Required",
                 }))
 
                 return;
             }
-            if (carInfo["Chassis Number"].trim() === "") {
+            if (carInfo.chassisNumber.trim() === "") {
                 setCarInfoError((prev: CarInfoErrorType) => ({
                     ...prev,
-                    Chassis_Number_Error: "This Field is Required",
+                    chassisNumberError: "This Field is Required",
                 }))
 
                 return;
             }
-            if (carInfo["Purchased Date"].trim() === "") {
+            if (carInfo.purchasedDate.trim() === "") {
                 setCarInfoError((prev: CarInfoErrorType) => ({
                     ...prev,
-                    Purchased_Date_Error: "This Field is Required",
+                    purchasedDateError: "This Field is Required",
                 }))
 
                 return;
@@ -474,82 +479,89 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
             setIsLoanInfoSection(true);
         }
         else {
-            if (loanInfo["Total Loan Amount"].trim() === "") {
+            if (loanInfo.totalSaleAmount.trim() === "") {
                 setLoanInfoError((prev: LoanInfoErrorType) => ({
                     ...prev,
-                    Total_Loan_Amount_Error: "This Field is Required.",
+                    totalSaleAmountError: "This Field is Required.",
                 }))
                 return;
             }
-            if (loanInfo["Loan Tenure"].trim() === "") {
+            if (loanInfo.totalLoanAmount.trim() === "") {
                 setLoanInfoError((prev: LoanInfoErrorType) => ({
                     ...prev,
-                    Loan_Tenure_Error: "This Field is Required.",
+                    totalLoanAmountError: "This Field is Required.",
                 }))
                 return;
             }
-            else if (Number(loanInfo["Loan Tenure"].trim()) < 0) {
+            if (loanInfo.loanTenure.trim() === "") {
                 setLoanInfoError((prev: LoanInfoErrorType) => ({
                     ...prev,
-                    Loan_Tenure_Error: "Loan Tenure must be Greater then 0.",
+                    loanTenureError: "This Field is Required.",
                 }))
                 return;
             }
-            if (loanInfo["Interest Rate"].trim() === "") {
+            else if (Number(loanInfo.loanTenure.trim()) < 0) {
                 setLoanInfoError((prev: LoanInfoErrorType) => ({
                     ...prev,
-                    Interest_Rate_Error: "This Field is Required.",
+                    loanTenureError: "Loan Tenure must be Greater then 0.",
                 }))
                 return;
             }
-
-            if (loanInfo["Loan Start Date"].trim() === "") {
+            if (loanInfo.interestRate.trim() === "") {
                 setLoanInfoError((prev: LoanInfoErrorType) => ({
                     ...prev,
-                    Loan_Start_Date_Error: "This Field is Required.",
-                }))
-                return;
-            }
-            if (loanInfo["EMI Amount"].trim() === "") {
-                setLoanInfoError((prev: LoanInfoErrorType) => ({
-                    ...prev,
-                    EMI_Amount_Error: "This Field is Required.",
-                }))
-                return;
-            }
-            if (loanInfo["First EMI Date"].trim() === "") {
-                setLoanInfoError((prev: LoanInfoErrorType) => ({
-                    ...prev,
-                    "First_EMI Date_Error": "This Field is Required.",
-                }))
-                return;
-            }
-            if (loanInfo["Due Amount"].trim() === "") {
-                setLoanInfoError((prev: LoanInfoErrorType) => ({
-                    ...prev,
-                    Due_Amount_Error: "This Field is Required.",
-                }))
-                return;
-            }
-            if (loanInfo["Additional Charges"].trim() === "") {
-                setLoanInfoError((prev: LoanInfoErrorType) => ({
-                    ...prev,
-                    Additional_Charges_Error: "This Field is Required.",
-                }))
-                return;
-            }
-            if (loanInfo["Dasti Amount"].trim() === "") {
-                setLoanInfoError((prev: LoanInfoErrorType) => ({
-                    ...prev,
-                    Dasti_Amount_Error: "This Field is Required.",
+                    interestRateError: "This Field is Required.",
                 }))
                 return;
             }
 
-            if (loanInfo["Total Paid Amount"].trim() === "") {
+            if (loanInfo.loanStartDate.trim() === "") {
                 setLoanInfoError((prev: LoanInfoErrorType) => ({
                     ...prev,
-                    Total_Paid_Amount_Error: "This Field is Required.",
+                    loanStartDateError: "This Field is Required.",
+                }))
+                return;
+            }
+            if (loanInfo.emiAmount.trim() === "") {
+                setLoanInfoError((prev: LoanInfoErrorType) => ({
+                    ...prev,
+                    emiAmountError: "This Field is Required.",
+                }))
+                return;
+            }
+            if (loanInfo.firstEmiDate.trim() === "") {
+                setLoanInfoError((prev: LoanInfoErrorType) => ({
+                    ...prev,
+                    firstEmiDateError: "This Field is Required.",
+                }))
+                return;
+            }
+            if (loanInfo.dueAmount.trim() === "") {
+                setLoanInfoError((prev: LoanInfoErrorType) => ({
+                    ...prev,
+                    dueAmountError: "This Field is Required.",
+                }))
+                return;
+            }
+            if (loanInfo.additionalCharges.trim() === "") {
+                setLoanInfoError((prev: LoanInfoErrorType) => ({
+                    ...prev,
+                    additionalChargesError: "This Field is Required.",
+                }))
+                return;
+            }
+            if (loanInfo.dastiAmount.trim() === "") {
+                setLoanInfoError((prev: LoanInfoErrorType) => ({
+                    ...prev,
+                    dastiAmountError: "This Field is Required.",
+                }))
+                return;
+            }
+
+            if (loanInfo.downPayment.trim() === "") {
+                setLoanInfoError((prev: LoanInfoErrorType) => ({
+                    ...prev,
+                    downPaymentError: "This Field is Required.",
                 }))
                 return;
             }
@@ -561,38 +573,39 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
     useEffect(() => {
         if (isShowPopup && existingDetails) {
             const existingCarInfo = {
-                "Registration Number": existingDetails?.carInfo["Registration Number"] || "",
-                "Model Number": existingDetails?.carInfo["Model Number"] || "",
-                "Brand Name": existingDetails?.carInfo["Brand Name"] || "",
-                "Engine Number": existingDetails?.carInfo["Engine Number"] || "",
-                "Chassis Number": existingDetails?.carInfo["Chassis Number"] || "",
-                "Purchased Date": existingDetails?.carInfo["Purchased Date"] || "",
+                registrationNumber: existingDetails?.carInfo.registrationNumber || "",
+                modelNumber: existingDetails?.carInfo.modelNumber || "",
+                brandName: existingDetails?.carInfo.brandName || "",
+                engineNumber: existingDetails?.carInfo.engineNumber || "",
+                chassisNumber: existingDetails?.carInfo.chassisNumber || "",
+                purchasedDate: existingDetails?.carInfo.purchasedDate || "",
             }
 
             setCarInfo(existingCarInfo);
             const existingCustomerDetails = {
-                "Customer Name": existingDetails?.customerInfo?.["Customer Name"] || "",
-                "Address": existingDetails?.customerInfo?.["Address"] || "",
-                "Mobile Number": existingDetails?.customerInfo?.["Mobile Number"] || "",
-                "Guardian name": existingDetails?.customerInfo?.["Guardian name"] || "",
-                "Guarantor Name": existingDetails?.customerInfo?.["Guarantor Name"] || "",
-                "Guarantor Address": existingDetails?.customerInfo?.["Guarantor Address"] || "",
-                "Guarantor Mobile Number": existingDetails?.customerInfo?.["Guarantor Mobile Number"] || "",
-                "Guarantor Guardian Name": existingDetails?.customerInfo?.["Guarantor Guardian Name"] || "",
+                customerName: existingDetails?.customerInfo.customerName || "",
+                address: existingDetails?.customerInfo.address || "",
+                mobileNumber: existingDetails?.customerInfo.mobileNumber || "",
+                guardianName: existingDetails?.customerInfo.guardianName || "",
+                guarantorName: existingDetails?.customerInfo.guarantorName || "",
+                guarantorAddress: existingDetails?.customerInfo.guarantorAddress || "",
+                guarantorMobileNumber: existingDetails?.customerInfo.guarantorMobileNumber || "",
+                guarantorGuardianName: existingDetails?.customerInfo.guarantorGuardianName || "",
             }
 
             setCustomerInfo(existingCustomerDetails);
             const existingLoanInfo = {
-                "Total Loan Amount": existingDetails?.loanInfo["Total Loan Amount"] || "",
-                "Loan Start Date": existingDetails?.loanInfo["Loan Start Date"] || "",
-                "Loan Tenure": existingDetails?.loanInfo["Loan Tenure"] || "",
-                "EMI Amount": existingDetails?.loanInfo["EMI Amount"] || "",
-                "First EMI Date": existingDetails?.loanInfo["First EMI Date"] || "",
-                "Due Amount": existingDetails?.loanInfo["Due Amount"] || "",
-                "Additional Charges": existingDetails?.loanInfo["Additional Charges"] || "",
-                "Dasti Amount": existingDetails?.loanInfo["Dasti Amount"] || "",
-                "Total Paid Amount": existingDetails?.loanInfo["Total Paid Amount"] || "",
-                "Interest Rate": existingDetails?.loanInfo["Interest Rate"] || "",
+                totalSaleAmount: existingDetails?.loanInfo.totalSaleAmount || "",
+                totalLoanAmount: existingDetails?.loanInfo.totalLoanAmount || "",
+                loanStartDate: existingDetails?.loanInfo.loanStartDate || "",
+                loanTenure: existingDetails?.loanInfo.loanTenure || "",
+                emiAmount: existingDetails?.loanInfo.emiAmount || "",
+                firstEmiDate: existingDetails?.loanInfo.firstEmiDate || "",
+                dueAmount: existingDetails?.loanInfo.dueAmount || "",
+                additionalCharges: existingDetails?.loanInfo.additionalCharges || "",
+                dastiAmount: existingDetails?.loanInfo.dastiAmount || "",
+                downPayment: existingDetails?.loanInfo.downPayment || "",
+                interestRate: existingDetails?.loanInfo.interestRate || "",
             }
 
             setLoanInfo(existingLoanInfo);

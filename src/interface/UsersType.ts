@@ -24,19 +24,10 @@ export interface SignUpErrorType {
     passwordError: string;
     confirmPasswordError: string;
 }
-export interface LoginQueryType {
-    userName: string;
-    mobile: string;
-    email: string;
-    password: string;
-    "Cars Ids": string[];
-}
-
 export interface UserDetailsType {
-    "Cars ids": string[];
+    registeredCars: string[];
     email: string;
     mobile: string;
-    password: string;
     userName: string;
 }
 export interface FirebaseContextType {

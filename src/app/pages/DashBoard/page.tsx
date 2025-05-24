@@ -28,22 +28,24 @@ const DashBoard = () => {
     const router = useRouter()
 
     const getTotalLoanAmount = () => {
-        let totalAmount = "0";
-        fillteredRegisteredCarInfo?.forEach((item: CarDetailsWithIdType) => {
-            totalAmount = (Number(totalAmount) + Number(item.loanInfo["Total Loan Amount"])).toString();
-        })
+        if (fillteredRegisteredCarInfo && fillteredRegisteredCarInfo.length > 0) {
+            let totalAmount = "0";
+            fillteredRegisteredCarInfo.forEach((item: CarDetailsWithIdType) => {
+                totalAmount = (Number(totalAmount) + Number(item.loanInfo.totalLoanAmount)).toString();
+            })
 
-        setTotalLoanAmount(totalAmount);
+            setTotalLoanAmount(totalAmount);
+        }
     }
 
     const getCarRecords = async () => {
         setIsLoading(true);
 
         try {
-            const requiredCarData: CarDetailsWithIdType[] = await Promise.all(firebaseContext?.userDetails?.["Cars Ids"].map(async (item: string) => {
+            const requiredCarData: CarDetailsWithIdType[] = await Promise.all(firebaseContext?.userDetails?.registeredCars.map(async (item: string) => {
                 const docRef = doc(firestore, "CarDetails", item);
                 const carDocument = await getDoc(docRef);
-                const loanDocs = await firebaseContext.getDataWithQuery("LoanDetails", "Car Id", "==", item);
+                const loanDocs = await firebaseContext.getDataWithQuery("LoanDetails", "carId", "==", item);
 
 
                 return {
@@ -72,24 +74,24 @@ const DashBoard = () => {
 
     const handleSearch = (registrationNumber: string | null, carModel: string | null) => {
         if (registrationNumber !== null) {
-            const fillteredInfo = allRegisteredCarInfo?.filter((item) => ((item.carInfo["Registration Number"]).toLowerCase().includes(registrationNumber.toLowerCase())));
+            const fillteredInfo = allRegisteredCarInfo?.filter((item) => ((item.carInfo.registrationNumber).toLowerCase().includes(registrationNumber.toLowerCase())));
 
             setFillteredRegisteredCarInfo(fillteredInfo ? fillteredInfo : null);
         }
         else if (carModel !== null) {
-            const fillteredInfo = allRegisteredCarInfo?.filter((item) => ((item.carInfo["Model Number"]).toLowerCase()).includes(carModel.toLowerCase()));
+            const fillteredInfo = allRegisteredCarInfo?.filter((item) => ((item.carInfo.modelNumber).toLowerCase()).includes(carModel.toLowerCase()));
 
             setFillteredRegisteredCarInfo(fillteredInfo ? fillteredInfo : null);
         }
     }
     useEffect(() => {
-        if (firebaseContext?.userDetails && firebaseContext?.userDetails?.["Cars Ids"]?.length) {
+        if (firebaseContext?.userDetails && firebaseContext?.userDetails?.registeredCars?.length) {
             getCarRecords();
         }
     }, [firebaseContext?.userDetails])
 
     useEffect(() => {
-        if (fillteredRegisteredCarInfo?.length) {
+        if (fillteredRegisteredCarInfo && fillteredRegisteredCarInfo.length > 0) {
             getTotalLoanAmount();
         }
     }, [fillteredRegisteredCarInfo])
@@ -158,6 +160,7 @@ const DashBoard = () => {
                                     ) : <button className="text-white bg-primary px-5 py-2 rounded " onClick={() => {
                                         setShowRegistrationInput(false);
                                         setShowCarModelInput(true);
+                                        setCarModel("");
                                     }}>Search Using Car Model</button>}
 
                                 {showRegistrationInput ?
@@ -178,6 +181,7 @@ const DashBoard = () => {
                                         </div>
                                     ) : <button className="text-white bg-primary px-5 py-2 rounded " onClick={() => {
                                         setShowRegistrationInput(true);
+                                        setRegistrationNumber("");
                                         setShowCarModelInput(false);
                                     }}>Search Using Registration Number</button>}
 
@@ -202,13 +206,13 @@ const DashBoard = () => {
                                                 fillteredRegisteredCarInfo?.map((item, index) => {
 
                                                     return (
-                                                        <tr key={item.carInfo?.["Registration Number"]}>
+                                                        <tr key={item.carInfo.registrationNumber}>
                                                             <td className="px-3 py-2 border border-black">{index + 1}</td>
-                                                            <td className="px-3 py-2 border border-black">{item.carInfo?.["Registration Number"]}</td>
-                                                            <td className="px-3 py-2 border border-black">{item.carInfo?.["Model Number"]}</td>
-                                                            <td className="px-3 py-2 border border-black whitespace-nowrap">{item.carInfo?.["Purchased Date"]}</td>
-                                                            <td className="px-3 py-2 border border-black">{item.loanInfo?.["Total Loan Amount"] || 0}</td>
-                                                            <td className="px-3 py-2 border border-black">{item.loanInfo?.["EMI Amount"] || 0}</td>
+                                                            <td className="px-3 py-2 border border-black">{item.carInfo.registrationNumber}</td>
+                                                            <td className="px-3 py-2 border border-black">{item.carInfo.modelNumber}</td>
+                                                            <td className="px-3 py-2 border border-black whitespace-nowrap">{item.carInfo.purchasedDate}</td>
+                                                            <td className="px-3 py-2 border border-black">{item.loanInfo.totalLoanAmount || 0}</td>
+                                                            <td className="px-3 py-2 border border-black">{item.loanInfo.emiAmount || 0}</td>
                                                             <td className="px-3 py-2 border border-black">
 
                                                                 <button className="text-accent font-bold mr-5" onClick={(e) => {
@@ -219,7 +223,7 @@ const DashBoard = () => {
 
                                                                 <button className="text-red-500" onClick={() => {
                                                                     setCarIdForDeletion(item.carId);
-                                                                    setCarRegistrationNoForDeletion(item.carInfo["Registration Number"]);
+                                                                    setCarRegistrationNoForDeletion(item.carInfo.registrationNumber);
                                                                     setShowDeleteConfirm(true);
                                                                 }}>Delete</button>
                                                             </td>

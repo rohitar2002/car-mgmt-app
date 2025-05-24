@@ -19,7 +19,7 @@ const signUpUser = async (data: SignUpType, password: string) => {
                 ...passedData,
                 email: passedData.email.toLowerCase(),
                 mobile: countryCode.value + passedData.mobile,
-                "Cars Ids": [],
+                registeredCars: [],
             });
             return true;
         }
@@ -65,12 +65,12 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
                 const documentId = queryResult.docs[0].id;
                 const documentData = queryResult.docs[0].data();
 
-                if (documentData["Cars Ids"].length) {
-                    const carIds = documentData["Cars Ids"];
+                if (documentData.registeredCars.length) {
+                    const registeredCars = documentData.registeredCars;
 
                     const activeCars = (
                         await Promise.all(
-                            carIds.map(async (item: string) => {
+                            registeredCars.map(async (item: string) => {
                                 const carDocRef = doc(firestore, "CarDetails", item);
                                 const carDocument = await getDoc(carDocRef);
                                 const documentSnapShot = carDocument.data();
@@ -85,7 +85,7 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
                     setUserDetails({
                         ...documentData,
                         id: documentId,
-                        "Cars Ids": activeCars,
+                        registeredCars: activeCars,
                     });
                 }
                 else {
@@ -117,33 +117,33 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
 
             const loanDocRef = await addDoc(collection(firestore, "LoanDetails"), {
                 ...data.loanInfo,
-                "Remaining Balance": (Number(data.loanInfo["Total Loan Amount"]) - Number(data.loanInfo["Total Paid Amount"])).toString(),
-                "Car Id": carDocRef.id,
+                remainingBalance: (Number(data.loanInfo.totalLoanAmount) - Number(data.loanInfo.downPayment)).toString(),
+                carId: carDocRef.id,
             });
 
             await addDoc(collection(firestore, "EMIDetails"), {
                 "loanId": loanDocRef.id,
                 "emiNo": 1,
-                "emiAmount": data.loanInfo["EMI Amount"],
-                "emiDueDate": nextEMIDate(data.loanInfo["First EMI Date"]),
+                "emiAmount": data.loanInfo.emiAmount,
+                "emiDueDate": nextEMIDate(data.loanInfo.firstEmiDate),
             });
 
             await addDoc(collection(firestore, "CustomerDetails"), {
                 ...data.customerInfo,
-                "Car Id": carDocRef.id,
+                carId: carDocRef.id,
             });
 
             const userRef = doc(firestore, "Users", userDetails?.id);
             await updateDoc(userRef, {
-                "Cars Ids": arrayUnion(carDocRef.id),
+                registeredCars: arrayUnion(carDocRef.id),
             })
 
-            const carIds: string[] = userDetails?.["Cars Ids"];
+            const carIds: string[] = userDetails?.registeredCars || [];
             carIds.push(carDocRef.id);
 
             setUserDetails((prev: UserDetailsType) => ({
                 ...prev,
-                "Cars Ids": carIds,
+                registeredCars: carIds,
             }))
 
         } catch (error: unknown) {
@@ -164,10 +164,10 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
                 isDeleted: true,
             })
 
-            const updatedCarIds: string[] = userDetails?.["Cars Ids"].filter((item: string) => item != carId)
+            const updatedCarIds: string[] = userDetails?.registeredCars.filter((item: string) => item != carId)
             setUserDetails((prev: UserDetailsType) => ({
                 ...prev,
-                "Cars Ids": updatedCarIds,
+                registeredCars: updatedCarIds,
             }))
 
             return true;

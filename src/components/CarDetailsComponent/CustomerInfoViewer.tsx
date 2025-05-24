@@ -11,38 +11,38 @@ export const CustomerInfoViewer = ({ customerInfo }: CustomerInfoViewerProps) =>
             <div className="flex flex-col gap-3 justify-center px-2 lg:px-10">
                 <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
                     <label className="font-bold text-lg">Name:</label>
-                    <h2 className="text-md">{customerInfo?.["Customer Name"] || "--"}</h2>
+                    <h2 className="text-md">{customerInfo?.customerName || "--"}</h2>
                 </div>
                 <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
                     <label className="font-bold text-lg">Address:</label>
-                    <h2 className="text-md">{customerInfo?.Address || "--"}</h2>
+                    <h2 className="text-md">{customerInfo?.address || "--"}</h2>
                 </div>
                 <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
                     <label className="font-bold text-lg">Mobile No.:</label>
-                    <h2 className="text-md">{customerInfo?.["Mobile Number"] || "--"}</h2>
+                    <h2 className="text-md">{customerInfo?.mobileNumber || "--"}</h2>
                 </div>
                 <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
                     <label className="font-bold text-lg">Guardian Name:</label>
-                    <h2 className="text-md">{customerInfo?.["Guardian name"] || "--"}</h2>
+                    <h2 className="text-md">{customerInfo?.guardianName || "--"}</h2>
                 </div>
                 <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
                     <label className="font-bold text-lg">Guarantor Name:</label>
-                    <h2 className="text-md">{customerInfo?.["Guarantor Name"] || "--"}</h2>
+                    <h2 className="text-md">{customerInfo?.guarantorName || "--"}</h2>
                 </div>
 
                 <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
                     <label className="font-bold text-lg">Guarantor Address :</label>
-                    <h2 className="text-md">{customerInfo?.["Guarantor Address"] || "--"}</h2>
+                    <h2 className="text-md">{customerInfo?.guarantorAddress || "--"}</h2>
                 </div>
 
                 <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
                     <label className="font-bold text-lg">Guarantor Mobile No. :</label>
-                    <h2 className="text-md">{customerInfo?.["Guarantor Mobile Number"] || "--"}</h2>
+                    <h2 className="text-md">{customerInfo?.guarantorMobileNumber || "--"}</h2>
                 </div>
 
                 <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
                     <label className="font-bold text-lg">Guarantor Guardian Name :</label>
-                    <h2 className="text-md">{customerInfo?.["Guarantor Guardian Name"] || "--"}</h2>
+                    <h2 className="text-md">{customerInfo?.guarantorGuardianName || "--"}</h2>
                 </div>
             </div>
         </section>
