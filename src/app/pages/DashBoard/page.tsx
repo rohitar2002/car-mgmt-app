@@ -92,7 +92,6 @@ const DashBoard = () => {
 
     useEffect(() => {
         if (fillteredRegisteredCarInfo && fillteredRegisteredCarInfo.length > 0) {
-        if (fillteredRegisteredCarInfo && fillteredRegisteredCarInfo.length > 0) {
             getTotalLoanAmount();
         }
     }, [fillteredRegisteredCarInfo])
