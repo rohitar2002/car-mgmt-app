@@ -23,8 +23,7 @@ export const Header = () => {
       if (signOutResponse) {
         toast.success("SignOut User");
         firebaseContext?.setUserDetails(null);
-        localStorage.removeItem("UsersInfo");
-        localStorage.removeItem("carDetails");
+
         router.replace("/")
       }
       else {

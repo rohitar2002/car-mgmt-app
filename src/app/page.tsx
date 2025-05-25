@@ -75,10 +75,10 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (localStorage.getItem("UsersInfo")) {
+    if (firebaseResponse?.userDetails) {
       router.replace("/pages/DashBoard")
     }
-  }, [])
+  }, [firebaseResponse?.userDetails])
 
   return (
     <>

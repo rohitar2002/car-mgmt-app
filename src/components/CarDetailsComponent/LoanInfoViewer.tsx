@@ -39,8 +39,8 @@ export const LoanInfoViewer = ({ loanInfo }: LoanInfoViewerProps) => {
                 </div>
 
                 {!isExpended ? (
-                    <button className="text-primary font-bold text-md" onClick={() => setIsExpanded(true)}>
-                        Show More
+                    <button className="text-primary font-bold text-md inline-block mx-auto" onClick={() => setIsExpanded(true)}>
+                        Show More ⬇️
                     </button>
                 ) : (
                     <div className="flex flex-col gap-3 justify-center">
@@ -65,8 +65,8 @@ export const LoanInfoViewer = ({ loanInfo }: LoanInfoViewerProps) => {
                             <h2 className="text-md">{loanInfo?.additionalCharges || "--"}</h2>
                         </div>
 
-                        <button className="text-primary font-bold text-md" onClick={() => setIsExpanded(false)}>
-                            Show Less
+                        <button className="text-primary font-bold text-md inline-block mx-auto" onClick={() => setIsExpanded(false)}>
+                            Show Less ⬆️
                         </button>
                     </div>
                 )}

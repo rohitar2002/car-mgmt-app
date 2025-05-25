@@ -4,7 +4,7 @@ import { nextEMIDate } from "@/Helper/utils";
 import { auth, firestore } from "@/firebase/firebase.config";
 import { CarDetailsType, EmiDetailsType } from "@/interface/CarEntriesTypes";
 import { FirebaseContextType, LoginCredentials, SignUpType, UserDetailsType } from "@/interface/UsersType";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { addDoc, arrayUnion, collection, doc, DocumentData, getDoc, getDocs, query, updateDoc, where, WhereFilterOp } from "firebase/firestore";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
@@ -198,17 +198,23 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
         }
         return "Something Went Wrong!";
     }
-    useEffect(() => {
-        if (userDetails) {
-            localStorage.setItem("UsersInfo", JSON.stringify(userDetails));
-        }
-    }, [userDetails])
 
     useEffect(() => {
-        const usersData = localStorage.getItem("UsersInfo");
 
-        if (usersData) {
-            setUserDetails(JSON.parse(usersData));
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user && user.uid) {
+                const queryResult = await getDataWithQuery("Users", "email", "==", user.email);
+                if (queryResult && !queryResult.empty) {
+                    setUserDetails({
+                        ...queryResult.docs[0].data(),
+                    });
+                }
+            }
+            else setUserDetails(null);
+        })
+
+        return () => {
+            unsubscribe();
         }
     }, [])
     return (
