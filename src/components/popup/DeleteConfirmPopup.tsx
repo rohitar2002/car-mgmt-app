@@ -49,7 +49,7 @@ const DeleteConfirmPopup = ({ isShowPopup, closePopup, carId, registrationNumber
         const deletionResposne = await firebaseContext?.deleteCarRecord(carId);
 
         if (typeof deletionResposne === "boolean") {
-            toast.success("car Entry Successfully Deleted.");
+            toast.success("Car Entry Deleted Successfully.");
             closePopup();
             getCarRecords();
         }
