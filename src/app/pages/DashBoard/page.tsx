@@ -42,7 +42,7 @@ const DashBoard = () => {
         setIsLoading(true);
 
         try {
-            const requiredCarData: CarDetailsWithIdType[] = await Promise.all(firebaseContext?.userDetails?.registeredCars.map(async (item: string) => {
+            const requiredCarData: CarDetailsWithIdType[] = (await Promise.all(firebaseContext?.userDetails?.registeredCars.map(async (item: string) => {
                 const docRef = doc(firestore, "CarDetails", item);
                 const carDocument = await getDoc(docRef);
                 const loanDocs = await firebaseContext.getDataWithQuery("LoanDetails", "carId", "==", item);
@@ -60,7 +60,7 @@ const DashBoard = () => {
                     carId: carDocument.id,
                     loanId: !loanDocs.empty ? loanDocs.docs[0].id : null,
                 }
-            }))
+            }))).filter((item) => item.loanInfo !== null && item.carInfo !== null && !item.carInfo?.isDeleted);
 
             setAllRegisteredCarInfo(requiredCarData);
             setFillteredRegisteredCarInfo(requiredCarData);
