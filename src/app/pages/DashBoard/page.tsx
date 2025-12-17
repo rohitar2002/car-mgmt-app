@@ -61,7 +61,7 @@ const DashBoard = () => {
                     loanId: !loanDocs.empty ? loanDocs.docs[0].id : null,
                 }
             }))).filter((item) => item.loanInfo !== null && item.carInfo !== null && !item.carInfo?.isDeleted);
-
+            
             setAllRegisteredCarInfo(requiredCarData);
             setFillteredRegisteredCarInfo(requiredCarData);
         } catch (error) {

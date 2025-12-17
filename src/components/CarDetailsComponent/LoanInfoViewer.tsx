@@ -53,7 +53,7 @@ export const LoanInfoViewer = ({ loanInfo }: LoanInfoViewerProps) => {
                             <h2 className="text-md">{loanInfo?.firstEmiDate || "--"}</h2>
                         </div>
                         <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
-                            <label className="font-bold text-lg">Due Amount:</label>
+                            <label className="font-bold text-lg">Any balance Amount:</label>
                             <h2 className="text-md">{loanInfo?.dueAmount || "--"}</h2>
                         </div>
                         <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">

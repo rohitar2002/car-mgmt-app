@@ -114,10 +114,10 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
     const addCarRecord = async (data: CarDetailsType) => {
         try {
             const carDocRef = await addDoc(collection(firestore, "CarDetails"), data.carInfo);
-
+            const bal = (data.loanInfo.totalLoanAmount.trim() && data.loanInfo.downPayment.trim()) ? (Number(data.loanInfo.totalLoanAmount) - Number(data.loanInfo.downPayment)).toString() : "0";
             const loanDocRef = await addDoc(collection(firestore, "LoanDetails"), {
                 ...data.loanInfo,
-                remainingBalance: (Number(data.loanInfo.totalLoanAmount) - Number(data.loanInfo.downPayment)).toString(),
+                remainingBalance: bal,
                 carId: carDocRef.id,
             });
 
@@ -125,19 +125,19 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
                 "loanId": loanDocRef.id,
                 "emiNo": 1,
                 "emiAmount": data.loanInfo.emiAmount,
-                "emiDueDate": nextEMIDate(data.loanInfo.firstEmiDate),
+                "emiDueDate": data.loanInfo.firstEmiDate.trim() != "" ? nextEMIDate(data.loanInfo.firstEmiDate) : "",
             });
 
             await addDoc(collection(firestore, "CustomerDetails"), {
                 ...data.customerInfo,
                 carId: carDocRef.id,
             });
-
+             
             const userRef = doc(firestore, "Users", userDetails?.id);
             await updateDoc(userRef, {
                 registeredCars: arrayUnion(carDocRef.id),
             })
-
+            
             const carIds: string[] = userDetails?.registeredCars || [];
             carIds.push(carDocRef.id);
 
@@ -154,7 +154,7 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
             return "Something Went Wrong!";
         }
 
-        return true;
+        return false;
     }
 
     const deleteCarRecord = async (carId: string) => {
@@ -207,6 +207,7 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
                 if (queryResult && !queryResult.empty) {
                     setUserDetails({
                         ...queryResult.docs[0].data(),
+                        id: queryResult.docs[0].id,
                     });
                 }
             }
@@ -217,6 +218,8 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
             unsubscribe();
         }
     }, [])
+
+   
     return (
         <FirebaseUtilsContext.Provider value={{ signUpUser, getDataWithQuery, loginUser, signOutUser, userDetails, addCarRecord, addEMIDetails, setUserDetails, deleteCarRecord }}>
             {children}

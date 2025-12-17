@@ -36,6 +36,7 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
         emiDueDate: "",
         emiAmount: "",
         slipNo: "",
+        emiReceivedDate: ""
     })
     const customStyles: ReactModal.Styles = {
         overlay: {
@@ -64,7 +65,7 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
             ...prevState,
             [field]: value,
         }));
-        if (field === "emiNo" || field === "emiAmount" || field === "emiDueDate" || field === "slipNo") {
+        if (field === "emiNo" || field === "emiAmount" || field === "emiDueDate" || field === "slipNo" || field === "emiReceivedDate") {
             setErrorDetails((prevState) => ({
                 ...prevState,
                 [field]: "",
@@ -83,7 +84,15 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
         })
         closePopup();
     }
-
+    const clearState = ()=>{
+        setErrorDetails({
+            emiNo: "",
+            emiDueDate: "",
+            emiAmount: "",
+            slipNo: "",
+            emiReceivedDate: "",
+        })
+    }
     const handleValidation = () => {
         if (emiDetails.emiNo === "") {
             setErrorDetails((prevState) => ({
@@ -109,13 +118,23 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
 
         return true;
     }
-    const slipNoValidation = () => {
-        if (emiDetails.emiReceivedDate && emiDetails.slipNo === "") {
-            setErrorDetails((prevState) => ({
-                ...prevState,
-                slipNo: "Slip Number is required",
-            }))
-            return false;
+    const emiReceivedValidation = () => {
+        if (emiDetails.emiReceivedDate.trim() || emiDetails.slipNo.trim()) {
+            if (!emiDetails.slipNo.trim()) {
+                setErrorDetails((prevState) => ({
+                    ...prevState,
+                    slipNo: "Slip Number is required",
+                }))
+                return false;
+            }
+            if (!emiDetails.emiReceivedDate.trim()) {
+                setErrorDetails((prevState) => ({
+                    ...prevState,
+                    emiReceivedDate: "EMI Received date is required"
+                }))
+                return false;
+            }
+
         }
         return true;
     }
@@ -124,15 +143,9 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
 
         const isValid = handleValidation();
         if (!isValid) return;
-        const isSlipNoValid = slipNoValidation();
-        if (!isSlipNoValid) return;
-        setErrorDetails({
-            emiNo: "",
-            emiDueDate: "",
-            emiAmount: "",
-            slipNo: "",
-        })
-
+        const isReceivedEntryValid = emiReceivedValidation();
+        if (!isReceivedEntryValid) return;
+        clearState();
         setIsLoading(true);
 
         const emiDocs = await firebaseContext?.getDataWithQuery("EMIDetails", "loanId", "==", loanId);
@@ -161,14 +174,11 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
     const handleUpdate = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
-        const isSlipNoValid = slipNoValidation();
-        if (!isSlipNoValid) return;
-        setErrorDetails({
-            emiNo: "",
-            emiDueDate: "",
-            emiAmount: "",
-            slipNo: "",
-        })
+        const isValid = handleValidation();
+        if (!isValid) return;
+        const isReceivedEntryValid = emiReceivedValidation();
+        if (!isReceivedEntryValid) return;
+        clearState();
         handleEMIUpdate(emiDetails);
     }
 
@@ -217,10 +227,12 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
         }
         else {
             window.removeEventListener("resize", handleScreenSize);
+            clearState();
         }
 
         return () => {
             window.removeEventListener("resize", handleScreenSize);
+            clearState();
         }
     }, [isShowPopup])
     return (
@@ -259,6 +271,7 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
                                 <div className="flex flex-col gap-2 w-full md:w-1/2">
                                     <label htmlFor="receivedDate" className="text-lg font-semibold">Received Date</label>
                                     <input type="date" id="receivedDate" value={emiDetails.emiReceivedDate} onChange={(e) => handleValueChange(e.target.value, "emiReceivedDate")} className="focus:outline-none border border-gray-300 rounded-md p-2" />
+                                    {errorDetails.emiReceivedDate && <p className="text-red-500 text-lg font-bold">{errorDetails.emiReceivedDate}</p>}
                                 </div>
                             </div>
 
