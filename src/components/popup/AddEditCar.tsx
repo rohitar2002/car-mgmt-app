@@ -55,39 +55,6 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
         interestRate: existingDetails?.loanInfo.interestRate || "",
     })
     const [registrationNumberError, setRegistrationNumberError] = useState<string>("")
-    // const [carInfoError, setCarInfoError] = useState<CarInfoErrorType>({
-    //     registrationNumberError: "",
-    //     modelNumberError: "",
-    //     brandNameError: "",
-    //     engineNumberError: "",
-    //     chassisNumberError: "",
-    //     purchasedDateError: "",
-    // })
-    // const [customerInfoError, setCustomerInfoError] = useState<CustomerInfoType>({
-    //     customerName: "",
-    //     address: "",
-    //     mobileNumber: "",
-    //     guardianName: "",
-    //     guarantorName: "",
-    //     guarantorAddress: "",
-    //     guarantorMobileNumber: "",
-    //     guarantorGuardianName: "",
-    // })
-
-    // const [loanInfoError, setLoanInfoError] = useState<LoanInfoErrorType>({
-    //     totalSaleAmountError: "",
-    //     totalLoanAmountError: "",
-    //     loanStartDateError: "",
-    //     loanTenureError: "",
-    //     emiAmountError: "",
-    //     firstEmiDateError: "",
-    //     dueAmountError: "",
-    //     additionalChargesError: "",
-    //     dastiAmountError: "",
-    //     downPaymentError: "",
-    //     interestRateError: "",
-    // })
-
     const [carInfoChangesStatus, setCarInfoChangesStatus] = useState<CarInfoChangesStatusType>({
         registrationNumber: false,
         modelNumber: false,
@@ -182,105 +149,9 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
             guarantorGuardianName: "",
         })
         setRegistrationNumberError("");
-        // setCarInfoError({
-        //     registrationNumberError: "",
-        //     modelNumberError: "",
-        //     brandNameError: "",
-        //     engineNumberError: "",
-        //     chassisNumberError: "",
-        //     purchasedDateError: "",
-        // })
-
-        // setLoanInfoError({
-        //     totalSaleAmountError: "",
-        //     totalLoanAmountError: "",
-        //     loanStartDateError: "",
-        //     loanTenureError: "",
-        //     emiAmountError: "",
-        //     firstEmiDateError: "",
-        //     dueAmountError: "",
-        //     additionalChargesError: "",
-        //     dastiAmountError: "",
-        //     downPaymentError: "",
-        //     interestRateError: "",
-        // })
-        // setCustomerInfoError({
-        //     customerName: "",
-        //     address: "",
-        //     mobileNumber: "",
-        //     guardianName: "",
-        //     guarantorName: "",
-        //     guarantorAddress: "",
-        //     guarantorMobileNumber: "",
-        //     guarantorGuardianName: "",
-        // })
-
     }
 
-    // const isCustomerInfoValid = () => {
-    //     if (customerInfo.customerName.trim() === "") {
-    //         setCustomerInfoError((prev: CustomerInfoType) => ({
-    //             ...prev,
-    //             customerName: "This Field is Required",
-    //         }))
-    //         return false;
-    //     }
-    //     if (customerInfo.address.trim() === "") {
-    //         setCustomerInfoError((prev: CustomerInfoType) => ({
-    //             ...prev,
-    //             address: "This Field is Required",
-    //         }))
-    //         return false;
-    //     }
-    //     if (customerInfo.mobileNumber.trim() === "") {
-    //         setCustomerInfoError((prev: CustomerInfoType) => ({
-    //             ...prev,
-    //             mobileNumber: "This Field is Required",
-    //         }))
-    //         return false;
-    //     }
-    //     if (customerInfo.guardianName.trim() === "") {
-    //         setCustomerInfoError((prev: CustomerInfoType) => ({
-    //             ...prev,
-    //             guardianName: "This Field is Required",
-    //         }))
-    //         return false;
-    //     }
-    //     if (customerInfo.guarantorName.trim() === "") {
-    //         setCustomerInfoError((prev: CustomerInfoType) => ({
-    //             ...prev,
-    //             guarantorName: "This Field is Required",
-    //         }))
-    //         return false;
-    //     }
-    //     if (customerInfo.guarantorAddress.trim() === "") {
-    //         setCustomerInfoError((prev: CustomerInfoType) => ({
-    //             ...prev,
-    //             guarantorAddress: "This Field is Required",
-    //         }))
-    //         return false;
-    //     }
-    //     if (customerInfo.guarantorMobileNumber.trim() === "") {
-    //         setCustomerInfoError((prev: CustomerInfoType) => ({
-    //             ...prev,
-    //             guarantorMobileNumber: "This Field is Required",
-    //         }))
-    //         return false;
-    //     }
-    //     if (customerInfo.guarantorGuardianName.trim() === "") {
-    //         setCustomerInfoError((prev: CustomerInfoType) => ({
-    //             ...prev,
-    //             guarantorGuardianName: "This Field is Required",
-    //         }))
-    //         return false;
-    //     }
-
-    //     return true;
-    // }
     const handleSubmit = async () => {
-        // const isValidCustomerInfo = isCustomerInfoValid();
-        // if (!isValidCustomerInfo) return;
-
         setIsLoading(true);
 
         const queryResult = await firebaseContext?.getDataWithQuery("CarDetails", "registrationNumber", "==", carInfo.registrationNumber);
@@ -361,9 +232,6 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
         setIsLoading(false);
     }
     const handleUpdate = async () => {
-        // const isValidCustomerInfo = isCustomerInfoValid();
-        // if (!isValidCustomerInfo) return;
-
         setIsLoading(true);
 
         const updatedCarInfo: Partial<CarInfoType> = {};
@@ -427,145 +295,13 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
         if (isCarInfoSection) {
             if (carInfo.registrationNumber.trim() === "") {
                 setRegistrationNumberError("This Field is Required");
-                // setCarInfoError((prev: CarInfoErrorType) => ({
-                //     ...prev,
-                //     registrationNumberError: "This Field is Required",
-                // }))
-
                 return;
             }
-            // if (carInfo.modelNumber.trim() === "") {
-            //     setCarInfoError((prev: CarInfoErrorType) => ({
-            //         ...prev,
-            //         modelNumberError: "This Field is Required",
-            //     }))
-
-            //     return;
-            // }
-            // if (carInfo.brandName.trim() === "") {
-            //     setCarInfoError((prev: CarInfoErrorType) => ({
-            //         ...prev,
-            //         brandNameError: "This Field is Required",
-            //     }))
-
-            //     return;
-            // }
-            // if (carInfo.engineNumber.trim() === "") {
-            //     setCarInfoError((prev: CarInfoErrorType) => ({
-            //         ...prev,
-            //         engineNumberError: "This Field is Required",
-            //     }))
-
-            //     return;
-            // }
-            // if (carInfo.chassisNumber.trim() === "") {
-            //     setCarInfoError((prev: CarInfoErrorType) => ({
-            //         ...prev,
-            //         chassisNumberError: "This Field is Required",
-            //     }))
-
-            //     return;
-            // }
-            // if (carInfo.purchasedDate.trim() === "") {
-            //     setCarInfoError((prev: CarInfoErrorType) => ({
-            //         ...prev,
-            //         purchasedDateError: "This Field is Required",
-            //     }))
-
-            //     return;
-            // }
 
             setIsCarInfoSection(false);
             setIsLoanInfoSection(true);
         }
         else {
-            // if (loanInfo.totalSaleAmount.trim() === "") {
-            //     setLoanInfoError((prev: LoanInfoErrorType) => ({
-            //         ...prev,
-            //         totalSaleAmountError: "This Field is Required.",
-            //     }))
-            //     return;
-            // }
-            // if (loanInfo.totalLoanAmount.trim() === "") {
-            //     setLoanInfoError((prev: LoanInfoErrorType) => ({
-            //         ...prev,
-            //         totalLoanAmountError: "This Field is Required.",
-            //     }))
-            //     return;
-            // }
-            // if (loanInfo.loanTenure.trim() === "") {
-            //     setLoanInfoError((prev: LoanInfoErrorType) => ({
-            //         ...prev,
-            //         loanTenureError: "This Field is Required.",
-            //     }))
-            //     return;
-            // }
-            // else if (Number(loanInfo.loanTenure.trim()) < 0) {
-            //     setLoanInfoError((prev: LoanInfoErrorType) => ({
-            //         ...prev,
-            //         loanTenureError: "Loan Tenure must be Greater then 0.",
-            //     }))
-            //     return;
-            // }
-            // if (loanInfo.interestRate.trim() === "") {
-            //     setLoanInfoError((prev: LoanInfoErrorType) => ({
-            //         ...prev,
-            //         interestRateError: "This Field is Required.",
-            //     }))
-            //     return;
-            // }
-
-            // if (loanInfo.loanStartDate.trim() === "") {
-            //     setLoanInfoError((prev: LoanInfoErrorType) => ({
-            //         ...prev,
-            //         loanStartDateError: "This Field is Required.",
-            //     }))
-            //     return;
-            // }
-            // if (loanInfo.emiAmount.trim() === "") {
-            //     setLoanInfoError((prev: LoanInfoErrorType) => ({
-            //         ...prev,
-            //         emiAmountError: "This Field is Required.",
-            //     }))
-            //     return;
-            // }
-            // if (loanInfo.firstEmiDate.trim() === "") {
-            //     setLoanInfoError((prev: LoanInfoErrorType) => ({
-            //         ...prev,
-            //         firstEmiDateError: "This Field is Required.",
-            //     }))
-            //     return;
-            // }
-            // if (loanInfo.dueAmount.trim() === "") {
-            //     setLoanInfoError((prev: LoanInfoErrorType) => ({
-            //         ...prev,
-            //         dueAmountError: "This Field is Required.",
-            //     }))
-            //     return;
-            // }
-            // if (loanInfo.additionalCharges.trim() === "") {
-            //     setLoanInfoError((prev: LoanInfoErrorType) => ({
-            //         ...prev,
-            //         additionalChargesError: "This Field is Required.",
-            //     }))
-            //     return;
-            // }
-            // if (loanInfo.dastiAmount.trim() === "") {
-            //     setLoanInfoError((prev: LoanInfoErrorType) => ({
-            //         ...prev,
-            //         dastiAmountError: "This Field is Required.",
-            //     }))
-            //     return;
-            // }
-
-            // if (loanInfo.downPayment.trim() === "") {
-            //     setLoanInfoError((prev: LoanInfoErrorType) => ({
-            //         ...prev,
-            //         downPaymentError: "This Field is Required.",
-            //     }))
-            //     return;
-            // }
-
             setIsLoanInfoSection(false);
         }
     }
@@ -665,7 +401,7 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
 
                         <form className="w-full" onSubmit={(e) => e.preventDefault()}>
                             {isCarInfoSection ? (<>
-                                <CarDetails carInfo={carInfo} setCarInfo={setCarInfo} registrationNumberError ={registrationNumberError} setRegistrationNumberError={setRegistrationNumberError} setCarInfoChangesStatus={setCarInfoChangesStatus} />
+                                <CarDetails carInfo={carInfo} setCarInfo={setCarInfo} registrationNumberError={registrationNumberError} setRegistrationNumberError={setRegistrationNumberError} setCarInfoChangesStatus={setCarInfoChangesStatus} />
 
                                 <div className="flex items-center md:justify-end py-5">
                                     <button className="text-white bg-primary px-10 py-2 rounded text-lg w-full md:w-auto" onClick={() => {

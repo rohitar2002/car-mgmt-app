@@ -7,6 +7,8 @@ import { useFirebaseContext } from "@/context/firebaseContext";
 import { isMobile, isTablet } from "react-device-detect";
 import { EmiDetailsType } from "@/interface/CarEntriesTypes";
 import { DocumentData } from "firebase/firestore";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 Modal.setAppElement("#documentBody");
 
@@ -84,7 +86,7 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
         })
         closePopup();
     }
-    const clearState = ()=>{
+    const clearState = () => {
         setErrorDetails({
             emiNo: "",
             emiDueDate: "",
@@ -94,21 +96,21 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
         })
     }
     const handleValidation = () => {
-        if (emiDetails.emiNo === "") {
+        if (!emiDetails.emiNo.trim()) {
             setErrorDetails((prevState) => ({
                 ...prevState,
                 emiNo: "EMI Number is required",
             }))
             return false;
         }
-        if (emiDetails.emiDueDate === "") {
+        if (!emiDetails.emiDueDate.trim()) {
             setErrorDetails((prevState) => ({
                 ...prevState,
                 emiDueDate: "EMI Due Date is required",
             }))
             return false;
         }
-        if (emiDetails.emiAmount === "") {
+        if (!emiDetails.emiAmount.trim()) {
             setErrorDetails((prevState) => ({
                 ...prevState,
                 emiAmount: "EMI Amount is required",
@@ -250,13 +252,13 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
                             <div className="w-full flex items-center flex-col gap-5 md:flex-row md:items-start">
                                 <div className="flex flex-col gap-2 w-full md:w-1/2">
                                     <label htmlFor="emiNumber" className="text-lg font-semibold">EMI No.</label>
-                                    <input type="text" id="emiNumber" value={emiDetails.emiNo} onChange={(e) => handleValueChange(e.target.value.replace(/\D/g, ""), "emiNo")} placeholder="Enter EMI Number" disabled={existingDetails ? true : false} className={`focus:outline-none border border-gray-300 rounded-md p-2 ${existingDetails && "bg-gray-200"}`} />
+                                    <input type="text" id="emiNumber" value={emiDetails.emiNo} onChange={(e) => handleValueChange(e.target.value, "emiNo")} placeholder="Enter EMI Number" disabled={existingDetails ? true : false} className={`focus:outline-none border border-gray-300 rounded-md p-2 ${existingDetails && "bg-gray-200"}`} />
                                     {errorDetails.emiNo && <p className="text-red-500 text-lg font-bold">{errorDetails.emiNo}</p>}
                                 </div>
 
                                 <div className="flex flex-col gap-2 w-full md:w-1/2">
                                     <label htmlFor="slipNumber" className="text-lg font-semibold">Slip No.</label>
-                                    <input type="text" id="slipNumber" value={emiDetails.slipNo} onChange={(e) => handleValueChange(e.target.value.replace(/\D/g, ""), "slipNo")} placeholder="Enter Slip Number" className="focus:outline-none border border-gray-300 rounded-md p-2" />
+                                    <input type="text" id="slipNumber" value={emiDetails.slipNo} onChange={(e) => handleValueChange(e.target.value, "slipNo")} placeholder="Enter Slip Number" className="focus:outline-none border border-gray-300 rounded-md p-2" />
                                     {errorDetails.slipNo && <p className="text-red-500 text-lg font-bold">{errorDetails.slipNo}</p>}
                                 </div>
                             </div>
@@ -264,30 +266,54 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
                             <div className="w-full flex items-center flex-col gap-5 md:flex-row md:items-start">
                                 <div className="flex flex-col gap-2 w-full md:w-1/2">
                                     <label htmlFor="dueDate" className="text-lg font-semibold">Due Date</label>
-                                    <input type="date" id="dueDate" value={emiDetails.emiDueDate} onChange={(e) => handleValueChange(e.target.value, "emiDueDate")} className="focus:outline-none border border-gray-300 rounded-md p-2" />
+                                    <DatePicker
+                                        selected={emiDetails.emiDueDate.trim() ? new Date(emiDetails.emiDueDate) : null}
+                                        onChange={(date: Date | null) => {
+                                            handleValueChange(date ? date.toISOString() : "", "emiDueDate")
+                                        }}
+                                        dateFormat = "dd-MM-yyyy"
+                                        placeholderText="dd-MM-yyyy"
+                                        showMonthDropdown
+                                        showYearDropdown
+                                        dropdownMode="select"
+                                        scrollableMonthYearDropdown
+                                       className="focus:outline-none border border-gray-300 rounded-md p-2 w-full" 
+                                    />
                                     {errorDetails.emiDueDate && <p className="text-red-500 text-lg font-bold">{errorDetails.emiDueDate}</p>}
                                 </div>
 
                                 <div className="flex flex-col gap-2 w-full md:w-1/2">
                                     <label htmlFor="receivedDate" className="text-lg font-semibold">Received Date</label>
-                                    <input type="date" id="receivedDate" value={emiDetails.emiReceivedDate} onChange={(e) => handleValueChange(e.target.value, "emiReceivedDate")} className="focus:outline-none border border-gray-300 rounded-md p-2" />
+                                    <DatePicker
+                                        selected={emiDetails.emiReceivedDate.trim() ? new Date(emiDetails.emiReceivedDate) : null}
+                                        onChange={(date: Date | null) => {
+                                            handleValueChange(date ? date.toISOString() : "", "emiReceivedDate")
+                                        }}
+                                        dateFormat = "dd-MM-yyyy"
+                                        placeholderText="dd-MM-yyyy"
+                                        showMonthDropdown
+                                        showYearDropdown
+                                        dropdownMode="select"
+                                        scrollableMonthYearDropdown
+                                       className="focus:outline-none border border-gray-300 rounded-md p-2 w-full" 
+                                    />
                                     {errorDetails.emiReceivedDate && <p className="text-red-500 text-lg font-bold">{errorDetails.emiReceivedDate}</p>}
                                 </div>
                             </div>
 
                             <div className="flex flex-col gap-2">
                                 <label htmlFor="emiAmount" className="text-lg font-semibold">EMI Amount</label>
-                                <input type="text" id="emiAmount" value={emiDetails.emiAmount} onChange={(e) => handleValueChange(e.target.value.replace(/\D/g, ""), "emiAmount")} placeholder="Enter EMI Amount" className="focus:outline-none border border-gray-300 rounded-md p-2" />
+                                <input type="text" id="emiAmount" value={emiDetails.emiAmount} onChange={(e) => handleValueChange(e.target.value, "emiAmount")} placeholder="Enter EMI Amount" className="focus:outline-none border border-gray-300 rounded-md p-2" />
                                 {errorDetails.emiAmount && <p className="text-red-500 text-lg font-bold">{errorDetails.emiAmount}</p>}
                             </div>
 
                             <div className="flex flex-col gap-2">
                                 <label htmlFor="overdueAmt" className="text-lg font-semibold">Overdue Amount</label>
-                                <input type="text" id="overdueAmt" value={emiDetails.overdue} onChange={(e) => handleValueChange(e.target.value.replace(/\D/g, ""), "overdue")} placeholder="Enter Overdue Amount" className="focus:outline-none border border-gray-300 rounded-md p-2" />
+                                <input type="text" id="overdueAmt" value={emiDetails.overdue} onChange={(e) => handleValueChange(e.target.value, "overdue")} placeholder="Enter Overdue Amount" className="focus:outline-none border border-gray-300 rounded-md p-2" />
                             </div>
                             <div className="flex flex-col gap-2">
                                 <label htmlFor="otnerInt" className="text-lg font-semibold">Other Interest Amount</label>
-                                <input type="text" id="otnerInt" value={emiDetails.otherInterest} onChange={(e) => handleValueChange(e.target.value.replace(/\D/g, ""), "otherInterest")} placeholder="Enter Other Interest Amount" className="focus:outline-none border border-gray-300 rounded-md p-2" />
+                                <input type="text" id="otnerInt" value={emiDetails.otherInterest} onChange={(e) => handleValueChange(e.target.value, "otherInterest")} placeholder="Enter Other Interest Amount" className="focus:outline-none border border-gray-300 rounded-md p-2" />
                             </div>
 
                         </div>

@@ -32,7 +32,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        className="h-screen"
+        className="h-screen bg-white text-black"
         id="documentBody"
       >
         <FireBaseProvider>

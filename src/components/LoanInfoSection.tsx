@@ -1,4 +1,6 @@
 import { LoanInfoChangesStatusType, LoanInfoType } from "@/interface/CarEntriesTypes"
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface Props {
     loanInfo: LoanInfoType;
@@ -7,16 +9,19 @@ interface Props {
 }
 
 export const LoanDetails = ({ loanInfo, setLoanInfo, setLoanInfoChangesStatus }: Props) => {
-    // const handleIntRateBlur = () => {
-    //     if (Number(loanInfo.interestRate) > 100) {
-    //         setLoanInfoError((prev: LoanInfoErrorType) => ({
-    //             ...prev,
-    //             Interest_Rate_Error: "Interest Rate must 0 to 100.",
-    //         }))
-    //         return;
-    //     }
+    const handleValueChange = (value: string, field: string) => {
+        setLoanInfo((prev: LoanInfoType) => ({
+            ...prev,
+            [field]: value,
+        }))
 
-    // }
+        if (setLoanInfoChangesStatus) {
+            setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
+                ...prev,
+                [field]: true,
+            }))
+        }
+    }
     return (
         <>
             <div className="flex flex-col gap-5 my-5">
@@ -24,261 +29,95 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, setLoanInfoChangesStatus }:
                 <div className="flex flex-col justify-center gap-3">
                     <label className="font-semibold text-lg">Total Sale Amount</label>
                     <input type="text" value={loanInfo.totalSaleAmount} onChange={(e) => {
-                        setLoanInfo((prev: LoanInfoType) => ({
-                            ...prev,
-                            totalSaleAmount: e.target.value,
-                        }))
-
-                        if (setLoanInfoChangesStatus) {
-                            setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
-                                ...prev,
-                                totalSaleAmount: true,
-                            }))
-                        }
-                        // setLoanInfoError((prev: LoanInfoErrorType) => ({
-                        //     ...prev,
-                        //     totalSaleAmountError: "",
-                        // }))
+                        handleValueChange(e.target.value, "totalSaleAmount");
                     }} placeholder="Enter total Loan Amount" className="px-3 py-2 border border-primary focus:outline-none rounded" />
-
-                    {/* {loanInfoError.totalSaleAmountError && <h2 className="text-lg font-bold text-red-500">{loanInfoError.totalSaleAmountError}</h2>} */}
                 </div>
                 <div className="flex flex-col justify-center gap-3">
                     <label className="font-semibold text-lg">Total Loan Amount</label>
                     <input type="text" value={loanInfo.totalLoanAmount} onChange={(e) => {
-                        setLoanInfo((prev: LoanInfoType) => ({
-                            ...prev,
-                            totalLoanAmount: e.target.value,
-                        }))
-
-                        if (setLoanInfoChangesStatus) {
-                            setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
-                                ...prev,
-                                totalLoanAmount: true,
-                            }))
-                        }
-                        // setLoanInfoError((prev: LoanInfoErrorType) => ({
-                        //     ...prev,
-                        //     totalLoanAmountError: "",
-                        // }))
+                        handleValueChange(e.target.value, "totalLoanAmount");
                     }} placeholder="Enter total Loan Amount" className="px-3 py-2 border border-primary focus:outline-none rounded" />
-
-                    {/* {loanInfoError.totalLoanAmountError && <h2 className="text-lg font-bold text-red-500">{loanInfoError.totalLoanAmountError}</h2>} */}
                 </div>
 
                 <div className="flex items-center md:items-start gap-3 flex-col md:flex-row">
                     <div className="flex flex-col justify-center gap-3 w-full md:w-1/2">
                         <label className="font-semibold text-lg">Loan Tenure</label>
                         <input type="text" value={loanInfo.loanTenure} onChange={(e) => {
-                            setLoanInfo((prev: LoanInfoType) => ({
-                                ...prev,
-                                loanTenure: e.target.value,
-                            }))
-
-                            if (setLoanInfoChangesStatus) {
-                                setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
-                                    ...prev,
-                                    loanTenure: true,
-                                }))
-                            }
-
-                            // setLoanInfoError((prev: LoanInfoErrorType) => ({
-                            //     ...prev,
-                            //     loanTenureError: "",
-                            // }))
+                            handleValueChange(e.target.value, "loanTenure");
                         }} placeholder="Enter Loan Tenure" className="px-3 py-2 border border-primary focus:outline-none rounded" />
-
-                        {/* {loanInfoError.loanTenureError && <h2 className="text-lg font-bold text-red-500">{loanInfoError.loanTenureError}</h2>} */}
                     </div>
 
                     <div className="flex flex-col justify-center gap-3 w-full md:w-1/2">
                         <label className="font-semibold text-lg">Interest Rate</label>
                         <input type="text" value={loanInfo.interestRate} onChange={(e) => {
-                            setLoanInfo((prev: LoanInfoType) => ({
-                                ...prev,
-                                interestRate: e.target.value,
-                            }))
-
-                            if (setLoanInfoChangesStatus) {
-                                setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
-                                    ...prev,
-                                    interestRate: true,
-                                }))
-                            }
-                            // setLoanInfoError((prev: LoanInfoErrorType) => ({
-                            //     ...prev,
-                            //     interestRateError: "",
-                            // }))
-                        }}
-                            // onBlur={handleIntRateBlur}
-                            placeholder="Enter Interest Rate" className="px-3 py-2 border border-primary focus:outline-none rounded" />
-
-                        {/* {loanInfoError.interestRateError && <h2 className="text-lg font-bold text-red-500">{loanInfoError.interestRateError}</h2>} */}
+                            handleValueChange(e.target.value, "interestRate");
+                        }} placeholder="Enter Interest Rate" className="px-3 py-2 border border-primary focus:outline-none rounded" />
                     </div>
                 </div>
 
                 <div className="flex flex-col justify-center gap-3">
                     <label className="font-semibold text-lg">Loan Start Date</label>
-                    <input type="date" value={loanInfo.loanStartDate} onChange={(e) => {
-                        setLoanInfo((prev: LoanInfoType) => ({
-                            ...prev,
-                            loanStartDate: e.target.value,
-                        }))
-
-                        if (setLoanInfoChangesStatus) {
-                            setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
-                                ...prev,
-                                loanStartDate: true,
-                            }))
-                        }
-
-                        // setLoanInfoError((prev: LoanInfoErrorType) => ({
-                        //     ...prev,
-                        //     loanStartDateError: "",
-                        // }))
-                    }} className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
-
-                    {/* {loanInfoError.loanStartDateError && <h2 className="text-lg font-bold text-red-500">{loanInfoError.loanStartDateError}</h2>} */}
+                    <DatePicker
+                        selected={loanInfo.loanStartDate.trim() ? new Date(loanInfo.loanStartDate) : null}
+                        onChange={(date: Date | null) => {
+                            handleValueChange(date ? date.toISOString() : "", "loanStartDate")
+                        }}
+                        dateFormat="dd-MM-yyyy"
+                        placeholderText="dd-MM-yyyy"
+                        showMonthDropdown
+                        showYearDropdown
+                        dropdownMode="select"
+                        scrollableMonthYearDropdown
+                        className="px-3 py-2 w-full border border-primary focus:outline-none rounded"
+                    />
                 </div>
                 <div className="flex flex-col justify-center gap-3">
                     <label className="font-semibold text-lg">EMI Amount</label>
                     <input type="text" value={loanInfo.emiAmount} onChange={(e) => {
-                        setLoanInfo((prev: LoanInfoType) => ({
-                            ...prev,
-                            emiAmount: e.target.value,
-                        }))
-
-                        if (setLoanInfoChangesStatus) {
-                            setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
-                                ...prev,
-                                emiAmount: true,
-                            }))
-                        }
-
-                        // setLoanInfoError((prev: LoanInfoErrorType) => ({
-                        //     ...prev,
-                        //     emiAmountError: "",
-                        // }))
+                        handleValueChange(e.target.value, "emiAmount");
                     }} placeholder="Enter EMI Amount" className="px-3 py-2 border border-primary focus:outline-none rounded" />
-
-                    {/* {loanInfoError.emiAmountError && <h2 className="text-lg font-bold text-red-500">{loanInfoError.emiAmountError}</h2>} */}
                 </div>
                 <div className="flex flex-col justify-center gap-3">
                     <label className="font-semibold text-lg">First EMI Date</label>
-                    <input type="date" value={loanInfo.firstEmiDate} onChange={(e) => {
-                        setLoanInfo((prev: LoanInfoType) => ({
-                            ...prev,
-                            firstEmiDate: e.target.value,
-                        }))
-
-                        if (setLoanInfoChangesStatus) {
-                            setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
-                                ...prev,
-                                firstEmiDate: true,
-                            }))
-                        }
-
-                        // setLoanInfoError((prev: LoanInfoErrorType) => ({
-                        //     ...prev,
-                        //     firstEmiDateError: "",
-                        // }))
-                    }} className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
-
-                    {/* {loanInfoError.firstEmiDateError && <h2 className="text-lg font-bold text-red-500">{loanInfoError.firstEmiDateError}</h2>} */}
+                    <DatePicker
+                        selected={loanInfo.firstEmiDate.trim() ? new Date(loanInfo.firstEmiDate) : null}
+                        onChange={(date: Date | null) => {
+                            handleValueChange(date ? date.toISOString() : "", "firstEmiDate")
+                        }}
+                        dateFormat="dd-MM-yyyy"
+                        placeholderText="dd-MM-yyyy"
+                        showMonthDropdown
+                        showYearDropdown
+                        dropdownMode="select"
+                        scrollableMonthYearDropdown
+                        className="px-3 py-2 w-full border border-primary focus:outline-none rounded"
+                    />
                 </div>
 
                 <div className="flex flex-col justify-center gap-3">
                     <label className="font-semibold text-lg">Any balance Amount</label>
                     <input type="text" value={loanInfo.dueAmount} onChange={(e) => {
-                        setLoanInfo((prev: LoanInfoType) => ({
-                            ...prev,
-                            dueAmount: e.target.value,
-                        }))
-
-                        if (setLoanInfoChangesStatus) {
-                            setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
-                                ...prev,
-                                dueAmount: true,
-                            }))
-                        }
-
-                        // setLoanInfoError((prev: LoanInfoErrorType) => ({
-                        //     ...prev,
-                        //     dueAmountError: "",
-                        // }))
+                        handleValueChange(e.target.value, "dueAmount");
                     }} placeholder="Enter Any Due Amount" className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
-
-                    {/* {loanInfoError.dueAmountError && <h2 className="text-lg font-bold text-red-500">{loanInfoError.dueAmountError}</h2>} */}
                 </div>
                 <div className="flex flex-col justify-center gap-3">
                     <label className="font-semibold text-lg">Additional Charges (Including file Charges)</label>
                     <input type="text" value={loanInfo.additionalCharges} onChange={(e) => {
-                        setLoanInfo((prev: LoanInfoType) => ({
-                            ...prev,
-                            additionalCharges: e.target.value,
-                        }))
-
-                        if (setLoanInfoChangesStatus) {
-                            setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
-                                ...prev,
-                                additionalCharges: true,
-                            }))
-                        }
-
-                        // setLoanInfoError((prev: LoanInfoErrorType) => ({
-                        //     ...prev,
-                        //     additionalChargesError: "",
-                        // }))
+                        handleValueChange(e.target.value, "additionalCharges");
                     }} placeholder="Enter any Additional Charges" className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
-
-                    {/* {loanInfoError.additionalChargesError && <h2 className="text-lg font-bold text-red-500">{loanInfoError.additionalChargesError}</h2>} */}
                 </div>
                 <div className="flex flex-col justify-center gap-3">
                     <label className="font-semibold text-lg">Dasti Amount</label>
                     <input type="text" value={loanInfo.dastiAmount} onChange={(e) => {
-                        setLoanInfo((prev: LoanInfoType) => ({
-                            ...prev,
-                            dastiAmount: e.target.value,
-                        }))
-
-                        if (setLoanInfoChangesStatus) {
-                            setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
-                                ...prev,
-                                dastiAmount: true,
-                            }))
-                        }
-
-                        // setLoanInfoError((prev: LoanInfoErrorType) => ({
-                        //     ...prev,
-                        //     dastiAmountError: "",
-                        // }))
+                        handleValueChange(e.target.value, "dastiAmount");
                     }} placeholder="Enter any dasti Amount" className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
-
-                    {/* {loanInfoError.dastiAmountError && <h2 className="text-lg font-bold text-red-500">{loanInfoError.dastiAmountError}</h2>} */}
                 </div>
 
                 <div className="flex flex-col justify-center gap-3">
                     <label className="font-semibold text-lg">Down Payment</label>
                     <input type="text" value={loanInfo.downPayment} onChange={(e) => {
-                        setLoanInfo((prev: LoanInfoType) => ({
-                            ...prev,
-                            downPayment: e.target.value,
-                        }))
-
-                        if (setLoanInfoChangesStatus) {
-                            setLoanInfoChangesStatus((prev: LoanInfoChangesStatusType) => ({
-                                ...prev,
-                                downPayment: true,
-                            }))
-                        }
-
-                        // setLoanInfoError((prev: LoanInfoErrorType) => ({
-                        //     ...prev,
-                        //     downPaymentError: "",
-                        // }))
+                        handleValueChange(e.target.value, "downPayment");
                     }} placeholder="Enter Down Payment" className="px-3 py-2 border border-primary focus:outline-none rounded" />
-
-                    {/* {loanInfoError.downPaymentError && <h2 className="text-lg font-bold text-red-500">{loanInfoError.downPaymentError}</h2>} */}
                 </div>
             </div>
         </>

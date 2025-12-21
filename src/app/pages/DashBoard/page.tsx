@@ -31,7 +31,7 @@ const DashBoard = () => {
         if (fillteredRegisteredCarInfo && fillteredRegisteredCarInfo.length > 0) {
             let totalAmount = "0";
             fillteredRegisteredCarInfo.forEach((item: CarDetailsWithIdType) => {
-                totalAmount = (Number(totalAmount) + Number(item.loanInfo.totalLoanAmount)).toString();
+                totalAmount = (Number(totalAmount) + Number(item.loanInfo.totalLoanAmount.replace(/\D/g, ""))).toString();
             })
 
             setTotalLoanAmount(totalAmount);
@@ -83,6 +83,13 @@ const DashBoard = () => {
 
             setFillteredRegisteredCarInfo(fillteredInfo ? fillteredInfo : null);
         }
+    }
+    const handleDateDisplay = (dateString: string | undefined) => {
+        if (dateString && dateString.trim() !== "") {
+            const date = new Date(dateString);
+            return (date.toLocaleDateString()).replace(/\//g, '-');
+        }
+        return dateString;
     }
     useEffect(() => {
         if (firebaseContext?.userDetails && firebaseContext?.userDetails?.registeredCars?.length) {
@@ -210,9 +217,9 @@ const DashBoard = () => {
                                                             <td className="px-3 py-2 border border-black">{index + 1}</td>
                                                             <td className="px-3 py-2 border border-black">{item.carInfo.registrationNumber}</td>
                                                             <td className="px-3 py-2 border border-black">{item.carInfo.modelNumber}</td>
-                                                            <td className="px-3 py-2 border border-black whitespace-nowrap">{item.carInfo.purchasedDate}</td>
-                                                            <td className="px-3 py-2 border border-black">{item.loanInfo.totalLoanAmount || 0}</td>
-                                                            <td className="px-3 py-2 border border-black">{item.loanInfo.emiAmount || 0}</td>
+                                                            <td className="px-3 py-2 border border-black whitespace-nowrap">{handleDateDisplay(item.carInfo.purchasedDate)}</td>
+                                                            <td className="px-3 py-2 border border-black">{"₹" + ((item.loanInfo.totalLoanAmount).toString().trim() ? item.loanInfo.totalLoanAmount : 0)}</td>
+                                                            <td className="px-3 py-2 border border-black">{"₹" +  ((item.loanInfo.emiAmount).toString().trim() ? item.loanInfo.emiAmount : 0)}</td>
                                                             <td className="px-3 py-2 border border-black">
 
                                                                 <button className="text-accent font-bold mr-5" onClick={(e) => {
@@ -220,7 +227,7 @@ const DashBoard = () => {
 
                                                                     router.replace(`CarDetails?carId=${item.carId}&loanId=${item.loanId}`);
                                                                 }}>View</button>
-
+        
                                                                 <button className="text-red-500" onClick={() => {
                                                                     setCarIdForDeletion(item.carId);
                                                                     setCarRegistrationNoForDeletion(item.carInfo.registrationNumber);

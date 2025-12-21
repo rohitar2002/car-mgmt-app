@@ -5,6 +5,13 @@ interface CarInfoViewerProps {
 }
 
 export const CarInfoViewer = ({ carInfo }: CarInfoViewerProps) => {
+    const handleDateDisplay = (dateString: string | undefined) => {
+        if (dateString && dateString.trim() !== "") {
+            const date = new Date(dateString);
+            return (date.toLocaleDateString()).replace(/\//g, '-');
+        }
+        return dateString;
+    }
     return (
         <section className="border-b border-gray-500 bg-white p-5">
             <h2 className="text-xl font-bold text-primary mb-5 text-center sm:text-left">Car Information</h2>
@@ -31,7 +38,7 @@ export const CarInfoViewer = ({ carInfo }: CarInfoViewerProps) => {
                 </div>
                 <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
                     <label className="font-bold text-md md:text-lg">Purchase Date:</label>
-                    <h2 className="text-md">{carInfo?.purchasedDate || "--"}</h2>
+                    <h2 className="text-md">{handleDateDisplay(carInfo?.purchasedDate) || "--"}</h2>
                 </div>
             </div>
         </section>

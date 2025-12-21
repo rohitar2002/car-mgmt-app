@@ -57,11 +57,16 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPo
 
                 const rows = emiHistoryDetails.map(
                     (item: EmiDetailsType) =>
-                        `${item.emiNo}, ${item.slipNo || "--"}, "${item.emiDueDate}", "${item.emiReceivedDate || "--"}", ${item.emiAmount}, ${item.emiStatus},${item.overdue || "--"}, ${item.otherInterest || "--"}`
+                        `${item.emiNo}, ${item.slipNo || "--"}, "${handleDateDisplay(item.emiDueDate)}", "${handleDateDisplay(item.emiReceivedDate) || "--"}", ${item.emiAmount}, ${item.emiStatus},${item.overdue || "--"}, ${item.otherInterest || "--"}`
                 );
 
                 // Combine headers and rows
-                const csvContent = [headers, ...rows].join("\n");
+                let csvContent = [headers, ...rows].join("\n");
+                const tableFooter = document.querySelector("#emiTable_footer tr");
+                if (tableFooter) {
+                    const footerContent = Array.from(tableFooter.children).map((item) => item ? (item.textContent.includes("₹") ? item.textContent.slice(1,) : item.textContent) : "").join(", ");
+                    csvContent = csvContent.concat("\n").concat(footerContent);
+                }
 
                 // Create a Blob from the CSV content
                 const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -92,24 +97,19 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPo
         setExistingEMIDetails(data);
         setEMIPopupTitle("Edit EMI Details");
     }
-    // const getLateFees = (emiInfo: EMIHistoryDBType) => {
-    //     const dueDate = new Date(emiInfo["Due Date"]);
-    //     const currentDate = new Date();
 
-    //     const yearsDiff = currentDate.getFullYear() - dueDate.getFullYear();
-    //     const monthsDiff = currentDate.getMonth() - dueDate.getMonth();
+    const handleDateDisplay = (dateString: string | undefined) => {
+        if (dateString && dateString.trim() !== "") {
+            const date = new Date(dateString);
+            return (date.toLocaleDateString()).replace(/\//g, '-');
+        }
+        return "--";
+    }
 
-    //     // Total months difference
-    //     let totalMonthsPassed = yearsDiff * 12 + monthsDiff;
+    const totalEmiAmount = emiHistoryDetails ? emiHistoryDetails.reduce((total, item) => total + parseInt(item.emiAmount), 0) : 0;
+    const totalOverDueAmount = emiHistoryDetails ? emiHistoryDetails.reduce((total, item) => total + (item.overdue ? parseInt(item.overdue) : 0), 0) : 0;
+    const totalOtherInterestAmount = emiHistoryDetails ? emiHistoryDetails.reduce((total, item) => total + (item.otherInterest ? parseInt(item.otherInterest) : 0), 0) : 0;
 
-    //     // Check if the current day is before the due day in the current month
-    //     if (currentDate.getDate() < dueDate.getDate()) {
-    //         totalMonthsPassed--; // Subtract one month if the day hasn't fully passed
-    //     }
-
-    //     return totalMonthsPassed >= 2 ? (totalMonthsPassed / 2) * 500 : 0;
-
-    // }
     useEffect(() => {
         if (isShowPopup) {
             if (loanId) {
@@ -193,8 +193,8 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPo
                                                 <tr key={index}>
                                                     <td className="px-3 py-2 border border-black">{item.emiNo}</td>
                                                     <td className="px-3 py-2 border border-black">{item.slipNo ? item.slipNo : "--"}</td>
-                                                    <td className="px-3 py-2 border border-black">{item.emiDueDate}</td>
-                                                    <td className="px-3 py-2 border border-black whitespace-nowrap">{item.emiReceivedDate ? item.emiReceivedDate : "--"}</td>
+                                                    <td className="px-3 py-2 border border-black whitespace-nowrap">{handleDateDisplay(item.emiDueDate)}</td>
+                                                    <td className="px-3 py-2 border border-black whitespace-nowrap">{handleDateDisplay(item.emiReceivedDate)}</td>
                                                     <td className="px-3 py-2 border border-black">₹{item.emiAmount}</td>
                                                     <td className={`px-3 py-2 font-bold border border-black ${item.emiStatus === "Paid" ? "text-accent" : item.emiStatus === "Pending" ? "text-orange-500" : "text-error"}`}>{item.emiStatus}</td>
                                                     <td className="px-3 py-2 border border-black">{item.overdue ? "₹" + item.overdue : "--"}</td>
@@ -209,6 +209,19 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPo
                                             </tr>
                                     }
                                 </tbody>
+                                <tfoot id="emiTable_footer">
+                                    <tr>
+                                        <td className="px-3 py-2 border border-black">Total:</td>
+                                        <td className="px-3 py-2 border border-black">{""}</td>
+                                        <td className="px-3 py-2 border border-black">{""}</td>
+                                        <td className="px-3 py-2 border border-black">{""}</td>
+                                        <td className="px-3 py-2 border border-black">{"₹" + totalEmiAmount}</td>
+                                        <td className="px-3 py-2 border border-black">{""}</td>
+                                        <td className="px-3 py-2 border border-black">{"₹" + totalOverDueAmount}</td>
+                                        <td className="px-3 py-2 border border-black">{"₹" + totalOtherInterestAmount}</td>
+                                        <td className="px-3 py-2 border border-black">{""}</td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                         <div className="flex justify-center sm:justify-end items-center flex-col sm:flex-row gap-5 py-5 mt-3">
