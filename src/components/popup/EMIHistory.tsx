@@ -64,7 +64,7 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPo
                 let csvContent = [headers, ...rows].join("\n");
                 const tableFooter = document.querySelector("#emiTable_footer tr");
                 if (tableFooter) {
-                    const footerContent = Array.from(tableFooter.children).map((item) => item ? (item.textContent.includes("₹") ? item.textContent.slice(1,) : item.textContent) : "").join(", ");
+                    const footerContent = Array.from(tableFooter.children).map((item) => (item && item.textContent) ? (item.textContent.includes("₹") ? item.textContent.slice(1,) : item.textContent) : "").join(", ");
                     csvContent = csvContent.concat("\n").concat(footerContent);
                 }
 
