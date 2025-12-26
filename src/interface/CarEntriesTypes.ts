@@ -8,6 +8,7 @@ export interface CarInfoType {
 }
 export interface CustomerInfoType {
     customerName: string;
+    permitHolderName?: string;
     guardianName: string;
     address: string;
     mobileNumber: string;
@@ -96,6 +97,7 @@ export interface CarDetailsWithIdType {
     carId: string;
     loanId: string;
     customerId: string;
+    permitHolder: CustomerInfoType | null;
 }
 
 export interface EmiDetailsType {

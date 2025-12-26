@@ -1,5 +1,5 @@
 import { DocumentData, QuerySnapshot, WhereFilterOp } from "firebase/firestore";
-import { CarDetailsType, EmiDetailsType } from "./CarEntriesTypes";
+import { CarDetailsType, CustomerInfoType, EmiDetailsType } from "./CarEntriesTypes";
 import { OptionType } from "./CommonTypes";
 
 export interface LoginCredentials {
@@ -38,6 +38,7 @@ export interface FirebaseContextType {
     signOutUser: () => Promise<boolean>;
     addCarRecord: (data: CarDetailsType) => Promise<string | boolean>;
     addEMIDetails: (loanId: string, data: EmiDetailsType) => Promise<string | boolean>;
+    addPermitHolderDetails: (carId: string, details: Partial<CustomerInfoType>) => Promise<string | boolean>;
     deleteCarRecord: (carId: string) => Promise<string | boolean>;
     getDataWithQuery: (collectionName: string, fieldName: string, operator: WhereFilterOp, value: unknown) => Promise<QuerySnapshot<DocumentData, DocumentData>>;
 }

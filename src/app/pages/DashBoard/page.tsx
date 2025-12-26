@@ -61,7 +61,7 @@ const DashBoard = () => {
                     loanId: !loanDocs.empty ? loanDocs.docs[0].id : null,
                 }
             }))).filter((item) => item.loanInfo !== null && item.carInfo !== null && !item.carInfo?.isDeleted);
-            
+
             setAllRegisteredCarInfo(requiredCarData);
             setFillteredRegisteredCarInfo(requiredCarData);
         } catch (error) {
@@ -219,7 +219,7 @@ const DashBoard = () => {
                                                             <td className="px-3 py-2 border border-black">{item.carInfo.modelNumber}</td>
                                                             <td className="px-3 py-2 border border-black whitespace-nowrap">{handleDateDisplay(item.carInfo.purchasedDate)}</td>
                                                             <td className="px-3 py-2 border border-black">{"₹" + ((item.loanInfo.totalLoanAmount).toString().trim() ? item.loanInfo.totalLoanAmount : 0)}</td>
-                                                            <td className="px-3 py-2 border border-black">{"₹" +  ((item.loanInfo.emiAmount).toString().trim() ? item.loanInfo.emiAmount : 0)}</td>
+                                                            <td className="px-3 py-2 border border-black">{"₹" + ((item.loanInfo.emiAmount).toString().trim() ? item.loanInfo.emiAmount : 0)}</td>
                                                             <td className="px-3 py-2 border border-black">
 
                                                                 <button className="text-accent font-bold mr-5" onClick={(e) => {
@@ -227,7 +227,7 @@ const DashBoard = () => {
 
                                                                     router.replace(`CarDetails?carId=${item.carId}&loanId=${item.loanId}`);
                                                                 }}>View</button>
-        
+
                                                                 <button className="text-red-500" onClick={() => {
                                                                     setCarIdForDeletion(item.carId);
                                                                     setCarRegistrationNoForDeletion(item.carInfo.registrationNumber);

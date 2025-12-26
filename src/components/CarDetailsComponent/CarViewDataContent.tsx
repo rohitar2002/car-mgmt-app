@@ -15,6 +15,8 @@ import { useFirebaseContext } from "@/context/firebaseContext";
 import { CustomerInfoViewer } from "./CustomerInfoViewer";
 import { CarInfoViewer } from "./CarInfoViewer";
 import { LoanInfoViewer } from "./LoanInfoViewer";
+import { PermitHolderViewer } from "./PermitHolderSection";
+import ADDEMIPermitHolderDetails from "../popup/AddEditPermitHolder";
 
 const CarViewDataContent = () => {
     const [carDetails, setCarDetails] = useState<CarDetailsWithIdType | null>(null);
@@ -22,6 +24,7 @@ const CarViewDataContent = () => {
     const [existingEMIDetails, setExistingEMIDetails] = useState<EmiDetailsType | null>(null);
     const [emiPopupTitle, setEMIPopupTitle] = useState<string>("Add EMI Details");
     const [showConfirm, setShowConfirm] = useState<boolean>(false);
+    const [showPermitHolderConfirm, setShowPermitHolderConfirm] = useState<boolean>(false);
     const [showUpdatePopup, setShowUpdatePopup] = useState<boolean>(false);
     const [showAddEMIPopup, setShowAddEMIPopup] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -51,6 +54,7 @@ const CarViewDataContent = () => {
                     ...loanDocument?.data() as LoanInfoType
                 };
                 const customerInfo = queryResult?.docs[0]?.data() as CustomerInfoType;
+                const permitHolderResult = await firebaseContext?.getDataWithQuery("PermitHolderDetails", "carId", "==", carId);
 
                 const carDetails: CarDetailsWithIdType = {
                     carInfo,
@@ -59,7 +63,9 @@ const CarViewDataContent = () => {
                     carId: carId,
                     loanId: loanId,
                     customerId: queryResult?.docs[0]?.id as string,
+                    permitHolder: permitHolderResult && !permitHolderResult.empty ? permitHolderResult.docs[0].data() as CustomerInfoType : null
                 }
+
                 setCarDetails(carDetails);
 
             } catch (error) {
@@ -151,6 +157,36 @@ const CarViewDataContent = () => {
         }
     }
 
+    const handlePermitHolderUpdate = async (details: CustomerInfoType) => {
+        setIsLoading(true);
+        try {
+            const permitDetailsDocs = await firebaseContext?.getDataWithQuery("PermitHolderDetails", "carId", "==", carDetails?.carId);
+            if (permitDetailsDocs && !permitDetailsDocs.empty) {
+                const permitData = permitDetailsDocs.docs[0];
+                if (permitData) {
+                    await updateDoc(permitData.ref, {
+                        ...details
+                    })
+                }
+            }
+
+            getData();
+            setShowPermitHolderConfirm(false);
+            toast.success("Permit Holder Details Updated Successfully");
+
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+            else {
+                toast.error("Something went wrong");
+            }
+        }
+        finally {
+            setIsLoading(false);
+        }
+    }
+
     useEffect(() => {
         if (searchParms.size) {
             getData();
@@ -191,6 +227,9 @@ const CarViewDataContent = () => {
 
             <ADDEMIDetails isShowPopup={showAddEMIPopup} title={emiPopupTitle} handleEMIUpdate={handleEMIUpdate} existingDetails={existingEMIDetails} closePopup={handleEMIClosePopup} loanId={loanId} />
 
+            <ADDEMIPermitHolderDetails title={`${carDetails?.permitHolder ? "Update" : "Add"} Information`} carId={carDetails?.carId ? carDetails?.carId : null} existingDetails={carDetails?.permitHolder} handlePermitHolderUpdate={handlePermitHolderUpdate} isShowPopup={showPermitHolderConfirm} closePopup={() => {
+                setShowPermitHolderConfirm(false);
+            }} getData = {getData}/>
 
             <div className="flex justify-center items-center relative top-20">
                 <div className="w-full lg:w-3/5 h-full border border-primary rounded m-10">
@@ -208,6 +247,17 @@ const CarViewDataContent = () => {
                             <button className="px-3 py-2 bg-primary text-white rounded" onClick={() => {
                                 setShowConfirm(true);
                             }}>Click to see EMI history</button>
+                        </div>
+                    </section>
+
+                    <section className="border-b border-gray-500 bg-white p-5 flex flex-col">
+                        <h2 className="text-xl font-bold text-primary mb-5 text-center sm:text-left">Permit Holder Information</h2>
+                        {carDetails?.permitHolder ? <PermitHolderViewer permitHolder={carDetails.permitHolder} /> : <h2 className="text-lg text-center font-bold">No Permit Holder Details Available</h2>}
+
+                        <div>
+                            <button className="mt-5 px-3 py-2 bg-primary text-white rounded" onClick={() => {
+                                setShowPermitHolderConfirm(true);
+                            }}>{carDetails?.permitHolder ? "Update" : "Add"} Permit Holder Details</button>
                         </div>
                     </section>
 

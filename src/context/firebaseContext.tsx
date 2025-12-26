@@ -2,7 +2,7 @@
 
 import { nextEMIDate } from "@/Helper/utils";
 import { auth, firestore } from "@/firebase/firebase.config";
-import { CarDetailsType, EmiDetailsType } from "@/interface/CarEntriesTypes";
+import { CarDetailsType, CustomerInfoType, EmiDetailsType } from "@/interface/CarEntriesTypes";
 import { FirebaseContextType, LoginCredentials, SignUpType, UserDetailsType } from "@/interface/UsersType";
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { addDoc, arrayUnion, collection, doc, DocumentData, getDoc, getDocs, query, updateDoc, where, WhereFilterOp } from "firebase/firestore";
@@ -199,6 +199,26 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
         return "Something Went Wrong!";
     }
 
+    const addPermitHolderDetails = async (carId: string, details: Partial<CustomerInfoType>) => {
+        try {
+            const permitHolderDocRef = await addDoc(collection(firestore, "PermitHolderDetails"), {
+                carId: carId,
+                ...details,
+            })
+
+            if (permitHolderDocRef.id) {
+                return true;
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                return error.message;
+            }
+
+            return "Something Went Wrong!";
+        }
+        return "Something Went Wrong!";
+    }
+
     useEffect(() => {
 
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -221,7 +241,7 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
 
    
     return (
-        <FirebaseUtilsContext.Provider value={{ signUpUser, getDataWithQuery, loginUser, signOutUser, userDetails, addCarRecord, addEMIDetails, setUserDetails, deleteCarRecord }}>
+        <FirebaseUtilsContext.Provider value={{ signUpUser, getDataWithQuery, addPermitHolderDetails, loginUser, signOutUser, userDetails, addCarRecord, addEMIDetails, setUserDetails, deleteCarRecord }}>
             {children}
         </FirebaseUtilsContext.Provider>
     )
