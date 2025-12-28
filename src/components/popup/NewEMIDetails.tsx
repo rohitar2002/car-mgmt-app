@@ -96,7 +96,7 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
         })
     }
     const handleValidation = () => {
-        if (!emiDetails.emiNo.trim()) {
+        if (!emiDetails.emiNo.toString().trim()) {
             setErrorDetails((prevState) => ({
                 ...prevState,
                 emiNo: "EMI Number is required",
@@ -110,7 +110,7 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
             }))
             return false;
         }
-        if (!emiDetails.emiAmount.trim()) {
+        if (!emiDetails.emiAmount.toString().trim()) {
             setErrorDetails((prevState) => ({
                 ...prevState,
                 emiAmount: "EMI Amount is required",
@@ -121,8 +121,8 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
         return true;
     }
     const emiReceivedValidation = () => {
-        if (emiDetails.emiReceivedDate.trim() || emiDetails.slipNo.trim()) {
-            if (!emiDetails.slipNo.trim()) {
+        if (emiDetails.emiReceivedDate.trim() || emiDetails.slipNo.toString().trim()) {
+            if (!emiDetails.slipNo.toString().trim()) {
                 setErrorDetails((prevState) => ({
                     ...prevState,
                     slipNo: "Slip Number is required",
