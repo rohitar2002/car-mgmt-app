@@ -31,7 +31,7 @@ export const CarDetails = ({ carInfo, setCarInfo, registrationNumberError, setRe
             <div className="flex flex-col justify-center gap-3">
                 <label className="font-semibold text-lg">Registration Number</label>
                 <input type="text" value={carInfo.registrationNumber} onChange={(e) => {
-                    handleValueChange(e.target.value, "registrationNumber");
+                    handleValueChange(e.target.value.toUpperCase(), "registrationNumber");
                     setRegistrationNumberError("");
                 }} placeholder="Enter Registration Number" className="px-3 py-2 border border-primary focus:outline-none rounded" />
                 {registrationNumberError && <h2 className="text-lg font-bold text-red-500">{registrationNumberError}</h2>}
@@ -53,17 +53,17 @@ export const CarDetails = ({ carInfo, setCarInfo, registrationNumberError, setRe
             </div>
 
             <div className="flex flex-col justify-center gap-3">
-                <label className="font-semibold text-lg">Engine Number</label>
-                <input type="text" value={carInfo.engineNumber} onChange={(e) => {
-                    handleValueChange(e.target.value, "engineNumber");
-                }} placeholder="Enter Engine Number" className="px-3 py-2 border border-primary focus:outline-none rounded" />
-            </div>
-
-            <div className="flex flex-col justify-center gap-3">
                 <label className="font-semibold text-lg">Chassis Number</label>
                 <input type="text" value={carInfo.chassisNumber} onChange={(e) => {
                     handleValueChange(e.target.value, "chassisNumber");
                 }} placeholder="Enter Chassis Number" className="px-3 py-2 border border-primary focus:outline-none rounded" />
+            </div>
+
+            <div className="flex flex-col justify-center gap-3">
+                <label className="font-semibold text-lg">Engine Number</label>
+                <input type="text" value={carInfo.engineNumber} onChange={(e) => {
+                    handleValueChange(e.target.value, "engineNumber");
+                }} placeholder="Enter Engine Number" className="px-3 py-2 border border-primary focus:outline-none rounded" />
             </div>
 
             <div className="flex flex-col justify-center gap-3">

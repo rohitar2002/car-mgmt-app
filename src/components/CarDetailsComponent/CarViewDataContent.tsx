@@ -17,9 +17,13 @@ import { CarInfoViewer } from "./CarInfoViewer";
 import { LoanInfoViewer } from "./LoanInfoViewer";
 import { PermitHolderViewer } from "./PermitHolderSection";
 import ADDEMIPermitHolderDetails from "../popup/AddEditPermitHolder";
+import DeleteConfirmPopup from "../popup/DeleteConfirmPopup";
 
 const CarViewDataContent = () => {
     const [carDetails, setCarDetails] = useState<CarDetailsWithIdType | null>(null);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
+    const [carIdForDeletion, setCarIdForDeletion] = useState<string>("");
+    const [carRegistrationNoForDeletion, setCarRegistrationNoForDeletion] = useState<string>("");
     const [emiHistoryDetails, setEMIHistoryDetails] = useState<EmiDetailsType[] | null>(null);
     const [existingEMIDetails, setExistingEMIDetails] = useState<EmiDetailsType | null>(null);
     const [emiPopupTitle, setEMIPopupTitle] = useState<string>("Add EMI Details");
@@ -220,6 +224,12 @@ const CarViewDataContent = () => {
                 setShowConfirm(false);
             }} />
 
+            <DeleteConfirmPopup isShowPopup={showDeleteConfirm} closePopup={() => {
+                setShowDeleteConfirm(false);
+                setCarIdForDeletion("");
+                setCarRegistrationNoForDeletion("");
+            }} carId={carIdForDeletion} registrationNumber={carRegistrationNoForDeletion} />
+
             <AddEditCarDetails isShowPopup={showUpdatePopup} closePopup={() => {
                 setShowUpdatePopup(false);
                 setEMIPopupTitle("Add EMI Details");
@@ -229,7 +239,7 @@ const CarViewDataContent = () => {
 
             <ADDEMIPermitHolderDetails title={`${carDetails?.permitHolder ? "Update" : "Add"} Information`} carId={carDetails?.carId ? carDetails?.carId : null} existingDetails={carDetails?.permitHolder} handlePermitHolderUpdate={handlePermitHolderUpdate} isShowPopup={showPermitHolderConfirm} closePopup={() => {
                 setShowPermitHolderConfirm(false);
-            }} getData = {getData}/>
+            }} getData={getData} />
 
             <div className="flex justify-center items-center relative top-20">
                 <div className="w-full lg:w-3/5 h-full border border-primary rounded m-10">
@@ -264,6 +274,11 @@ const CarViewDataContent = () => {
                     <CustomerInfoViewer customerInfo={carDetails?.customerInfo} />
 
                     <div className="flex items-center justify-center flex-col sm:flex-row sm:justify-end gap-5 p-5">
+                        <button className="bg-red-500 border px-5 py-2 w-full sm:w-fit text-white rounded-lg" disabled = {!carDetails?.carId} onClick={() => {
+                            setCarIdForDeletion(carDetails?.carId ? carDetails.carId : "");
+                            setCarRegistrationNoForDeletion(carDetails?.carInfo.registrationNumber ? carDetails?.carInfo.registrationNumber : "");
+                            setShowDeleteConfirm(true);
+                        }}>Delete</button>
                         <button className="px-3 py-2 w-full sm:w-fit bg-primary text-white rounded" onClick={() => {
                             setShowUpdatePopup(true);
                         }}>Update Car Info</button>

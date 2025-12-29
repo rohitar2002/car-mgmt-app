@@ -6,19 +6,21 @@ import { toast } from "react-toastify";
 import Loader from "../Loader/RotatingLines";
 import { useFirebaseContext } from "@/context/firebaseContext";
 import { isMobile, isTablet } from "react-device-detect";
+import { useRouter } from "next/navigation";
+// import { useRouter } from "next/router";
 
 Modal.setAppElement("#documentBody");
 
 interface Props {
     isShowPopup: boolean;
     closePopup: () => void;
-    getCarRecords: () => void;
     carId: string;
     registrationNumber: string;
 }
-const DeleteConfirmPopup = ({ isShowPopup, closePopup, carId, registrationNumber, getCarRecords }: Props) => {
+const DeleteConfirmPopup = ({ isShowPopup, closePopup, carId, registrationNumber }: Props) => {
     const [modalWidth, setModalWidth] = useState<string>("50%");
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const router = useRouter();
     const firebaseContext = useFirebaseContext();
 
     const customStyles: ReactModal.Styles = {
@@ -51,7 +53,7 @@ const DeleteConfirmPopup = ({ isShowPopup, closePopup, carId, registrationNumber
         if (typeof deletionResposne === "boolean") {
             toast.success("Car Entry Deleted Successfully.");
             closePopup();
-            getCarRecords();
+            router.push("/pages/DashBoard");
         }
         else {
             toast.error(deletionResposne);

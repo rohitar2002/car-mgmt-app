@@ -2,7 +2,6 @@
 
 import Loader from "@/components/Loader/RotatingLines";
 import AddEditCarDetails from "@/components/popup/AddEditCar";
-import DeleteConfirmPopup from "@/components/popup/DeleteConfirmPopup";
 import { useFirebaseContext } from "@/context/firebaseContext";
 import { firestore } from "@/firebase/firebase.config";
 import { CarDetailsWithIdType } from "@/interface/CarEntriesTypes";
@@ -17,9 +16,6 @@ const DashBoard = () => {
     const [fillteredRegisteredCarInfo, setFillteredRegisteredCarInfo] = useState<CarDetailsWithIdType[] | null>(null);
     const [totalLoanAmount, setTotalLoanAmount] = useState<string>("0");
     const [showConfirm, setShowConfirm] = useState<boolean>(false);
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
-    const [carIdForDeletion, setCarIdForDeletion] = useState<string>("");
-    const [carRegistrationNoForDeletion, setCarRegistrationNoForDeletion] = useState<string>("");
     const [registrationNumber, setRegistrationNumber] = useState<string>("");
     const [carModel, setCarModel] = useState<string>("");
     const [showRegistrationInput, setShowRegistrationInput] = useState<boolean>(false);
@@ -91,6 +87,7 @@ const DashBoard = () => {
         }
         return dateString;
     }
+
     useEffect(() => {
         if (firebaseContext?.userDetails && firebaseContext?.userDetails?.registeredCars?.length) {
             getCarRecords();
@@ -104,7 +101,7 @@ const DashBoard = () => {
     }, [fillteredRegisteredCarInfo])
 
     useEffect(() => {
-        if ((showConfirm || showDeleteConfirm) && (document.getElementById("main-container"))) {
+        if ((showConfirm) && (document.getElementById("main-container"))) {
             // document.body.style.display = "fixed";
             // document.body.style.overflow = "hidden";
             document.getElementById("main-container")?.classList.add("scroll-hidden");
@@ -121,7 +118,7 @@ const DashBoard = () => {
             document.getElementById("main-container")?.classList.remove("scroll-hidden");
         }
 
-    }, [showConfirm, showDeleteConfirm])
+    }, [showConfirm])
 
     return (
         <>
@@ -129,12 +126,6 @@ const DashBoard = () => {
             <AddEditCarDetails title="Add New Car" isShowPopup={showConfirm} closePopup={() => {
                 setShowConfirm(false);
             }} />
-
-            <DeleteConfirmPopup isShowPopup={showDeleteConfirm} closePopup={() => {
-                setShowDeleteConfirm(false);
-                setCarIdForDeletion("");
-                setCarRegistrationNoForDeletion("");
-            }} carId={carIdForDeletion} registrationNumber={carRegistrationNoForDeletion} getCarRecords={getCarRecords} />
 
             <div>
                 <main className="p-5">
@@ -203,7 +194,7 @@ const DashBoard = () => {
                                             <th className="border border-black px-3 py-3 text-left text-white bg-primary">Purchased Date</th>
                                             <th className="border border-black px-3 py-3 text-left text-white bg-primary">Total Financed Amount</th>
                                             <th className="border border-black px-3 py-3 text-left text-white bg-primary">EMI Amount</th>
-                                            <th className="border border-black px-3 py-3 text-center text-white bg-primary">Action</th>
+                                            <th className="border border-black px-3 py-3 text-left text-white bg-primary">Action</th>
                                         </tr>
                                     </thead>
 
@@ -227,12 +218,6 @@ const DashBoard = () => {
 
                                                                     router.replace(`CarDetails?carId=${item.carId}&loanId=${item.loanId}`);
                                                                 }}>View</button>
-
-                                                                <button className="text-red-500" onClick={() => {
-                                                                    setCarIdForDeletion(item.carId);
-                                                                    setCarRegistrationNoForDeletion(item.carInfo.registrationNumber);
-                                                                    setShowDeleteConfirm(true);
-                                                                }}>Delete</button>
                                                             </td>
                                                         </tr>
                                                     )

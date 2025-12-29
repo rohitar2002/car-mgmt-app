@@ -106,9 +106,9 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPo
         return "--";
     }
 
-    const totalEmiAmount = emiHistoryDetails ? emiHistoryDetails.reduce((total, item) => total + parseInt(item.emiAmount), 0) : 0;
-    const totalOverDueAmount = emiHistoryDetails ? emiHistoryDetails.reduce((total, item) => total + (item.overdue ? parseInt(item.overdue) : 0), 0) : 0;
-    const totalOtherInterestAmount = emiHistoryDetails ? emiHistoryDetails.reduce((total, item) => total + (item.otherInterest ? parseInt(item.otherInterest) : 0), 0) : 0;
+    const totalEmiAmount = emiHistoryDetails ? emiHistoryDetails.reduce((total, item) => total + parseInt(item.emiAmount.replace(/\D/g, "")), 0) : 0;
+    const totalOverDueAmount = emiHistoryDetails ? emiHistoryDetails.reduce((total, item) => total + (item.overdue ? parseInt(item.overdue.replace(/\D/g, "")) : 0), 0) : 0;
+    const totalOtherInterestAmount = emiHistoryDetails ? emiHistoryDetails.reduce((total, item) => total + (item.otherInterest ? parseInt(item.otherInterest.replace(/\D/g, "")) : 0), 0) : 0;
 
     useEffect(() => {
         if (isShowPopup) {
