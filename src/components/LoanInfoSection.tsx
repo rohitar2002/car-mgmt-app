@@ -107,10 +107,34 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, setLoanInfoChangesStatus }:
                     }} placeholder="Enter any Additional Charges" className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
                 </div>
                 <div className="flex flex-col justify-center gap-3">
-                    <label className="font-semibold text-lg">Dasti Amount</label>
-                    <input type="text" value={loanInfo.dastiAmount} onChange={(e) => {
-                        handleValueChange(e.target.value, "dastiAmount");
-                    }} placeholder="Enter any dasti Amount" className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
+                    <label className="font-semibold text-lg">Friendly Loan1 Amount</label>
+                    <input type="text" value={loanInfo.friendlyLoan1} onChange={(e) => {
+                        handleValueChange(e.target.value, "friendlyLoan1");
+                    }} placeholder="Enter any Friendly Loan1 Amount" className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
+                </div>
+                <div className="flex flex-col justify-center gap-3">
+                    <label className="font-semibold text-lg">Friendly Loan1 Description</label>
+                    <input type="text" value={loanInfo.friendlyLoan1Description} onChange={(e) => {
+                        handleValueChange(e.target.value, "friendlyLoan1Description");
+                    }} placeholder="Enter any Friendly Loan1 Description" className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
+                </div>
+                <div className="flex flex-col justify-center gap-3">
+                    <label className="font-semibold text-lg">Friendly Loan2 Amount</label>
+                    <input type="text" value={loanInfo.friendlyLoan2} onChange={(e) => {
+                        handleValueChange(e.target.value, "friendlyLoan2");
+                    }} placeholder="Enter any Friendly Loan1 Amount" className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
+                </div>
+                <div className="flex flex-col justify-center gap-3">
+                    <label className="font-semibold text-lg">Friendly Loan2 Description</label>
+                    <input type="text" value={loanInfo.friendlyLoan2Description} onChange={(e) => {
+                        handleValueChange(e.target.value, "friendlyLoan2Description");
+                    }} placeholder="Enter any Friendly Loan2 Description" className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
+                </div>
+                <div className="flex flex-col justify-center gap-3">
+                    <label className="font-semibold text-lg">Loan Disbursement Description</label>
+                    <input type="text" value={loanInfo.loandisbursementDescription} onChange={(e) => {
+                        handleValueChange(e.target.value, "loandisbursementDescription");
+                    }} placeholder="Enter Loan Disbursement Description" className="px-3 py-2 w-full border border-primary focus:outline-none rounded" />
                 </div>
 
                 <div className="flex flex-col justify-center gap-3">

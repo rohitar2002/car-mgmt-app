@@ -65,8 +65,24 @@ export const LoanInfoViewer = ({ loanInfo }: LoanInfoViewerProps) => {
                             <h2 className="text-md">{loanInfo?.dueAmount ? "₹" + loanInfo?.dueAmount : "--"}</h2>
                         </div>
                         <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
-                            <label className="font-bold text-lg">Dasti Amount:</label>
-                            <h2 className="text-md">{loanInfo?.dastiAmount ? "₹" + loanInfo?.dastiAmount : "--"}</h2>
+                            <label className="font-bold text-lg">Friendly Loan1 Amount:</label>
+                            <h2 className="text-md">{loanInfo?.friendlyLoan1 ? "₹" + loanInfo?.friendlyLoan1 : "--"}</h2>
+                        </div>
+                        <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
+                            <label className="font-bold text-lg">Friendly Loan1 Description:</label>
+                            <h2 className="text-md">{loanInfo?.friendlyLoan1Description ? loanInfo?.friendlyLoan1Description : "--"}</h2>
+                        </div>
+                        <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
+                            <label className="font-bold text-lg">Friendly Loan2 Amount:</label>
+                            <h2 className="text-md">{loanInfo?.friendlyLoan2 ? "₹" + loanInfo?.friendlyLoan2 : "--"}</h2>
+                        </div>
+                        <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
+                            <label className="font-bold text-lg">Friendly Loan2 Description:</label>
+                            <h2 className="text-md">{loanInfo?.friendlyLoan2Description ? loanInfo?.friendlyLoan2Description : "--"}</h2>
+                        </div>
+                        <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
+                            <label className="font-bold text-lg">Loan Disbursement Description:</label>
+                            <h2 className="text-md">{loanInfo?.loandisbursementDescription ? loanInfo?.loandisbursementDescription : "--"}</h2>
                         </div>
                         <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
                             <label className="font-bold text-lg">Additional Charges:</label>

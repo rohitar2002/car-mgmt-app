@@ -1,4 +1,4 @@
-import { EmiDetailsType } from "@/interface/CarEntriesTypes";
+import { EMIDetailsWithIDType } from "@/interface/CarEntriesTypes";
 import { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
 import Modal from "react-modal"
@@ -12,9 +12,9 @@ Modal.setAppElement("#documentBody");
 interface Props {
     loanId: string | undefined;
     isShowPopup: boolean;
-    emiHistoryDetails: EmiDetailsType[] | null;
-    setEMIHistoryDetails: (value: EmiDetailsType[] | null) => void;
-    setExistingEMIDetails: (value: EmiDetailsType) => void;
+    emiHistoryDetails: EMIDetailsWithIDType[] | null;
+    setEMIHistoryDetails: (value: EMIDetailsWithIDType[] | null) => void;
+    setExistingEMIDetails: (value: EMIDetailsWithIDType) => void;
     getEMIDetails: (loanId: string) => void;
     setEMIPopupTitle: (value: string) => void;
     setShowEditPopup: (value: boolean) => void;
@@ -56,8 +56,8 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPo
                 const headers = ["EMI Number, Slip Number, Due Date, Received Date, Status, Emi Amount, OverDue, Other Interest"];
 
                 const rows = emiHistoryDetails.map(
-                    (item: EmiDetailsType) =>
-                        `${item.emiNo}, ${item.slipNo || "--"}, "${handleDateDisplay(item.emiDueDate)}", "${handleDateDisplay(item.emiReceivedDate) || "--"}", ${item.emiAmount}, ${item.emiStatus},${item.overdue || "--"}, ${item.otherInterest || "--"}`
+                    (item: EMIDetailsWithIDType) =>
+                        `${item.data.emiNo}, ${item.data.slipNo || "--"}, "${handleDateDisplay(item.data.emiDueDate)}", "${handleDateDisplay(item.data.emiReceivedDate) || "--"}", ${item.data.emiAmount}, ${item.data.emiStatus},${item.data.overdue || "--"}, ${item.data.otherInterest || "--"}`
                 );
 
                 // Combine headers and rows
@@ -92,7 +92,7 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPo
         }
     };
 
-    const handleEditClick = (data: EmiDetailsType) => {
+    const handleEditClick = (data: EMIDetailsWithIDType) => {
         setShowEditPopup(true);
         setExistingEMIDetails(data);
         setEMIPopupTitle("Edit EMI Details");
@@ -106,9 +106,9 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPo
         return "--";
     }
 
-    const totalEmiAmount = emiHistoryDetails ? emiHistoryDetails.reduce((total, item) => total + parseInt(item.emiAmount.replace(/\D/g, "")), 0) : 0;
-    const totalOverDueAmount = emiHistoryDetails ? emiHistoryDetails.reduce((total, item) => total + (item.overdue ? parseInt(item.overdue.replace(/\D/g, "")) : 0), 0) : 0;
-    const totalOtherInterestAmount = emiHistoryDetails ? emiHistoryDetails.reduce((total, item) => total + (item.otherInterest ? parseInt(item.otherInterest.replace(/\D/g, "")) : 0), 0) : 0;
+    const totalEmiAmount = emiHistoryDetails ? emiHistoryDetails.reduce((total, item) => total + (item.data?.emiAmount.toString().trim() ? parseInt(item.data.emiAmount.replace(/\D/g, "")) : 0), 0) : 0;
+    const totalOverDueAmount = emiHistoryDetails ? emiHistoryDetails.reduce((total, item) => total + (item.data.overdue?.toString().trim() ? parseInt(item.data.overdue.replace(/\D/g, "")) : 0), 0) : 0;
+    const totalOtherInterestAmount = emiHistoryDetails ? emiHistoryDetails.reduce((total, item) => total + (item.data.otherInterest?.toString().trim() ? parseInt(item.data.otherInterest.replace(/\D/g, "")) : 0), 0) : 0;
 
     useEffect(() => {
         if (isShowPopup) {
@@ -188,17 +188,17 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPo
 
                                 <tbody>
                                     {
-                                        emiHistoryDetails ? (emiHistoryDetails.map((item: EmiDetailsType, index) => {
+                                        emiHistoryDetails ? (emiHistoryDetails.map((item: EMIDetailsWithIDType, index) => {
                                             return (
                                                 <tr key={index}>
-                                                    <td className="px-3 py-2 border border-black">{item.emiNo}</td>
-                                                    <td className="px-3 py-2 border border-black">{item.slipNo ? item.slipNo : "--"}</td>
-                                                    <td className="px-3 py-2 border border-black whitespace-nowrap">{handleDateDisplay(item.emiDueDate)}</td>
-                                                    <td className="px-3 py-2 border border-black whitespace-nowrap">{handleDateDisplay(item.emiReceivedDate)}</td>
-                                                    <td className="px-3 py-2 border border-black">₹{item.emiAmount}</td>
-                                                    <td className={`px-3 py-2 font-bold border border-black ${item.emiStatus === "Paid" ? "text-accent" : item.emiStatus === "Pending" ? "text-orange-500" : "text-error"}`}>{item.emiStatus}</td>
-                                                    <td className="px-3 py-2 border border-black">{item.overdue ? "₹" + item.overdue : "--"}</td>
-                                                    <td className="px-3 py-2 border border-black">{item.otherInterest ? "₹" + item.otherInterest : "--"}</td>
+                                                    <td className="px-3 py-2 border border-black">{item.data.emiNo ? item.data.emiNo : "--"}</td>
+                                                    <td className="px-3 py-2 border border-black">{item.data.slipNo ? item.data.slipNo : "--"}</td>
+                                                    <td className="px-3 py-2 border border-black whitespace-nowrap">{handleDateDisplay(item.data.emiDueDate)}</td>
+                                                    <td className="px-3 py-2 border border-black whitespace-nowrap">{handleDateDisplay(item.data.emiReceivedDate)}</td>
+                                                    <td className="px-3 py-2 border border-black">{item.data.emiAmount ? "₹" + item.data.emiAmount : "--"}</td>
+                                                    <td className={`px-3 py-2 font-bold border border-black ${item.data.emiStatus === "Paid" ? "text-accent" : item.data.emiStatus === "Pending" ? "text-orange-500" : "text-error"}`}>{item.data.emiStatus}</td>
+                                                    <td className="px-3 py-2 border border-black">{item.data.overdue ? "₹" + item.data.overdue : "--"}</td>
+                                                    <td className="px-3 py-2 border border-black">{item.data.otherInterest ? "₹" + item.data.otherInterest : "--"}</td>
                                                     <td className="px-5 py-2 border border-black">
                                                         <TbEdit size={30} className="cursor-pointer text-center" onClick={() => handleEditClick(item)} />
                                                     </td>

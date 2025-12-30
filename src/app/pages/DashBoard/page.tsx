@@ -17,9 +17,6 @@ const DashBoard = () => {
     const [totalLoanAmount, setTotalLoanAmount] = useState<string>("0");
     const [showConfirm, setShowConfirm] = useState<boolean>(false);
     const [registrationNumber, setRegistrationNumber] = useState<string>("");
-    const [carModel, setCarModel] = useState<string>("");
-    const [showRegistrationInput, setShowRegistrationInput] = useState<boolean>(false);
-    const [showCarModelInput, setShowCarModelInput] = useState<boolean>(false);
     const firebaseContext = useFirebaseContext();
     const router = useRouter()
 
@@ -68,17 +65,9 @@ const DashBoard = () => {
     }
 
 
-    const handleSearch = (registrationNumber: string | null, carModel: string | null) => {
-        if (registrationNumber !== null) {
-            const fillteredInfo = allRegisteredCarInfo?.filter((item) => ((item.carInfo.registrationNumber).toLowerCase().includes(registrationNumber.toLowerCase())));
-
-            setFillteredRegisteredCarInfo(fillteredInfo ? fillteredInfo : null);
-        }
-        else if (carModel !== null) {
-            const fillteredInfo = allRegisteredCarInfo?.filter((item) => ((item.carInfo.modelNumber).toLowerCase()).includes(carModel.toLowerCase()));
-
-            setFillteredRegisteredCarInfo(fillteredInfo ? fillteredInfo : null);
-        }
+    const handleSearch = (registrationNumber: string) => {
+        const fillteredInfo = allRegisteredCarInfo?.filter((item) => ((item.carInfo.registrationNumber).toLowerCase().includes(registrationNumber.toLowerCase())));
+        setFillteredRegisteredCarInfo(fillteredInfo ? fillteredInfo : null);
     }
     const handleDateDisplay = (dateString: string | undefined) => {
         if (dateString && dateString.trim() !== "") {
@@ -138,50 +127,20 @@ const DashBoard = () => {
                                     setShowConfirm(true);
                                 }}>Add New Car</button>
 
-                                {showCarModelInput ?
-                                    (
-                                        <div className="flex items-center gap-3">
-                                            <input type="text" className="border border-primary px-3 py-2 rounded focus:outline-none" placeholder="Car Model" value={carModel} onChange={(e) => {
-                                                setCarModel(e.target.value);
-                                            }}
-                                                onKeyDown={(e) => {
-                                                    if (e.key === "Enter") {
-                                                        handleSearch(null, carModel);
-                                                    }
-                                                }} />
-                                            <button className="text-white bg-primary px-5 py-2 rounded " onClick={(e) => {
-                                                e.preventDefault();
+                                <div className="flex items-center gap-3">
+                                    <input type="text" className="border border-primary px-3 py-2 rounded focus:outline-none" placeholder="Registration Number" value={registrationNumber} onChange={(e) => {
+                                        setRegistrationNumber(e.target.value);
+                                    }} onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            handleSearch(registrationNumber);
+                                        }
+                                    }} />
+                                    <button className="text-white bg-primary px-5 py-2 rounded " onClick={(e) => {
+                                        e.preventDefault();
 
-                                                handleSearch(null, carModel)
-                                            }}>Search</button>
-                                        </div>
-                                    ) : <button className="text-white bg-primary px-5 py-2 rounded " onClick={() => {
-                                        setShowRegistrationInput(false);
-                                        setShowCarModelInput(true);
-                                        setCarModel("");
-                                    }}>Search Using Car Model</button>}
-
-                                {showRegistrationInput ?
-                                    (
-                                        <div className="flex items-center gap-3">
-                                            <input type="text" className="border border-primary px-3 py-2 rounded focus:outline-none" placeholder="Registration Number" value={registrationNumber} onChange={(e) => {
-                                                setRegistrationNumber(e.target.value);
-                                            }} onKeyDown={(e) => {
-                                                if (e.key === "Enter") {
-                                                    handleSearch(registrationNumber, null);
-                                                }
-                                            }} />
-                                            <button className="text-white bg-primary px-5 py-2 rounded " onClick={(e) => {
-                                                e.preventDefault();
-
-                                                handleSearch(registrationNumber, null)
-                                            }}>Search</button>
-                                        </div>
-                                    ) : <button className="text-white bg-primary px-5 py-2 rounded " onClick={() => {
-                                        setShowRegistrationInput(true);
-                                        setRegistrationNumber("");
-                                        setShowCarModelInput(false);
-                                    }}>Search Using Registration Number</button>}
+                                        handleSearch(registrationNumber)
+                                    }}>Search</button>
+                                </div>
 
                             </div>
                             <div className="w-full overflow-auto">

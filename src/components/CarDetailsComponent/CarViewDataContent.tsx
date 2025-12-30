@@ -4,7 +4,7 @@ import Loader from "@/components/Loader/RotatingLines";
 import AddEditCarDetails from "@/components/popup/AddEditCar";
 import { EMIHistoryPopup } from "@/components/popup/EMIHistory";
 import { firestore } from "@/firebase/firebase.config";
-import { CarDetailsWithIdType, CarInfoType, CustomerInfoType, EmiDetailsType, LoanInfoType } from "@/interface/CarEntriesTypes";
+import { CarDetailsWithIdType, CarInfoType, CustomerInfoType, EmiDetailsType, EMIDetailsWithIDType, LoanInfoType } from "@/interface/CarEntriesTypes";
 import { doc, DocumentData, getDoc, updateDoc } from "firebase/firestore";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -24,8 +24,8 @@ const CarViewDataContent = () => {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
     const [carIdForDeletion, setCarIdForDeletion] = useState<string>("");
     const [carRegistrationNoForDeletion, setCarRegistrationNoForDeletion] = useState<string>("");
-    const [emiHistoryDetails, setEMIHistoryDetails] = useState<EmiDetailsType[] | null>(null);
-    const [existingEMIDetails, setExistingEMIDetails] = useState<EmiDetailsType | null>(null);
+    const [emiHistoryDetails, setEMIHistoryDetails] = useState<EMIDetailsWithIDType[] | null>(null);
+    const [existingEMIDetails, setExistingEMIDetails] = useState<EMIDetailsWithIDType | null>(null);
     const [emiPopupTitle, setEMIPopupTitle] = useState<string>("Add EMI Details");
     const [showConfirm, setShowConfirm] = useState<boolean>(false);
     const [showPermitHolderConfirm, setShowPermitHolderConfirm] = useState<boolean>(false);
@@ -92,13 +92,13 @@ const CarViewDataContent = () => {
 
     }, [carDetails])
 
-    const getStatus = (emiInfo: EmiDetailsType) => {
+    const getStatus = (emiInfo: EMIDetailsWithIDType) => {
         const currentDate = new Date();
-        const dueDate = new Date(emiInfo.emiDueDate);
+        const dueDate = new Date(emiInfo.data.emiDueDate);
         dueDate.setHours(0, 0, 0, 0);
         currentDate.setHours(0, 0, 0, 0);
 
-        if (emiInfo.emiReceivedDate) {
+        if (emiInfo.data.emiReceivedDate) {
             return "Paid";
         }
 
@@ -113,34 +113,46 @@ const CarViewDataContent = () => {
         setIsLoading(true);
         const queryResult = await firebaseContext?.getDataWithQuery("EMIDetails", "loanId", "==", loanId);
         if (queryResult && !queryResult.empty) {
-            const emiArray = queryResult.docs.map((item: DocumentData) => (item.data()));
+            const emiArray = queryResult.docs.map((item: DocumentData) => ({
+                data: item.data(),
+                id: item.id,
+            }));
 
-            const historyData = emiArray.map((item: EmiDetailsType) => {
+            const historyData = emiArray.map((item: EMIDetailsWithIDType) => {
                 const status = getStatus(item);
 
                 return {
-                    ...item,
-                    emiStatus: status,
+                    id: item.id,
+                    data: {
+                        ...item.data,
+                        emiStatus: status,
+                    }
                 }
             })
-            historyData.sort((a: EmiDetailsType, b: EmiDetailsType) => parseInt(a.emiNo) - parseInt(b.emiNo));
+            historyData.sort((a: EMIDetailsWithIDType, b: EMIDetailsWithIDType) => parseInt(a.data.emiNo) - parseInt(b.data.emiNo));
             setEMIHistoryDetails(historyData);
         }
         setIsLoading(false);
     }
 
-    const handleEMIUpdate = async (emiDetails: EmiDetailsType) => {
+    const handleEMIUpdate = async (emiDetails: EmiDetailsType, id: string) => {
         setIsLoading(true);
         try {
-            const emiDocs = await firebaseContext?.getDataWithQuery("EMIDetails", "loanId", "==", loanId);
-            if (emiDocs && !emiDocs.empty) {
-                const emiData = emiDocs.docs.find((item: DocumentData) => item.data().emiNo === emiDetails.emiNo);
-                if (emiData) {
-                    await updateDoc(emiData.ref, {
-                        ...emiDetails
-                    })
+            if (emiDetails.emiNo.toString().trim() && id.trim()) {
+                const emiDocs = await firebaseContext?.getDataWithQuery("EMIDetails", "loanId", "==", loanId);
+                if (emiDocs && !emiDocs.empty) {
+                    const emiData = emiDocs.docs.find((item: DocumentData) => item.data().emiNo === emiDetails.emiNo && item.id !== id);
+                    if (emiData) {
+                        toast.error("EMI No already exists. Please use a different EMI No.");
+                        setIsLoading(false);
+                        return;
+                    }
                 }
             }
+            
+            await updateDoc(doc(firestore, 'EMIDetails', id), {
+                ...emiDetails
+            })
 
             getEMIDetails(loanId);
             setShowAddEMIPopup(false);
@@ -274,7 +286,7 @@ const CarViewDataContent = () => {
                     <CustomerInfoViewer customerInfo={carDetails?.customerInfo} />
 
                     <div className="flex items-center justify-center flex-col sm:flex-row sm:justify-end gap-5 p-5">
-                        <button className="bg-red-500 border px-5 py-2 w-full sm:w-fit text-white rounded-lg" disabled = {!carDetails?.carId} onClick={() => {
+                        <button className="bg-red-500 border px-5 py-2 w-full sm:w-fit text-white rounded-lg" disabled={!carDetails?.carId} onClick={() => {
                             setCarIdForDeletion(carDetails?.carId ? carDetails.carId : "");
                             setCarRegistrationNoForDeletion(carDetails?.carInfo.registrationNumber ? carDetails?.carInfo.registrationNumber : "");
                             setShowDeleteConfirm(true);

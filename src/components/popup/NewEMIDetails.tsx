@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import Loader from "../Loader/RotatingLines";
 import { useFirebaseContext } from "@/context/firebaseContext";
 import { isMobile, isTablet } from "react-device-detect";
-import { EmiDetailsType } from "@/interface/CarEntriesTypes";
+import { EmiDetailsType, EMIDetailsWithIDType } from "@/interface/CarEntriesTypes";
 import { DocumentData } from "firebase/firestore";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -15,8 +15,8 @@ Modal.setAppElement("#documentBody");
 interface Props {
     isShowPopup: boolean;
     closePopup: () => void;
-    existingDetails?: EmiDetailsType | null;
-    handleEMIUpdate: (emiDetails: EmiDetailsType) => void;
+    existingDetails?: EMIDetailsWithIDType | null;
+    handleEMIUpdate: (emiDetails: EmiDetailsType, id: string) => void;
     title: string
     loanId: string;
 }
@@ -25,13 +25,13 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const firebaseContext = useFirebaseContext();
     const [emiDetails, setEMIDetails] = useState<EmiDetailsType>({
-        emiNo: existingDetails?.emiNo || "",
-        emiDueDate: existingDetails?.emiDueDate || "",
-        emiReceivedDate: existingDetails?.emiReceivedDate || "",
-        emiAmount: existingDetails?.emiAmount || "",
-        slipNo: existingDetails?.slipNo || "",
-        overdue: existingDetails?.overdue || "",
-        otherInterest: existingDetails?.otherInterest || "",
+        emiNo: existingDetails?.data.emiNo || "",
+        emiDueDate: existingDetails?.data.emiDueDate || "",
+        emiReceivedDate: existingDetails?.data.emiReceivedDate || "",
+        emiAmount: existingDetails?.data.emiAmount || "",
+        slipNo: existingDetails?.data.slipNo || "",
+        overdue: existingDetails?.data.overdue || "",
+        otherInterest: existingDetails?.data.otherInterest || "",
     })
     const [errorDetails, setErrorDetails] = useState<Partial<EmiDetailsType>>({
         emiNo: "",
@@ -96,6 +96,8 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
         })
     }
     const handleValidation = () => {
+        if (!emiDetails.emiNo.toString().trim() && !emiDetails.emiAmount.toString().trim() && !emiDetails.emiDueDate.trim() && (emiDetails.overdue.toString().trim() || emiDetails.otherInterest.toString().trim())) return true;
+
         if (!emiDetails.emiNo.toString().trim()) {
             setErrorDetails((prevState) => ({
                 ...prevState,
@@ -143,23 +145,26 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
     const handleSave = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
+
         const isValid = handleValidation();
         if (!isValid) return;
+
         const isReceivedEntryValid = emiReceivedValidation();
         if (!isReceivedEntryValid) return;
         clearState();
         setIsLoading(true);
 
-        const emiDocs = await firebaseContext?.getDataWithQuery("EMIDetails", "loanId", "==", loanId);
-        if (emiDocs && !emiDocs.empty) {
-            const emiData = emiDocs.docs.find((item: DocumentData) => item.data().emiNo == emiDetails.emiNo);
-            if (emiData) {
-                toast.error("EMI Number Already Exists");
-                setIsLoading(false);
-                return;
+        if (emiDetails.emiNo.toString().trim()) {
+            const emiDocs = await firebaseContext?.getDataWithQuery("EMIDetails", "loanId", "==", loanId);
+            if (emiDocs && !emiDocs.empty) {
+                const emiData = emiDocs.docs.find((item: DocumentData) => item.data().emiNo == emiDetails.emiNo);
+                if (emiData) {
+                    toast.error("EMI Number Already Exists");
+                    setIsLoading(false);
+                    return;
+                }
             }
         }
-
 
         const emiDetailsResponse = await firebaseContext?.addEMIDetails(loanId, emiDetails);
 
@@ -181,18 +186,29 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
         const isReceivedEntryValid = emiReceivedValidation();
         if (!isReceivedEntryValid) return;
         clearState();
-        handleEMIUpdate(emiDetails);
+        handleEMIUpdate(emiDetails, existingDetails ? existingDetails.id : "");
     }
-
+    const handleReset = () => {
+        setEMIDetails({
+            emiNo: "",
+            emiDueDate: "",
+            emiReceivedDate: "",
+            emiAmount: "",
+            slipNo: "",
+            overdue: "",
+            otherInterest: "",
+        });
+        clearState();
+    }
     useEffect(() => {
         setEMIDetails({
-            emiNo: existingDetails?.emiNo || "",
-            emiDueDate: existingDetails?.emiDueDate || "",
-            emiReceivedDate: existingDetails?.emiReceivedDate || "",
-            emiAmount: existingDetails?.emiAmount || "",
-            slipNo: existingDetails?.slipNo || "",
-            overdue: existingDetails?.overdue || "",
-            otherInterest: existingDetails?.otherInterest || "",
+            emiNo: existingDetails?.data.emiNo || "",
+            emiDueDate: existingDetails?.data.emiDueDate || "",
+            emiReceivedDate: existingDetails?.data.emiReceivedDate || "",
+            emiAmount: existingDetails?.data.emiAmount || "",
+            slipNo: existingDetails?.data.slipNo || "",
+            overdue: existingDetails?.data.overdue || "",
+            otherInterest: existingDetails?.data.otherInterest || "",
         })
     }, [existingDetails])
 
@@ -252,7 +268,7 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
                             <div className="w-full flex items-center flex-col gap-5 md:flex-row md:items-start">
                                 <div className="flex flex-col gap-2 w-full md:w-1/2">
                                     <label htmlFor="emiNumber" className="text-lg font-semibold">EMI No.</label>
-                                    <input type="text" id="emiNumber" value={emiDetails.emiNo} onChange={(e) => handleValueChange(e.target.value, "emiNo")} placeholder="Enter EMI Number" disabled={existingDetails ? true : false} className={`focus:outline-none border border-gray-300 rounded-md p-2 ${existingDetails && "bg-gray-200"}`} />
+                                    <input type="text" id="emiNumber" value={emiDetails.emiNo} onChange={(e) => handleValueChange(e.target.value, "emiNo")} placeholder="Enter EMI Number" className="focus:outline-none border border-gray-300 rounded-md p-2" />
                                     {errorDetails.emiNo && <p className="text-red-500 text-lg font-bold">{errorDetails.emiNo}</p>}
                                 </div>
 
@@ -271,13 +287,13 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
                                         onChange={(date: Date | null) => {
                                             handleValueChange(date ? date.toISOString() : "", "emiDueDate")
                                         }}
-                                        dateFormat = "dd-MM-yyyy"
+                                        dateFormat="dd-MM-yyyy"
                                         placeholderText="dd-MM-yyyy"
                                         showMonthDropdown
                                         showYearDropdown
                                         dropdownMode="select"
                                         scrollableMonthYearDropdown
-                                       className="focus:outline-none border border-gray-300 rounded-md p-2 w-full" 
+                                        className="focus:outline-none border border-gray-300 rounded-md p-2 w-full"
                                     />
                                     {errorDetails.emiDueDate && <p className="text-red-500 text-lg font-bold">{errorDetails.emiDueDate}</p>}
                                 </div>
@@ -289,13 +305,14 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
                                         onChange={(date: Date | null) => {
                                             handleValueChange(date ? date.toISOString() : "", "emiReceivedDate")
                                         }}
-                                        dateFormat = "dd-MM-yyyy"
+                                        dateFormat="dd-MM-yyyy"
                                         placeholderText="dd-MM-yyyy"
+                                        openToDate={new Date(emiDetails.emiDueDate)}
                                         showMonthDropdown
                                         showYearDropdown
                                         dropdownMode="select"
                                         scrollableMonthYearDropdown
-                                       className="focus:outline-none border border-gray-300 rounded-md p-2 w-full" 
+                                        className="focus:outline-none border border-gray-300 rounded-md p-2 w-full"
                                     />
                                     {errorDetails.emiReceivedDate && <p className="text-red-500 text-lg font-bold">{errorDetails.emiReceivedDate}</p>}
                                 </div>
@@ -318,6 +335,7 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
 
                         </div>
                         <div className="flex flex-col items-center md:flex-row md:items-end md:justify-end gap-5 pt-5">
+                            <button className="bg-red-500 border px-10 py-2 w-full sm:w-fit text-white rounded text-lg" onClick={handleReset}>Reset</button>
                             <button type="button" className="text-primary border border-primary bg-white px-10 py-2 rounded text-lg w-full md:w-auto" onClick={handleClosePopup}>Cancel</button>
                             <button type="button" className="text-white bg-primary px-10 py-2 rounded text-lg w-full md:w-auto" onClick={existingDetails ? handleUpdate : handleSave}>{existingDetails ? "Update" : "Save"}</button>
                         </div>

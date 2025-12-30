@@ -55,7 +55,11 @@ export interface LoanInfoType {
     firstEmiDate: string;
     dueAmount: string;
     additionalCharges: string;
-    dastiAmount: string;
+    friendlyLoan1: string;
+    friendlyLoan1Description: string;
+    friendlyLoan2: string;
+    friendlyLoan2Description: string;
+    loandisbursementDescription: string;
     downPayment: string;
     interestRate: string;
 }
@@ -68,7 +72,11 @@ export interface LoanInfoChangesStatusType {
     firstEmiDate: boolean;
     dueAmount: boolean;
     additionalCharges: boolean;
-    dastiAmount: boolean;
+    friendlyLoan1: boolean;
+    friendlyLoan1Description: boolean;
+    friendlyLoan2: boolean;
+    friendlyLoan2Description: boolean;
+    loandisbursementDescription: boolean;
     downPayment: boolean;
     interestRate: boolean;
 }
@@ -106,13 +114,11 @@ export interface EmiDetailsType {
     emiReceivedDate: string;
     emiAmount: string;
     slipNo: string;
-    overdue?: string;
+    overdue: string;
     emiStatus?: string;
     otherInterest: string;
 }
-export interface EMIHistoryDBType {
-    "EMI Amount": string;
-    "Due Date": string;
-    "Payment Date"?: string;
-    "Loan Id": string;
+export interface EMIDetailsWithIDType {
+    data: EmiDetailsType;
+    id: string;
 }
