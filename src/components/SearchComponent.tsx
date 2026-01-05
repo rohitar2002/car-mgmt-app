@@ -21,7 +21,7 @@ export const SearchComponent = ({ registrationNumber, registrationNumberOptionLi
         return () => setUpdatedOptionList([]);
     }, []);
     return (
-        <div className={`flex items-center w-full ${isEmiHistory ? "gap-10" : "md:w-5/12"}`}>
+        <div className={`flex sm:justify-end items-center sm:flex-row w-full ${isEmiHistory ? "gap-10 flex-col" : "md:w-5/12"}`}>
             {!isEmiHistory && <label className="px-3 font-bold whitespace-nowrap text-accent text-lg" htmlFor="filter-car">Filter Cars:</label>}
             <Select
                 className="border border-primary w-full rounded focus:outline-none"
@@ -33,7 +33,7 @@ export const SearchComponent = ({ registrationNumber, registrationNumberOptionLi
                     setRegistrationNumber(selectedOption)}
             />
 
-            {isEmiHistory && getEMIDetails && <button className="px-5 py-2 whitespace-nowrap rounded bg-primary text-white self-end" disabled={registrationNumber == null} onClick={() => getEMIDetails(registrationNumber ? registrationNumber.value : "", setHistoryTableTitle)}>Get EMI History</button>}
+            {isEmiHistory && getEMIDetails && <button className="px-5 py-2 w-fit whitespace-nowrap rounded bg-primary text-white " disabled={registrationNumber == null} onClick={() => getEMIDetails(registrationNumber ? registrationNumber.value : "", setHistoryTableTitle)}>Get EMI History</button>}
         </div>
     )
 }

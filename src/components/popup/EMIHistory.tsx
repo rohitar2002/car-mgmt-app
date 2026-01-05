@@ -268,7 +268,7 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPo
                             </table>
                         </div>
                         <div className="flex justify-center sm:justify-end items-center flex-col sm:flex-row gap-5 py-5 mt-3">
-                            <button className="px-3 py-2 bg-primary text-white rounded" disabled={emiHistoryDetails.length == 0} onClick={handleAddNewEMI}>Add EMI Details</button>
+                            <button className="px-3 py-2 w-full sm:w-fit bg-primary text-white rounded" disabled={emiHistoryDetails.length == 0} onClick={handleAddNewEMI}>Add EMI Details</button>
                             <button className="px-5 py-2 w-full sm:w-fit rounded bg-primary text-white" onClick={downloadCSV}>Download CSV</button>
                             <button className="px-8 py-2 w-full sm:w-fit rounded bg-primary text-white" onClick={() => {
                                 setEMIHistoryDetails([]);
