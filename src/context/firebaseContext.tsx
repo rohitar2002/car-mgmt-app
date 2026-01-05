@@ -114,10 +114,8 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
     const addCarRecord = async (data: CarDetailsType) => {
         try {
             const carDocRef = await addDoc(collection(firestore, "CarDetails"), data.carInfo);
-            const bal = (data.loanInfo.totalLoanAmount.trim() && data.loanInfo.downPayment.trim()) ? (Number(data.loanInfo.totalLoanAmount) - Number(data.loanInfo.downPayment)).toString() : "0";
             const loanDocRef = await addDoc(collection(firestore, "LoanDetails"), {
                 ...data.loanInfo,
-                remainingBalance: bal,
                 carId: carDocRef.id,
             });
 
@@ -132,12 +130,12 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
                 ...data.customerInfo,
                 carId: carDocRef.id,
             });
-             
+
             const userRef = doc(firestore, "Users", userDetails?.id);
             await updateDoc(userRef, {
                 registeredCars: arrayUnion(carDocRef.id),
             })
-            
+
             const carIds: string[] = userDetails?.registeredCars || [];
             carIds.push(carDocRef.id);
 
@@ -239,7 +237,7 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [])
 
-   
+
     return (
         <FirebaseUtilsContext.Provider value={{ signUpUser, getDataWithQuery, addPermitHolderDetails, loginUser, signOutUser, userDetails, addCarRecord, addEMIDetails, setUserDetails, deleteCarRecord }}>
             {children}

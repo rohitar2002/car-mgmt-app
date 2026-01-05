@@ -1,5 +1,6 @@
 import { dateToString } from "@/Helper/utils";
 import { CarInfoChangesStatusType, CarInfoType } from "@/interface/CarEntriesTypes"
+import { DocumentData } from "firebase/firestore";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -9,10 +10,10 @@ interface Props {
     setCarInfoChangesStatus?: React.Dispatch<React.SetStateAction<CarInfoChangesStatusType>>;
     registrationNumberError: string;
     setRegistrationNumberError: React.Dispatch<React.SetStateAction<string>>;
+    handleOnBlurRegistrationNumber: () => Promise<boolean | DocumentData>;
 }
 
-export const CarDetails = ({ carInfo, setCarInfo, registrationNumberError, setRegistrationNumberError, setCarInfoChangesStatus }: Props) => {
-
+export const CarDetails = ({ carInfo, setCarInfo, handleOnBlurRegistrationNumber, registrationNumberError, setRegistrationNumberError, setCarInfoChangesStatus }: Props) => {
     const handleValueChange = (value: string, field: string) => {
         setCarInfo((prev: CarInfoType) => ({
             ...prev,
@@ -26,6 +27,7 @@ export const CarDetails = ({ carInfo, setCarInfo, registrationNumberError, setRe
             }))
         }
     }
+
     return (
         <div className="flex flex-col gap-5 my-5">
             <h2 className="text-xl font-bold text-center underline text-accent">Car Info Section</h2>
@@ -34,7 +36,9 @@ export const CarDetails = ({ carInfo, setCarInfo, registrationNumberError, setRe
                 <input type="text" value={carInfo.registrationNumber} onChange={(e) => {
                     handleValueChange(e.target.value.toUpperCase(), "registrationNumber");
                     setRegistrationNumberError("");
-                }} placeholder="Enter Registration Number" className="px-3 py-2 border border-primary focus:outline-none rounded" />
+                }}
+                    onBlur={handleOnBlurRegistrationNumber}
+                    placeholder="Enter Registration Number" className="px-3 py-2 border border-primary focus:outline-none rounded" />
                 {registrationNumberError && <h2 className="text-lg font-bold text-red-500">{registrationNumberError}</h2>}
             </div>
 

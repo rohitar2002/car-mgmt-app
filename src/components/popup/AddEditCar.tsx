@@ -162,18 +162,25 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
         })
         setRegistrationNumberError("");
     }
+    const handleValidateRegistrationNumber = async () => {
+        const queryResult = await firebaseContext?.getDataWithQuery("CarDetails", "registrationNumber", "==", carInfo.registrationNumber);
+        if (queryResult && !queryResult.empty) {
+            if (!queryResult.docs[0].data().isDeleted) {
+                toast.error("Registration Number Already Exists. Try with a different registration number!");
+                return false;
+            }
+            return queryResult;
+        }
+        return true;
+    }
 
     const handleSubmit = async () => {
         setIsLoading(true);
 
-        const queryResult = await firebaseContext?.getDataWithQuery("CarDetails", "registrationNumber", "==", carInfo.registrationNumber);
-        if (queryResult && !queryResult.empty) {
-            const documentData = queryResult.docs[0].data();
-
-            if (!documentData.isDeleted) {
-                toast.error("Registration Number Already Exists!");
+        const queryResult = await handleValidateRegistrationNumber();
+        if (typeof (queryResult) == 'object' || queryResult == false) {
+            if (queryResult == false) {
                 setIsLoading(false);
-
                 return;
             }
             else {
@@ -417,7 +424,7 @@ const AddEditCarDetails = ({ title, existingDetails, isShowPopup, closePopup, ge
 
                         <form className="w-full" onSubmit={(e) => e.preventDefault()}>
                             {isCarInfoSection ? (<>
-                                <CarDetails carInfo={carInfo} setCarInfo={setCarInfo} registrationNumberError={registrationNumberError} setRegistrationNumberError={setRegistrationNumberError} setCarInfoChangesStatus={setCarInfoChangesStatus} />
+                                <CarDetails carInfo={carInfo} setCarInfo={setCarInfo} registrationNumberError={registrationNumberError} setRegistrationNumberError={setRegistrationNumberError} setCarInfoChangesStatus={setCarInfoChangesStatus} handleOnBlurRegistrationNumber={handleValidateRegistrationNumber} />
 
                                 <div className="flex items-center md:justify-end py-5">
                                     <button className="text-white bg-primary px-10 py-2 rounded text-lg w-full md:w-auto" onClick={() => {
