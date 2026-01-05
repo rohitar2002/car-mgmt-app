@@ -1,3 +1,4 @@
+import { dateToString } from "@/Helper/utils";
 import { LoanInfoChangesStatusType, LoanInfoType } from "@/interface/CarEntriesTypes"
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -60,7 +61,7 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, setLoanInfoChangesStatus }:
                     <DatePicker
                         selected={loanInfo.loanStartDate.trim() ? new Date(loanInfo.loanStartDate) : null}
                         onChange={(date: Date | null) => {
-                            handleValueChange(date ? date.toISOString() : "", "loanStartDate")
+                            handleValueChange(date ? dateToString(date) : "", "loanStartDate")
                         }}
                         dateFormat="dd-MM-yyyy"
                         placeholderText="dd-MM-yyyy"
@@ -82,10 +83,11 @@ export const LoanDetails = ({ loanInfo, setLoanInfo, setLoanInfoChangesStatus }:
                     <DatePicker
                         selected={loanInfo.firstEmiDate.trim() ? new Date(loanInfo.firstEmiDate) : null}
                         onChange={(date: Date | null) => {
-                            handleValueChange(date ? date.toISOString() : "", "firstEmiDate")
+                            handleValueChange(date ? dateToString(date) : "", "firstEmiDate")
                         }}
                         dateFormat="dd-MM-yyyy"
                         placeholderText="dd-MM-yyyy"
+                        openToDate={new Date(loanInfo.loanStartDate)}
                         showMonthDropdown
                         showYearDropdown
                         dropdownMode="select"

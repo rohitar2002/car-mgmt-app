@@ -4,8 +4,8 @@ import Loader from "@/components/Loader/RotatingLines";
 import AddEditCarDetails from "@/components/popup/AddEditCar";
 import { EMIHistoryPopup } from "@/components/popup/EMIHistory";
 import { firestore } from "@/firebase/firebase.config";
-import { CarDetailsWithIdType, CarInfoType, CustomerInfoType, EmiDetailsType, EMIDetailsWithIDType, LoanInfoType } from "@/interface/CarEntriesTypes";
-import { doc, DocumentData, getDoc, updateDoc } from "firebase/firestore";
+import { CarDetailsWithIdType, CarInfoType, CustomerInfoType, EmiDetailsType, LoanInfoType } from "@/interface/CarEntriesTypes";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -18,23 +18,21 @@ import { LoanInfoViewer } from "./LoanInfoViewer";
 import { PermitHolderViewer } from "./PermitHolderSection";
 import ADDEMIPermitHolderDetails from "../popup/AddEditPermitHolder";
 import DeleteConfirmPopup from "../popup/DeleteConfirmPopup";
+import { useEMIContext } from "@/context/EMIContext";
 
 const CarViewDataContent = () => {
     const [carDetails, setCarDetails] = useState<CarDetailsWithIdType | null>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
     const [carIdForDeletion, setCarIdForDeletion] = useState<string>("");
     const [carRegistrationNoForDeletion, setCarRegistrationNoForDeletion] = useState<string>("");
-    const [emiHistoryDetails, setEMIHistoryDetails] = useState<EMIDetailsWithIDType[] | null>(null);
-    const [existingEMIDetails, setExistingEMIDetails] = useState<EMIDetailsWithIDType | null>(null);
-    const [emiPopupTitle, setEMIPopupTitle] = useState<string>("Add EMI Details");
     const [showConfirm, setShowConfirm] = useState<boolean>(false);
     const [showPermitHolderConfirm, setShowPermitHolderConfirm] = useState<boolean>(false);
     const [showUpdatePopup, setShowUpdatePopup] = useState<boolean>(false);
-    const [showAddEMIPopup, setShowAddEMIPopup] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [loanId, setLoanId] = useState<string>("");
     const searchParms = useSearchParams();
     const firebaseContext = useFirebaseContext();
+    const emiContext = useEMIContext();
 
     const getData = async () => {
         setIsLoading(true);
@@ -81,9 +79,11 @@ const CarViewDataContent = () => {
     }
 
     const handleEMIClosePopup = () => {
-        setShowAddEMIPopup(false);
-        setExistingEMIDetails(null);
-        setEMIPopupTitle("Add EMI Details");
+        if (emiContext) {
+            emiContext.setShowAddEMIPopup(false);
+            emiContext.setExistingEMIDetails(null);
+            emiContext.setEMIPopupTitle("Add EMI Details");
+        }
     }
     useEffect(() => {
         if (carDetails) {
@@ -92,74 +92,21 @@ const CarViewDataContent = () => {
 
     }, [carDetails])
 
-    const getStatus = (emiInfo: EMIDetailsWithIDType) => {
-        const currentDate = new Date();
-        const dueDate = new Date(emiInfo.data.emiDueDate);
-        dueDate.setHours(0, 0, 0, 0);
-        currentDate.setHours(0, 0, 0, 0);
-
-        if (emiInfo.data.emiReceivedDate) {
-            return "Paid";
-        }
-
-        else if (dueDate < currentDate) {
-            return "Overdue";
-        }
-
-        return "Pending";
-    }
 
     const getEMIDetails = async (loanId: string) => {
-        setIsLoading(true);
-        const queryResult = await firebaseContext?.getDataWithQuery("EMIDetails", "loanId", "==", loanId);
-        if (queryResult && !queryResult.empty) {
-            const emiArray = queryResult.docs.map((item: DocumentData) => ({
-                data: item.data(),
-                id: item.id,
-            }));
-
-            const historyData = emiArray.map((item: EMIDetailsWithIDType) => {
-                const status = getStatus(item);
-
-                return {
-                    id: item.id,
-                    data: {
-                        ...item.data,
-                        emiStatus: status,
-                    }
-                }
-            })
-            historyData.sort((a: EMIDetailsWithIDType, b: EMIDetailsWithIDType) => parseInt(a.data.emiNo) - parseInt(b.data.emiNo));
-            setEMIHistoryDetails(historyData);
+        if (emiContext) {
+            setIsLoading(true);
+            await emiContext.getEMIHistory(loanId);
+            setIsLoading(false);
         }
-        setIsLoading(false);
     }
 
     const handleEMIUpdate = async (emiDetails: EmiDetailsType, id: string) => {
-        setIsLoading(true);
         try {
-            if (emiDetails.emiNo.toString().trim() && id.trim()) {
-                const emiDocs = await firebaseContext?.getDataWithQuery("EMIDetails", "loanId", "==", loanId);
-                if (emiDocs && !emiDocs.empty) {
-                    const emiData = emiDocs.docs.find((item: DocumentData) => item.data().emiNo === emiDetails.emiNo && item.id !== id);
-                    if (emiData) {
-                        toast.error("EMI No already exists. Please use a different EMI No.");
-                        setIsLoading(false);
-                        return;
-                    }
-                }
-            }
-            
-            await updateDoc(doc(firestore, 'EMIDetails', id), {
-                ...emiDetails
-            })
-
-            getEMIDetails(loanId);
-            setShowAddEMIPopup(false);
-            setExistingEMIDetails(null);
-            setEMIPopupTitle("Add EMI Details");
-            toast.success("EMI Details Updated Successfully");
-
+            setIsLoading(true);
+            const updateResult = await emiContext?.updateEMIDetails(emiDetails, id, loanId);
+            if (updateResult)
+                getEMIDetails(loanId);
         } catch (error) {
             if (error instanceof Error) {
                 toast.error(error.message);
@@ -167,8 +114,7 @@ const CarViewDataContent = () => {
             else {
                 toast.error("Something went wrong");
             }
-        }
-        finally {
+        } finally {
             setIsLoading(false);
         }
     }
@@ -232,9 +178,9 @@ const CarViewDataContent = () => {
     return (
         <>
             {isLoading && <Loader />}
-            <EMIHistoryPopup loanId={carDetails?.loanId} emiHistoryDetails={emiHistoryDetails} setEMIHistoryDetails={setEMIHistoryDetails} getEMIDetails={getEMIDetails} isShowPopup={showConfirm} setEMIPopupTitle={setEMIPopupTitle} setExistingEMIDetails={setExistingEMIDetails} setShowEditPopup={setShowAddEMIPopup} closePopup={() => {
+            {emiContext && <EMIHistoryPopup loanId={carDetails?.loanId} emiHistoryDetails={emiContext.emiHistoryDetails} setEMIHistoryDetails={emiContext.setEMIHistoryDetails} getEMIDetails={getEMIDetails} isShowPopup={showConfirm} setEMIPopupTitle={emiContext.setEMIPopupTitle} setExistingEMIDetails={emiContext.setExistingEMIDetails} setShowEditPopup={emiContext.setShowAddEMIPopup} closePopup={() => {
                 setShowConfirm(false);
-            }} />
+            }} />}
 
             <DeleteConfirmPopup isShowPopup={showDeleteConfirm} closePopup={() => {
                 setShowDeleteConfirm(false);
@@ -244,10 +190,10 @@ const CarViewDataContent = () => {
 
             <AddEditCarDetails isShowPopup={showUpdatePopup} closePopup={() => {
                 setShowUpdatePopup(false);
-                setEMIPopupTitle("Add EMI Details");
+                emiContext?.setEMIPopupTitle("Add EMI Details");
             }} title="Update Information" existingDetails={carDetails!} getCarDetails={getData} />
 
-            <ADDEMIDetails isShowPopup={showAddEMIPopup} title={emiPopupTitle} handleEMIUpdate={handleEMIUpdate} existingDetails={existingEMIDetails} closePopup={handleEMIClosePopup} loanId={loanId} />
+            {emiContext && <ADDEMIDetails isShowPopup={emiContext.showAddEMIPopup} title={emiContext.emiPopupTitle} handleEMIUpdate={handleEMIUpdate} existingDetails={emiContext.existingEMIDetails} closePopup={handleEMIClosePopup} loanId={loanId} getEMIDetails={() => getEMIDetails(loanId)} />}
 
             <ADDEMIPermitHolderDetails title={`${carDetails?.permitHolder ? "Update" : "Add"} Information`} carId={carDetails?.carId ? carDetails?.carId : null} existingDetails={carDetails?.permitHolder} handlePermitHolderUpdate={handlePermitHolderUpdate} isShowPopup={showPermitHolderConfirm} closePopup={() => {
                 setShowPermitHolderConfirm(false);
@@ -264,7 +210,7 @@ const CarViewDataContent = () => {
 
                         <div className="flex flex-col items-center-center sm:flex-row sm:items-start lg:px-10 gap-5">
                             <button className="px-3 py-2 bg-primary text-white rounded" onClick={() => {
-                                setShowAddEMIPopup(true);
+                                emiContext?.setShowAddEMIPopup(true);
                             }}>Add EMI Details</button>
                             <button className="px-3 py-2 bg-primary text-white rounded" onClick={() => {
                                 setShowConfirm(true);

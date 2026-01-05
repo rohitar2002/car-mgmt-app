@@ -1,6 +1,6 @@
 'use client'
 
-import { nextEMIDate } from "@/Helper/utils";
+import { dateToString } from "@/Helper/utils";
 import { auth, firestore } from "@/firebase/firebase.config";
 import { CarDetailsType, CustomerInfoType, EmiDetailsType } from "@/interface/CarEntriesTypes";
 import { FirebaseContextType, LoginCredentials, SignUpType, UserDetailsType } from "@/interface/UsersType";
@@ -125,7 +125,7 @@ export const FireBaseProvider = ({ children }: { children: ReactNode }) => {
                 "loanId": loanDocRef.id,
                 "emiNo": 1,
                 "emiAmount": data.loanInfo.emiAmount,
-                "emiDueDate": data.loanInfo.firstEmiDate.trim() != "" ? nextEMIDate(data.loanInfo.firstEmiDate) : "",
+                "emiDueDate": data.loanInfo.firstEmiDate.trim() ? dateToString(new Date(data.loanInfo.firstEmiDate)) : "",
             });
 
             await addDoc(collection(firestore, "CustomerDetails"), {

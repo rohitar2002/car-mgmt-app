@@ -6,24 +6,39 @@ import Loader from "../Loader/RotatingLines";
 import { toast } from "react-toastify";
 import { isMobile, isTablet } from "react-device-detect";
 import { TbEdit } from "react-icons/tb";
+import { SearchComponent } from "../SearchComponent";
+import { SingleValue } from "react-select";
+import { OptionType } from "@/interface/CommonTypes";
+import { useEMIContext } from "@/context/EMIContext";
+import { handleDateDisplay } from "@/Helper/utils";
+import { useFirebaseContext } from "@/context/firebaseContext";
+import { firestore } from "@/firebase/firebase.config";
+import { doc, getDoc } from "firebase/firestore";
 
 Modal.setAppElement("#documentBody");
 
 interface Props {
     loanId: string | undefined;
     isShowPopup: boolean;
-    emiHistoryDetails: EMIDetailsWithIDType[] | null;
-    setEMIHistoryDetails: (value: EMIDetailsWithIDType[] | null) => void;
+    emiHistoryDetails: EMIDetailsWithIDType[];
+    setEMIHistoryDetails: (value: EMIDetailsWithIDType[]) => void;
     setExistingEMIDetails: (value: EMIDetailsWithIDType) => void;
-    getEMIDetails: (loanId: string) => void;
+    getEMIDetails: (value: string, setHistoryTableTitle?: React.Dispatch<React.SetStateAction<string>>) => void;
+    registrationNumberEMIFilter?: SingleValue<OptionType> | null;
+    setRegistrationNumberEMIFilter?: (value: SingleValue<OptionType> | null) => void;
+    registrationNumberOptionList?: OptionType[];
+    historyTableTitle?: string;
+    setHistoryTableTitle?: React.Dispatch<React.SetStateAction<string>>;
     setEMIPopupTitle: (value: string) => void;
     setShowEditPopup: (value: boolean) => void;
     closePopup: () => void;
 }
 
-export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPopup, emiHistoryDetails, setExistingEMIDetails, setEMIHistoryDetails, setEMIPopupTitle, getEMIDetails }: Props) => {
+export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPopup, emiHistoryDetails, setExistingEMIDetails, setEMIHistoryDetails, setEMIPopupTitle, getEMIDetails, historyTableTitle, setHistoryTableTitle, registrationNumberEMIFilter, setRegistrationNumberEMIFilter, registrationNumberOptionList }: Props) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [modalWidth, setModalWidth] = useState<string>("50%");
+    const emiContext = useEMIContext();
+    const firebaseContext = useFirebaseContext();
 
     const customStyles: ReactModal.Styles = {
         overlay: {
@@ -50,7 +65,7 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPo
     const downloadCSV = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
-        if (emiHistoryDetails) {
+        if (emiHistoryDetails && emiHistoryDetails.length > 0) {
             setIsLoading(true);
             try {
                 const headers = ["EMI Number, Slip Number, Due Date, Received Date, Status, Emi Amount, OverDue, Other Interest"];
@@ -98,17 +113,33 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPo
         setEMIPopupTitle("Edit EMI Details");
     }
 
-    const handleDateDisplay = (dateString: string | undefined) => {
-        if (dateString && dateString.trim() !== "") {
-            const date = new Date(dateString);
-            return (date.toLocaleDateString()).replace(/\//g, '-');
-        }
-        return "--";
-    }
+    const handleAddNewEMI = async () => {
+        if ((emiContext && loanId && firebaseContext && emiHistoryDetails && emiHistoryDetails.length > 0)) {
+            const queryResult = await getDoc(doc(firestore, "LoanDetails", loanId));
 
-    const totalEmiAmount = emiHistoryDetails ? emiHistoryDetails.reduce((total, item) => total + (item.data?.emiAmount.toString().trim() ? parseInt(item.data.emiAmount.replace(/\D/g, "")) : 0), 0) : 0;
-    const totalOverDueAmount = emiHistoryDetails ? emiHistoryDetails.reduce((total, item) => total + (item.data.overdue?.toString().trim() ? parseInt(item.data.overdue.replace(/\D/g, "")) : 0), 0) : 0;
-    const totalOtherInterestAmount = emiHistoryDetails ? emiHistoryDetails.reduce((total, item) => total + (item.data.otherInterest?.toString().trim() ? parseInt(item.data.otherInterest.replace(/\D/g, "")) : 0), 0) : 0;
+            if (queryResult && queryResult.data()?.emiAmount?.trim() && queryResult.data()?.firstEmiDate?.trim()) {
+                const recordIndex = emiHistoryDetails.findLastIndex((item: EMIDetailsWithIDType) => item.data.emiNo.toString().trim() !== "");
+                const emiAmount = emiHistoryDetails[recordIndex].data.emiAmount;
+                const emiDueDate = emiHistoryDetails[recordIndex].data.emiDueDate;
+                const firstDueDate: string | undefined = queryResult.data()?.firstEmiDate;
+                if (emiAmount.trim() && emiDueDate.trim()) {
+                    const emiNo = (parseInt(emiHistoryDetails[recordIndex].data.emiNo) + 1).toString();
+                    const nextDueDate = emiContext.nextEMIDate(emiDueDate, firstDueDate);
+                    const data = { emiNo: emiNo, emiDueDate: nextDueDate, emiAmount: emiAmount, slipNo: "", emiReceivedDate: "", overdue: "", otherInterest: "" };
+
+                    setExistingEMIDetails({ id: "", data: data });
+                    setEMIPopupTitle("Add EMI Details");
+                    setShowEditPopup(true);
+                }
+            }
+            else
+                toast.error("Unable to create EMI entry. Ensure the loan has a valid EMI amount and a EMI first due date set.");
+        }
+
+    }
+    const totalEmiAmount = (emiHistoryDetails && emiHistoryDetails.length > 0) ? emiHistoryDetails.reduce((total, item) => total + (item.data?.emiAmount.toString().trim() ? parseInt(item.data.emiAmount.replace(/\D/g, "")) : 0), 0) : 0;
+    const totalOverDueAmount = (emiHistoryDetails && emiHistoryDetails.length > 0) ? emiHistoryDetails.reduce((total, item) => total + (item.data.overdue?.toString().trim() ? parseInt(item.data.overdue.replace(/\D/g, "")) : 0), 0) : 0;
+    const totalOtherInterestAmount = (emiHistoryDetails && emiHistoryDetails.length > 0) ? emiHistoryDetails.reduce((total, item) => total + (item.data.otherInterest?.toString().trim() ? parseInt(item.data.otherInterest.replace(/\D/g, "")) : 0), 0) : 0;
 
     useEffect(() => {
         if (isShowPopup) {
@@ -117,7 +148,6 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPo
             }
         }
     }, [isShowPopup])
-
 
     useEffect(() => {
         const handleScreenSize = () => {
@@ -163,14 +193,27 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPo
                     {isLoading && <Loader />}
                     <div className="flex flex-col gap-3">
                         <div className="flex justify-between items-center py-5">
-                            <h2 className="text-lg md:text-2xl font-bold text-primary">Loan EMI History</h2>
+                            <h2 className="text-lg md:text-2xl font-bold text-primary">{registrationNumberOptionList ? "Add New EMI" : "Loan EMI History"}</h2>
                             <MdClose className="text-2xl font-bold text-red-500 cursor-pointer" onClick={() => {
-                                setEMIHistoryDetails(null);
+                                setEMIHistoryDetails([]);
                                 closePopup();
                             }} />
                         </div>
 
-                        <div className="flex-grow overflow-auto max-h-96">
+                        {setRegistrationNumberEMIFilter && registrationNumberOptionList &&
+                            <div className="flex flex-col gap-5">
+                                <SearchComponent
+                                    registrationNumber={registrationNumberEMIFilter || null}
+                                    registrationNumberOptionList={registrationNumberOptionList}
+                                    setRegistrationNumber={setRegistrationNumberEMIFilter}
+                                    isEmiHistory={true}
+                                    setHistoryTableTitle={setHistoryTableTitle}
+                                    getEMIDetails={getEMIDetails}
+                                />
+                            </div>
+                        }
+                        <div className="flex-grow overflow-auto max-h-80">
+                            {registrationNumberOptionList && <h2 className="text-lg font-bold text-primary pt-5 pb-3">{historyTableTitle}</h2>}
                             <table className="w-full border border-black">
                                 <thead>
                                     <tr>
@@ -193,8 +236,8 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPo
                                                 <tr key={index}>
                                                     <td className="px-3 py-2 border border-black">{item.data.emiNo ? item.data.emiNo : "--"}</td>
                                                     <td className="px-3 py-2 border border-black">{item.data.slipNo ? item.data.slipNo : "--"}</td>
-                                                    <td className="px-3 py-2 border border-black whitespace-nowrap">{handleDateDisplay(item.data.emiDueDate)}</td>
-                                                    <td className="px-3 py-2 border border-black whitespace-nowrap">{handleDateDisplay(item.data.emiReceivedDate)}</td>
+                                                    <td className="px-3 py-2 border border-black whitespace-nowrap">{(item.data.emiDueDate && item.data.emiDueDate.trim()) ? handleDateDisplay(item.data.emiDueDate) : "--"}</td>
+                                                    <td className="px-3 py-2 border border-black whitespace-nowrap">{(item.data.emiReceivedDate && item.data.emiReceivedDate.trim()) ? handleDateDisplay(item.data.emiReceivedDate) : "--"}</td>
                                                     <td className="px-3 py-2 border border-black">{item.data.emiAmount ? "₹" + item.data.emiAmount : "--"}</td>
                                                     <td className={`px-3 py-2 font-bold border border-black ${item.data.emiStatus === "Paid" ? "text-accent" : item.data.emiStatus === "Pending" ? "text-orange-500" : "text-error"}`}>{item.data.emiStatus}</td>
                                                     <td className="px-3 py-2 border border-black">{item.data.overdue ? "₹" + item.data.overdue : "--"}</td>
@@ -225,9 +268,10 @@ export const EMIHistoryPopup = ({ loanId, isShowPopup, closePopup, setShowEditPo
                             </table>
                         </div>
                         <div className="flex justify-center sm:justify-end items-center flex-col sm:flex-row gap-5 py-5 mt-3">
+                            <button className="px-3 py-2 bg-primary text-white rounded" disabled={emiHistoryDetails.length == 0} onClick={handleAddNewEMI}>Add EMI Details</button>
                             <button className="px-5 py-2 w-full sm:w-fit rounded bg-primary text-white" onClick={downloadCSV}>Download CSV</button>
                             <button className="px-8 py-2 w-full sm:w-fit rounded bg-primary text-white" onClick={() => {
-                                setEMIHistoryDetails(null);
+                                setEMIHistoryDetails([]);
                                 closePopup();
                             }}>OK</button>
                         </div>

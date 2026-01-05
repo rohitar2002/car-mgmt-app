@@ -1,24 +1,11 @@
-export const nextEMIDate = (date: string) =>{
-    const dateRef = new Date(date);
+export const dateToString = (value: Date) => {
+    return value.toLocaleDateString("en-CA", { day: "2-digit", month: "2-digit", year: "numeric" }).replaceAll("/", "-");
+}
 
-    const currentMonth = dateRef.getMonth();
-    let nextMonth;
-    let nextYear = dateRef.getFullYear();
-    if (currentMonth == 11) {
-        nextMonth = "01";
-        nextYear += 1;  
-    }
-    else{
-        nextMonth = currentMonth + 2;
-        if (nextMonth < 10) {
-            nextMonth = `0${nextMonth}`
-        }
-    }
+export const handleDateDisplay = (value: string) => {
+    return value.split("-").reverse().join("-")
+}
 
-    let nextDate = dateRef.getDate().toString();
-    if (dateRef.getDate() < 10) {
-        nextDate = `0${nextDate}`
-    }
-
-    return `${nextYear}-${nextMonth}-${nextDate}`;
-}  
+export const getLastDateOfMonth = (year: number, month: number): number => {
+    return new Date(year, month + 1, 0).getDate();
+}

@@ -7,7 +7,6 @@ import Loader from "../Loader/RotatingLines";
 import { useFirebaseContext } from "@/context/firebaseContext";
 import { isMobile, isTablet } from "react-device-detect";
 import { useRouter } from "next/navigation";
-// import { useRouter } from "next/router";
 
 Modal.setAppElement("#documentBody");
 

@@ -9,6 +9,7 @@ import { EmiDetailsType, EMIDetailsWithIDType } from "@/interface/CarEntriesType
 import { DocumentData } from "firebase/firestore";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { dateToString } from "@/Helper/utils";
 
 Modal.setAppElement("#documentBody");
 
@@ -16,11 +17,12 @@ interface Props {
     isShowPopup: boolean;
     closePopup: () => void;
     existingDetails?: EMIDetailsWithIDType | null;
+    getEMIDetails?: () => void;
     handleEMIUpdate: (emiDetails: EmiDetailsType, id: string) => void;
     title: string
     loanId: string;
 }
-const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title, handleEMIUpdate }: Props) => {
+const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title, handleEMIUpdate, getEMIDetails }: Props) => {
     const [modalWidth, setModalWidth] = useState<string>("50%");
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const firebaseContext = useFirebaseContext();
@@ -171,6 +173,8 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
         if (typeof emiDetailsResponse === "boolean") {
             toast.success("EMI Entry Successfully Added.");
             handleClosePopup();
+            if (existingDetails && title === "Add EMI Details" && getEMIDetails)
+                getEMIDetails();
         }
         else {
             toast.error(emiDetailsResponse);
@@ -285,7 +289,7 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
                                     <DatePicker
                                         selected={emiDetails.emiDueDate.trim() ? new Date(emiDetails.emiDueDate) : null}
                                         onChange={(date: Date | null) => {
-                                            handleValueChange(date ? date.toISOString() : "", "emiDueDate")
+                                            handleValueChange(date ? dateToString(date) : "", "emiDueDate")
                                         }}
                                         dateFormat="dd-MM-yyyy"
                                         placeholderText="dd-MM-yyyy"
@@ -303,7 +307,7 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
                                     <DatePicker
                                         selected={emiDetails.emiReceivedDate.trim() ? new Date(emiDetails.emiReceivedDate) : null}
                                         onChange={(date: Date | null) => {
-                                            handleValueChange(date ? date.toISOString() : "", "emiReceivedDate")
+                                            handleValueChange(date ? dateToString(date) : "", "emiReceivedDate")
                                         }}
                                         dateFormat="dd-MM-yyyy"
                                         placeholderText="dd-MM-yyyy"
@@ -337,7 +341,7 @@ const ADDEMIDetails = ({ isShowPopup, closePopup, loanId, existingDetails, title
                         <div className="flex flex-col items-center md:flex-row md:items-end md:justify-end gap-5 pt-5">
                             <button className="bg-red-500 border px-10 py-2 w-full sm:w-fit text-white rounded text-lg" onClick={handleReset}>Reset</button>
                             <button type="button" className="text-primary border border-primary bg-white px-10 py-2 rounded text-lg w-full md:w-auto" onClick={handleClosePopup}>Cancel</button>
-                            <button type="button" className="text-white bg-primary px-10 py-2 rounded text-lg w-full md:w-auto" onClick={existingDetails ? handleUpdate : handleSave}>{existingDetails ? "Update" : "Save"}</button>
+                            <button type="button" className="text-white bg-primary px-10 py-2 rounded text-lg w-full md:w-auto" onClick={title !== "Add EMI Details" ? handleUpdate : handleSave}>{title !== "Add EMI Details" ? "Update" : "Save"}</button>
                         </div>
                     </div>
                 </Modal>

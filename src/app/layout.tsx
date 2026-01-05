@@ -5,6 +5,7 @@ import { FireBaseProvider } from "@/context/firebaseContext";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import HeaderLayout from "@/components/HeaderLayout";
+import { EMIContextProvider } from "@/context/EMIContext";
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -42,8 +43,10 @@ export default function RootLayout({
         id="documentBody"
       >
         <FireBaseProvider>
-          <ToastContainer />
-          <HeaderLayout>{children}</HeaderLayout>
+          <EMIContextProvider>
+            <ToastContainer />
+            <HeaderLayout>{children}</HeaderLayout>
+          </EMIContextProvider>
         </FireBaseProvider>
       </body>
     </html>

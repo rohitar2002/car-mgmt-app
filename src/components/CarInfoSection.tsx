@@ -1,3 +1,4 @@
+import { dateToString } from "@/Helper/utils";
 import { CarInfoChangesStatusType, CarInfoType } from "@/interface/CarEntriesTypes"
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -71,7 +72,7 @@ export const CarDetails = ({ carInfo, setCarInfo, registrationNumberError, setRe
                 <DatePicker
                     selected={carInfo.purchasedDate.trim() ? new Date(carInfo.purchasedDate) : null}
                     onChange={(date: Date | null) => {
-                        handleValueChange(date ? date.toISOString() : "", "purchasedDate")
+                        handleValueChange(date ? dateToString(date) : "", "purchasedDate")
                     }}
                     dateFormat="dd-MM-yyyy"
                     placeholderText="dd-MM-yyyy"

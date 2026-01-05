@@ -1,5 +1,6 @@
 'use client'
 
+import { handleDateDisplay } from "@/Helper/utils";
 import { LoanInfoType } from "@/interface/CarEntriesTypes";
 import { useState } from "react";
 
@@ -10,13 +11,6 @@ interface LoanInfoViewerProps {
 export const LoanInfoViewer = ({ loanInfo }: LoanInfoViewerProps) => {
     const [isExpended, setIsExpanded] = useState<boolean>(false);
 
-    const handleDateDisplay = (dateString: string | undefined) => {
-        if (dateString && dateString.trim() !== "") {
-            const date = new Date(dateString);
-            return (date.toLocaleDateString()).replace(/\//g, '-');
-        }
-        return dateString;
-    }
     return (
         <section className="border-b border-gray-500 bg-white p-5">
             <h2 className="text-xl font-bold text-primary mb-5 text-center sm:text-left">Loan Information</h2>
@@ -31,7 +25,7 @@ export const LoanInfoViewer = ({ loanInfo }: LoanInfoViewerProps) => {
                 </div>
                 <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
                     <label className="font-bold text-lg">Loan Start Date:</label>
-                    <h2 className="text-md">{handleDateDisplay(loanInfo?.loanStartDate) || "--"}</h2>
+                    <h2 className="text-md">{(loanInfo && loanInfo?.loanStartDate.trim()) ? handleDateDisplay(loanInfo.loanStartDate) : "--"}</h2>
                 </div>
                 <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
                     <label className="font-bold text-lg">Loan Tenure:</label>
@@ -58,7 +52,7 @@ export const LoanInfoViewer = ({ loanInfo }: LoanInfoViewerProps) => {
                         </div>
                         <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
                             <label className="font-bold text-lg">First EMI Date:</label>
-                            <h2 className="text-md">{handleDateDisplay(loanInfo?.firstEmiDate) || "--"}</h2>
+                            <h2 className="text-md">{(loanInfo && loanInfo?.firstEmiDate.trim()) ? handleDateDisplay(loanInfo.firstEmiDate) :  "--"}</h2>
                         </div>
                         <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-3">
                             <label className="font-bold text-lg">Any balance Amount:</label>

@@ -122,3 +122,16 @@ export interface EMIDetailsWithIDType {
     data: EmiDetailsType;
     id: string;
 }
+export interface EMIContextType {
+    emiHistoryDetails: EMIDetailsWithIDType[];
+    setEMIHistoryDetails: React.Dispatch<React.SetStateAction<EMIDetailsWithIDType[]>>;
+    existingEMIDetails: EMIDetailsWithIDType | null;
+    setExistingEMIDetails: React.Dispatch<React.SetStateAction<EMIDetailsWithIDType | null>>;
+    emiPopupTitle: string;
+    setEMIPopupTitle: React.Dispatch<React.SetStateAction<string>>;
+    showAddEMIPopup: boolean;
+    setShowAddEMIPopup: React.Dispatch<React.SetStateAction<boolean>>;
+    getEMIHistory: (loanId: string) => Promise<void>;
+    updateEMIDetails: (emiDetails : EmiDetailsType, id: string, loanId: string) => Promise<boolean>;
+    nextEMIDate: (value:string, firstDueDate: string | undefined) => string;
+}
