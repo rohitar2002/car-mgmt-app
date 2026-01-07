@@ -26,7 +26,7 @@ export const SearchComponent = ({ registrationNumber, registrationNumberOptionLi
             <Select
                 className="border border-primary w-full rounded focus:outline-none"
                 placeholder="Search using registration Number"
-                inputId="filter-car"
+                instanceId="filter-car"
                 value={registrationNumber}
                 options={isEmiHistory ? updatedOtionList : registrationNumberOptionList}
                 onChange={(selectedOption: SingleValue<OptionType>) =>

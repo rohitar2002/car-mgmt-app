@@ -3,12 +3,12 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDXXAnkKCc8vDCzp84u3eIxPxU1Uwbh798",
-  authDomain: "car-finance-mgmt-app.firebaseapp.com",
-  projectId: "car-finance-mgmt-app",
-  storageBucket: "car-finance-mgmt-app.firebasestorage.app",
-  messagingSenderId: "964657361506",
-  appId: "1:964657361506:web:cc0fdffc39a90e7153973b"
+  apiKey: process.env.APP_FIREBASE_API_KEY,
+  authDomain: process.env.APP_FIREBASE_AUTHDOMAIN,
+  projectId: process.env.APP_FIREBASE_PROJECTID,
+  storageBucket: process.env.APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.APP_FIREBASE_MESSAGE_SENDER_ID,
+  appId: process.env.APP_FIREBASE_APP_ID
 };
 
 const app = getApps().length == 0 ? initializeApp(firebaseConfig) : getApps()[0];
