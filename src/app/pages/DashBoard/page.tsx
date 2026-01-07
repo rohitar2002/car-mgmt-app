@@ -228,7 +228,6 @@ const DashBoard = () => {
                                             <th className="border border-black px-3 py-3 text-left text-white bg-primary">Registration Number</th>
                                             <th className="border border-black px-3 py-3 text-left text-white bg-primary">Car Model</th>
                                             <th className="border border-black px-3 py-3 text-left text-white bg-primary">Purchased Date</th>
-                                            <th className="border border-black px-3 py-3 text-left text-white bg-primary">Total Financed Amount</th>
                                             <th className="border border-black px-3 py-3 text-left text-white bg-primary">EMI Amount</th>
                                             <th className="border border-black px-3 py-3 text-left text-white bg-primary">Action</th>
                                         </tr>
@@ -245,7 +244,6 @@ const DashBoard = () => {
                                                             <td className="px-3 py-2 border border-black">{item.carInfo.registrationNumber}</td>
                                                             <td className="px-3 py-2 border border-black">{item.carInfo.modelNumber}</td>
                                                             <td className="px-3 py-2 border border-black whitespace-nowrap">{(item.carInfo.purchasedDate && item.carInfo.purchasedDate.trim()) ? handleDateDisplay(item.carInfo.purchasedDate) : "--"}</td>
-                                                            <td className="px-3 py-2 border border-black">{"₹" + ((item.loanInfo.totalLoanAmount).toString().trim() ? item.loanInfo.totalLoanAmount : 0)}</td>
                                                             <td className="px-3 py-2 border border-black">{"₹" + ((item.loanInfo.emiAmount).toString().trim() ? item.loanInfo.emiAmount : 0)}</td>
                                                             <td className="px-3 py-2 border border-black">
 
